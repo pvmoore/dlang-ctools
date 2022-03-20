@@ -17,8 +17,8 @@ start
 
 3
 
-#include "c:/pvmoore/d/libs/ctools/test/inc/c.h"
-#include "c:/pvmoore/d/libs/ctools/test/inc/c.h"
+#include "c:/pvmoore/d/libs/ctools/test/pp/inc/c.h"
+#include "c:/pvmoore/d/libs/ctools/test/pp/inc/c.h"
 
 4
 

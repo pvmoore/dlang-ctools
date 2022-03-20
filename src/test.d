@@ -11,35 +11,55 @@ void main(string[] args) {
     //string file = "C:/pvmoore/cpp/cimgui/cimgui.h";
     //string file = "C:/work/VulkanSDK/1.3.204.1/Include/vulkan/vulkan.h";
 
-    test("test/define0.h");
-    test("test/define1.h");
-    test("test/define2.h");
-    test("test/define3.h");
-    test("test/example1.h");
-    test("test/example2.h");
-    test("test/example3.h");
-    test("test/example4.h");
-    test("test/if_expr1.h");
-    test("test/if_expr2.h");
-    test("test/if.h");
-    test("test/ifdef.h");
-    test("test/ifndef.h");
-    test("test/recursion1.h");
-    test("test/recursion2.h");
-    test("test/include1.h");
+    bool doTestPreProcessor = false;
+    bool doTestParser       = true;
+
+    if(doTestPreProcessor) {
+        testPreProcessor("test/pp/define0.h");
+        testPreProcessor("test/pp/define1.h");
+        testPreProcessor("test/pp/define2.h");
+        testPreProcessor("test/pp/define3.h");
+        testPreProcessor("test/pp/example1.h");
+        testPreProcessor("test/pp/example2.h");
+        testPreProcessor("test/pp/example3.h");
+        testPreProcessor("test/pp/example4.h");
+        testPreProcessor("test/pp/if_expr1.h");
+        testPreProcessor("test/pp/if_expr2.h");
+        testPreProcessor("test/pp/if.h");
+        testPreProcessor("test/pp/ifdef.h");
+        testPreProcessor("test/pp/ifndef.h");
+        testPreProcessor("test/pp/recursion1.h");
+        testPreProcessor("test/pp/recursion2.h");
+        testPreProcessor("test/pp/include1.h");
+    }
+    if(doTestParser) {
+        testParser("C:/work/VulkanSDK/1.3.204.1/Include/vulkan/vulkan.h");
+    }
 }
 
-void test(string filename) {
-
-    dbg("Testing %s", filename);
+void testParser(string filename) {
+    dbg("\nTesting Parser on file %s", filename);
     dbg("~~~~~~~~~~~~~~~~~~~~~~~");
 
     string[string] defines;
-    string[] includeDirs = ["c:/pvmoore/d/libs/ctools/test/incpath"];
+    string[] includeDirs;
 
-    auto parseState = new ParseState("test", includeDirs, defines);
+    //auto parseState = new ParseState(includeDirs, defines);
 
-    parseState.process(Filepath(filename));
+    //parseState.preProcess(Filepath(filename));
+}
+
+void testPreProcessor(string filename) {
+
+    dbg("Testing PreProcessor on file %s", filename);
+    dbg("~~~~~~~~~~~~~~~~~~~~~~~");
+
+    string[string] defines;
+    string[] includeDirs = ["c:/pvmoore/d/libs/ctools/test/pp/incpath"];
+
+    auto parseState = new ParseState(includeDirs, defines);
+
+    parseState.preProcess(Filepath(filename));
 
     string src = cast(string)read(filename);
     auto expectedTokens = extractExpectedTokens(src);

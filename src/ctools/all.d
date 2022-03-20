@@ -21,6 +21,10 @@ import ctools.lex.Lexer;
 import ctools.lex.Token;
 import ctools.lex.TokenNavigator;
 
+import ctools.parse.Parser;
+import ctools.parse.ast.Expr;
+import ctools.parse.ast.Stmt;
+
 import ctools.preprocess.PPDef;
 import ctools.preprocess.PPExpressionParser;
 import ctools.preprocess.PPMacroExpander;

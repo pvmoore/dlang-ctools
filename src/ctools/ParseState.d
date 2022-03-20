@@ -7,7 +7,6 @@ final class ParseState {
     Filepath[] directoryStack;
     bool[Filepath] pragmaOnceSourceFiles;
 public:
-    Directory directory;
     Directory[] includeDirectories;
     SourceFile mainSource;
 
@@ -30,8 +29,7 @@ public:
     }
 
 
-    this(string directory, string[] includeDirectories, string[string] defines) {
-        this.directory = Directory(directory);
+    this(string[] includeDirectories, string[string] defines) {
         this.includeDirectories = includeDirectories.map!(i=>Directory(i)).array;
         this.definitions = new Map!(string,PPDef);
 
@@ -46,7 +44,7 @@ public:
         }
     }
 
-    SourceFile process(Filepath path) {
+    SourceFile preProcess(Filepath path) {
         auto src = new SourceFile(path);
         if(!mainSource) {
             mainSource = src;
@@ -65,10 +63,13 @@ public:
         return src;
     }
 
+    void parse() {
+
+    }
+
     override string toString() {
         return "ParseState {\n" ~
             "\tmainSource: '%s'\n".format(mainSource?mainSource.path.value:"null") ~
-            "\tdirectory: '%s'\n".format(directory) ~
             "\tincludeDirectories: %s\n".format(includeDirectories) ~
             "}";
     }

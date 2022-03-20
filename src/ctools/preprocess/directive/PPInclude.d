@@ -111,7 +111,7 @@ private:
         throw new Exception("angle path not found %s".format(path));
     }
     static void doInclude(ParseState state, Filepath path, TokenNavigator nav) {
-        auto srcFile = state.process(path);
+        auto srcFile = state.preProcess(path);
 
         // add tokens to parent here
 
