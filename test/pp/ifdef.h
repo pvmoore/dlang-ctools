@@ -48,6 +48,14 @@ start
 15
 #endif
 
+#if defined(VALUE) && VALUE == 7
+16
+#endif
+
+#define VALUE2 7
+#if defined(VALUE2) && VALUE2 == 7
+17
+#endif
 
 end
 
@@ -65,5 +73,6 @@ TOKENS:
     11
     12
     15
+    17
     end
 */

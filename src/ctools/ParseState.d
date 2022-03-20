@@ -46,6 +46,8 @@ public:
 
     SourceFile preProcess(Filepath path) {
         auto src = new SourceFile(path);
+        static if(DEBUG) writefln("preProcess '%s'", src.path);
+
         if(!mainSource) {
             mainSource = src;
             pragmaOnceSourceFiles[path] = true;
@@ -53,7 +55,6 @@ public:
 
         pushDirectory(src.path);
 
-        static if(DEBUG) writefln("processing '%s'", src.path);
         src.nav = readAndLex(src);
 
         PreProcessor.process(this, src.path.filename.value, src.nav);
@@ -64,14 +65,12 @@ public:
     }
 
     void parse() {
+        static if(DEBUG) writefln("parse");
 
-    }
+        auto nav = mainSource.nav;
+        nav.rewind();
 
-    override string toString() {
-        return "ParseState {\n" ~
-            "\tmainSource: '%s'\n".format(mainSource?mainSource.path.value:"null") ~
-            "\tincludeDirectories: %s\n".format(includeDirectories) ~
-            "}";
+        Parser.process(this, nav);
     }
 private:
     void pushDirectory(Filepath path) {

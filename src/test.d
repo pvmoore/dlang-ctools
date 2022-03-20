@@ -11,26 +11,26 @@ void main(string[] args) {
     //string file = "C:/pvmoore/cpp/cimgui/cimgui.h";
     //string file = "C:/work/VulkanSDK/1.3.204.1/Include/vulkan/vulkan.h";
 
-    bool doTestPreProcessor = false;
-    bool doTestParser       = true;
+    bool doTestPreProcessor = true;
+    bool doTestParser       = false;
 
     if(doTestPreProcessor) {
-        testPreProcessor("test/pp/define0.h");
-        testPreProcessor("test/pp/define1.h");
-        testPreProcessor("test/pp/define2.h");
-        testPreProcessor("test/pp/define3.h");
-        testPreProcessor("test/pp/example1.h");
-        testPreProcessor("test/pp/example2.h");
-        testPreProcessor("test/pp/example3.h");
-        testPreProcessor("test/pp/example4.h");
-        testPreProcessor("test/pp/if_expr1.h");
-        testPreProcessor("test/pp/if_expr2.h");
-        testPreProcessor("test/pp/if.h");
+        // testPreProcessor("test/pp/define0.h");
+        // testPreProcessor("test/pp/define1.h");
+        // testPreProcessor("test/pp/define2.h");
+        // testPreProcessor("test/pp/define3.h");
+        // testPreProcessor("test/pp/example1.h");
+        // testPreProcessor("test/pp/example2.h");
+        // testPreProcessor("test/pp/example3.h");
+        // testPreProcessor("test/pp/example4.h");
+        // testPreProcessor("test/pp/if_expr1.h");
+        // testPreProcessor("test/pp/if_expr2.h");
+        // testPreProcessor("test/pp/if.h");
         testPreProcessor("test/pp/ifdef.h");
-        testPreProcessor("test/pp/ifndef.h");
-        testPreProcessor("test/pp/recursion1.h");
-        testPreProcessor("test/pp/recursion2.h");
-        testPreProcessor("test/pp/include1.h");
+        // testPreProcessor("test/pp/ifndef.h");
+        // testPreProcessor("test/pp/recursion1.h");
+        // testPreProcessor("test/pp/recursion2.h");
+        // testPreProcessor("test/pp/include1.h");
     }
     if(doTestParser) {
         testParser("C:/work/VulkanSDK/1.3.204.1/Include/vulkan/vulkan.h");
@@ -44,9 +44,9 @@ void testParser(string filename) {
     string[string] defines;
     string[] includeDirs;
 
-    //auto parseState = new ParseState(includeDirs, defines);
+    auto parseState = new ParseState(includeDirs, defines);
 
-    //parseState.preProcess(Filepath(filename));
+    parseState.preProcess(Filepath(filename));
 }
 
 void testPreProcessor(string filename) {

@@ -4,6 +4,7 @@ import ctools.all;
 import std.conv : to;
 
 private enum DEBUG = false;
+private enum POISON_VALUE = 0xf123e987;
 
 final class PPExpressionParser {
 public:
@@ -52,11 +53,16 @@ private:
                 nav.skip(1);
                 return new PPLiteral(to!int(value));
             case TK.LBRACKET:
-                 nav.skip(1);
+                nav.skip(1);
                 auto parens = new PPParens();
                 parse(nav, parens);
                 nav.skip(1);
                 return parens;
+            case TK.ID:
+                // If we see an identifer here it means it is undefined.
+                // We'll hack this by replacing it with a poison value
+                nav.skip(1);
+                return new PPLiteral(POISON_VALUE);
             default:
                 throw new Exception("Unhandled expression lhs %s".format(nav.peek(0)));
         }
