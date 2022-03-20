@@ -36,7 +36,10 @@ public:
                     }
                     break;
                 case '<':
-                    if(peek(1)=='<' && peek(2)=='=') {
+                    if(prevToken(0).value=="include" && prevToken(1).kind==TK.HASH) {
+                        addToken();
+                        angleString();
+                    } else if(peek(1)=='<' && peek(2)=='=') {
                         addToken(TK.DLT_EQ);
                     } else if(peek(1)=='<') {
                         addToken(TK.DLT);
@@ -172,6 +175,9 @@ public:
         return tokens;
     }
 private:
+    Token prevToken(int offset = 0) {
+        return tokens.length.as!int-offset <= 0 ? NO_TOKEN : tokens[$-(1+offset)];
+    }
     char peek(int offset) {
         return pos+offset < src.length ? src[pos+offset] : 0;
     }
@@ -235,6 +241,7 @@ private:
         }
     }
     void dquote() {
+        // " string "
         pos++;
         while(pos<src.length) {
             if(peek(0)=='\\' && peek(1)=='"') {
@@ -248,10 +255,24 @@ private:
             }
         }
     }
+    void angleString() {
+        // < string >
+        pos++;
+        while(pos<src.length) {
+            if(peek(0)=='>') {
+                pos++;
+                addToken();
+                break;
+            } else {
+                pos++;
+            }
+        }
+    }
     TK determineKind(string s) {
         if(s.length==0) return TK.ID;
         if(s[0]=='\'') return TK.CHAR;
         if(s[0]=='"') return TK.STRING;
+        if(s[0]=='<') return TK.ANGLE_STRING;
         if(isDigit(s[0])) return TK.NUMBER;
         return TK.ID;
     }

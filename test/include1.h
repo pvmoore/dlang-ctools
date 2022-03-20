@@ -40,6 +40,7 @@ TOKENS:
     incA
     2
     incInc2A
+    inc2Z
     3
     incC
     4

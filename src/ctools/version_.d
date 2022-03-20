@@ -9,6 +9,7 @@ Todo:
 - Implement __VA_ARGS__
 - Optimise TokenNavigator.{removeNext,removePrev} functions. These inefficiently manipulate the
   underlying token array.
+- Optimise include files with a guard. These can be ignored without passing the tokens each time
 - Update __LINE__ definition
 - Update __DATE__ definition
 - Update __TIME__ definition

@@ -100,8 +100,9 @@ enum TK {
     NONE,
     ID,
     NUMBER,
-    STRING,
-    CHAR,
+    STRING,         // "string"
+    ANGLE_STRING,   // <path>
+    CHAR,           // 'c'
 
     LBRACKET,       // (
     RBRACKET,       // )
@@ -171,7 +172,7 @@ int lengthOf(TK tk) {
             return 2;
         case DLT_EQ: case DGT_EQ:
             return 3;
-        case NONE: case ID: case NUMBER: case STRING: case CHAR:
+        case NONE: case ID: case NUMBER: case STRING: case ANGLE_STRING: case CHAR:
             return 0;
     }
     assert(false);
@@ -182,6 +183,7 @@ string stringOf(TK tk) {
         case ID:
         case NUMBER:
         case STRING:
+        case ANGLE_STRING:
         case CHAR:
             return "%s".format(tk);
         case LBRACKET: return "(";

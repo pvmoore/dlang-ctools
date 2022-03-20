@@ -18,22 +18,31 @@ public:
         nav.removeNext(2);
 
         // file path
-        string path = nav.value();
-        nav.removeNext(1);
+        throwIf(!nav.kind().isOneOf(TK.STRING, TK.ANGLE_STRING));
+        string path;
+        bool quoted = false;
+        if(nav.kind()==TK.STRING) {
+            // "path"
+            quoted = true;
+            path = nav.value()[1..$-1];
+            nav.removeNext(1);
+        } else {
+            // <path>
+            path = nav.value()[1..$-1];
+            nav.removeNext(1);
+        }
+
+        if(path.length == 0) throw new Exception("Path missing");
 
         static if(DEBUG) {
             writefln("======================------------------ - - - - - - - - - - - - - - - -");
             writefln("path = %s", path);
         }
 
-        if(path.length < 3 || path[0] != path[$-1]) throw new Exception("Invalid path '%s'".format(path));
-
-        bool quoted = path.startsWith("\"");
-
         if(quoted) {
-            quotedPath(state, nav, path[1..$-1]);
+            quotedPath(state, nav, path);
         } else {
-            angleBracketPath(state, nav, path[1..$-1]);
+            angleBracketPath(state, nav, path);
         }
     }
 private:
@@ -46,27 +55,23 @@ private:
         Filepath addPath = Filepath(path);
         Filepath newPath = addPath;
 
-        if(addPath.isAbsolute() && !addPath.exists()) {
-            throw new Exception("Include path not found %s".format(path));
+        // Handle absolute path
+        if(addPath.isAbsolute()) {
+            if(!addPath.exists()) {
+                throw new Exception("Absolute include path not found %s".format(path));
+            }
+            doInclude(state, newPath, nav);
+            return;
         }
 
-        if(addPath.directory.isRelative()) {
-            newPath = state.currentDirectory().add(addPath);
-        }
+        // It is a relative path
+        newPath = state.currentDirectory().add(addPath);
 
         static if(DEBUG) writefln("current dir = %s", state.currentDirectory());
         static if(DEBUG) writefln("include = %s", newPath);
 
         if(newPath.exists()) {
-            auto srcFile = state.process(newPath);
-
-            // add tokens to parent here
-
-
-            static if(DEBUG) writefln("TOKENS = %s", simpleStringOf(srcFile.tokens()));
-
-            nav.insert(srcFile.tokens());
-            nav.skip(srcFile.tokens.length.as!int);
+            doInclude(state, newPath, nav);
 
         } else {
             // if not found, search include directories
@@ -77,6 +82,42 @@ private:
      * 1) Include paths
      */
     static void angleBracketPath(ParseState state, TokenNavigator nav, string path) {
+
+        static if(DEBUG) writefln("ANGLE BRACKET INCLUDE %s", state.includeDirectories);
+
+        auto addPath = Filepath(path);
+
+        // Handle absolute path
+        if(addPath.isAbsolute()) {
+            if(!addPath.exists()) {
+                throw new Exception("Include path not found %s".format(path));
+            }
+            doInclude(state, addPath, nav);
+            return;
+        }
+
+        // It is a relative path
+        foreach(dir; state.includeDirectories) {
+            auto newPath = dir.add(addPath);
+
+            static if(DEBUG) writefln("trying path %s", newPath);
+
+            if(newPath.exists()) {
+                doInclude(state, newPath, nav);
+                return;
+            }
+        }
+
         throw new Exception("angle path not found %s".format(path));
+    }
+    static void doInclude(ParseState state, Filepath path, TokenNavigator nav) {
+        auto srcFile = state.process(path);
+
+        // add tokens to parent here
+
+        static if(DEBUG) writefln("TOKENS = %s", simpleStringOf(srcFile.tokens()));
+
+        nav.insert(srcFile.tokens());
+        nav.skip(srcFile.tokens.length.as!int);
     }
 }

@@ -35,7 +35,7 @@ void test(string filename) {
     dbg("~~~~~~~~~~~~~~~~~~~~~~~");
 
     string[string] defines;
-    string[] includeDirs;
+    string[] includeDirs = ["c:/pvmoore/d/libs/ctools/test/incpath"];
 
     auto parseState = new ParseState("test", includeDirs, defines);
 
