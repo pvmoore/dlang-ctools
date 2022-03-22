@@ -10,7 +10,7 @@ public:
     /**
      * '#error'
      */
-    static void process(ParseState state, TokenNavigator file) {
-        throw new Exception("#error directive encountered");
+    static void process(ParseState state, TokenNavigator nav) {
+        throw new Exception("#error directive encountered in file %s at line %s".format(state.currentFile(), nav.line()));
     }
 }

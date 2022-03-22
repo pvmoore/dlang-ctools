@@ -1,14 +1,13 @@
 module ctools.preprocess.PPExpressionParser;
 
 import ctools.all;
-import std.conv : to;
 
 private enum DEBUG = false;
-private enum POISON_VALUE = 0xf123e987;
+private enum POISON_VALUE = 0xf123e987_01010101;
 
 final class PPExpressionParser {
 public:
-    static int parse(TokenNavigator nav) {
+    static long parse(TokenNavigator nav) {
         static if(DEBUG) writefln("parse :: %s", simpleStringOf(nav.tokens));
         auto parent = new PPLiteral(999);
         auto expr = lhs(nav);
@@ -51,7 +50,8 @@ private:
             case TK.NUMBER:
                 auto value = nav.value();
                 nav.skip(1);
-                return new PPLiteral(to!int(value));
+                //writefln("line = %s", nav.line);
+                return new PPLiteral(convertToLong(value));
             case TK.LBRACKET:
                 nav.skip(1);
                 auto parens = new PPParens();
@@ -121,7 +121,7 @@ abstract class PPExpression {
     PPExpression[] children;
     PPExpression parent;
 
-    abstract int eval();
+    abstract long eval();
     abstract int precedence();
 
     final void dump(string indent = "") {
@@ -154,19 +154,20 @@ abstract class PPExpression {
 }
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
 final class PPLiteral : PPExpression {
-    int value;
+    long value;
 
-    this(int value) {
+    this(long value) {
         this.value = value;
     }
 
-    override int eval() {
+    override long eval() {
         return value;
     }
     override int precedence() {
         return 30;
     }
     override string toString() {
+        import std.conv : to;
         return to!string(value);
     }
 }
@@ -178,7 +179,7 @@ final class PPUnary : PPExpression {
         this.kind = kind;
     }
 
-    override int eval() {
+    override long eval() {
         switch(kind) {
             case TK.MINUS:
                 return -first().eval();
@@ -207,7 +208,7 @@ final class PPBinary : PPExpression {
         this.kind = kind;
     }
 
-    override int eval() {
+    override long eval() {
         switch(kind) {
             case TK.PIPE:
                 return first().eval() | last().eval();
@@ -294,7 +295,7 @@ final class PPBinary : PPExpression {
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
 final class PPParens : PPExpression {
 
-    override int eval() {
+    override long eval() {
         return first().eval();
     }
     override int precedence() {

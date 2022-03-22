@@ -23,10 +23,17 @@ public:
 
         // name
         string name = file.value();
-
         bool isFunc = file.kind(1)==TK.LBRACKET && file.isAdjacent(1);
 
         file.removeNext(1);
+
+        // if("_Field_range_"==name) {
+        //     //throwIf(true);
+
+        //     state.log ~= "%s %s %s\n".format(isFunc, file.line(), state.currentFile());
+
+        //     //state.log ~= "At this point the tokens = \n%s\n".format(simpleStringOf(state.mainSource.tokens()));
+        // }
 
         string[] params;
         PPDef def;
@@ -44,24 +51,27 @@ public:
             file.removeNext(1);
         }
 
+        Token[] lineTokens;
+
         if(file.line()==line) {
             // TOKENS
             auto tup = file.currentLine(true);
-            auto lineTokens = tup[0];
+            lineTokens = tup[0];
             auto numTokens = tup[1];
 
             file.removeNext(numTokens);
 
             lineTokens.paintBlue(name);
+        }
 
-            if(params) {
-                static if(DEBUG) writefln("%s(%s) = %s", name, params, simpleStringOf(lineTokens));
+        if(params) {
+            static if(DEBUG) writefln("%s(%s) = %s", name, params, simpleStringOf(lineTokens));
 
-                def = PPDef(name, params, lineTokens);
-            } else {
-                static if(DEBUG) writefln("%s = %s", name, simpleStringOf(lineTokens));
-                def = PPDef(name, lineTokens);
-            }
+            def = PPDef(name, params, lineTokens);
+
+        } else {
+            static if(DEBUG) writefln("%s = %s", name, simpleStringOf(lineTokens));
+            def = PPDef(name, lineTokens);
         }
 
         state.definitions[name] = def;

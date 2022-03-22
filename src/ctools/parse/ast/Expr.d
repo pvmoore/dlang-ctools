@@ -2,6 +2,7 @@ module ctools.parse.ast.Expr;
 
 import ctools.all;
 
-class Expr : Stmt {
+abstract class Expr : Stmt {
 
+    abstract int precedence();
 }

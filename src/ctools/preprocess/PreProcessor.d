@@ -9,7 +9,7 @@ import ctools.all;
  */
 final class PreProcessor {
 private:
-    enum DEBUG = false;
+
 public:
     static void process(ParseState state, string filename, TokenNavigator file) {
         state.definitions.add("__FILE__", PPDef("__FILE__", [Token(TK.ID, filename)]));
@@ -19,6 +19,12 @@ public:
         auto ifState = IfState.TRUE;
         bool isActive = true;
 
+        // void _dbg(string s) {
+        //     if(state.currentFile().filename.value=="winspool.h") {
+        //         writefln("[%s : %s] %s", file.line, file.pos, s);
+        //     }
+        // }
+
         void _updateState() {
             if(ifStates.length==0) {
                 isActive = true;
@@ -27,6 +33,7 @@ public:
                 isActive = ifStates.all!(it=>it==IfState.TRUE);
                 ifState =  ifStates[$-1];
             }
+            //_dbg("[%s] [%s] active = %s".format(file.line, ifStates.length, isActive));
         }
         void _openState(IfState s) {
             ifStates ~= s;
@@ -41,7 +48,13 @@ public:
             _updateState();
         }
 
+        __gshared static int counter = 0;
+
         while(!file.isEof()) {
+            //if((counter++%8192)==0) writefln("...%s %s", state.currentFile(), file.pos);
+
+            //_dbg("%s %s".format(file.kind, file.value));
+
             if(isActive) {
                 // active branch
                 // ═════════════════════════════════════════════════════════════════════════════════
@@ -87,7 +100,9 @@ public:
                         }
                         break;
                     case TK.ID:
-                        static if(DEBUG) writefln("ID found tokens = %s", simpleStringOf(file.tokens[file.pos..$]));
+                        // if(file.value()=="__crt_locale_data_public") {
+                        //     state.log ~= "%s %s\n".format(file.line(), state.currentFile());
+                        // }
                         PPMacroExpander.expandOrSkip(state, file, "");
                         break;
                     default:
@@ -131,6 +146,7 @@ public:
                 }
             }
         }
-        throwIf(ifStates.length!=0, "Number of branches should be 0");
+        throwIf(ifStates.length!=0, "Number of branches should be 0 file = %s, tokens = (%s)",
+            state.currentFile(), file.tokens.length);
     }
 }

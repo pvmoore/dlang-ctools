@@ -50,6 +50,37 @@ private:
      * @return true if we expanded the token
      */
     static bool tryExpand(ParseState state, TokenNavigator nav, string indent) {
+
+        // void dd(string s) {
+        //     if(state.currentFile().filename.value=="winuser.h" && nav.line==6774) {
+        //         writefln(s);
+        //     }
+        // }
+
+        // if(state.currentFile().filename.value=="winuser.h" && nav.line==6774) {
+        //     writefln("tryExpand %s %s", nav.value, nav.peek(0));
+
+        //     foreach(s; [
+        //         "_In_reads_bytes_opt_",
+        //         "_Pre_opt_bytecount_",
+        //         "_SAL2_Source_",
+        //         "__bytecount_impl",
+        //         "_Pre1_impl_",
+        //         "_Group_",
+        //         "_SA_annotes3",
+        //         "_Group_impl_",
+        //         "_SAL1_1_Source_",
+        //         "SAL_name",
+        //         "_SAL_nop_impl_",
+        //         "__maybenull_impl_notref",
+        //         "_Deref_pre_readonly_",
+        //         "_Pre_valid_impl_"
+        //     ]) {
+        //         auto v = state.definitions.get(s);
+        //         writefln("%s = %s", s, v?v.toString():"null");
+        //     }
+        // }
+
         if(nav.kind()==TK.ID && !nav.peek(0).blue) {
             string val = nav.value();
 
@@ -141,8 +172,11 @@ private:
                     }
                     break;
                 case TK.COMMA:
-                    _add();
-                    continue;
+                    if(br==1) {
+                        _add();
+                        continue;
+                    }
+                    break;
                 default:
                     break;
             }

@@ -2,6 +2,6 @@ module ctools.parse.ast.Stmt;
 
 import ctools.all;
 
-class Stmt {
-    
+abstract class Stmt : Node {
+
 }

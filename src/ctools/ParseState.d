@@ -3,12 +3,19 @@ module ctools.ParseState;
 import ctools.all;
 
 final class ParseState {
-    enum DEBUG = true;
+private:
     Filepath[] directoryStack;
     bool[Filepath] pragmaOnceSourceFiles;
 public:
     Directory[] includeDirectories;
     SourceFile mainSource;
+    Set!Filepath allSourceFiles;
+
+    string dumpDirectory = "target";
+    bool dumpIncludeFiles = false;
+    bool dumpIncludeTokens = false;
+
+    string log;
 
     // dynamic
     Map!(string,PPDef) definitions;
@@ -32,6 +39,7 @@ public:
     this(string[] includeDirectories, string[string] defines) {
         this.includeDirectories = includeDirectories.map!(i=>Directory(i)).array;
         this.definitions = new Map!(string,PPDef);
+        this.allSourceFiles = new Set!Filepath;
 
         defines["__DATE__"] = "MMM DD YYY";
         defines["__TIME__"] = "HH:MM:SS";
@@ -46,7 +54,13 @@ public:
 
     SourceFile preProcess(Filepath path) {
         auto src = new SourceFile(path);
-        static if(DEBUG) writefln("preProcess '%s'", src.path);
+
+        bool isFirst = !allSourceFiles.contains(path);
+        allSourceFiles.add(path);
+
+        if(isFirst && dumpIncludeFiles) {
+            writefln("%s%s", repeat("|  ", directoryStack.length), path.toString());
+        }
 
         if(!mainSource) {
             mainSource = src;
@@ -61,12 +75,19 @@ public:
 
         popDirectory();
 
+        if(isFirst && dumpIncludeTokens) {
+            string s;
+            foreach(t; src.tokens()) {
+                s ~= simpleStringOf([t], false) ~ " ";
+                if(t.kind == TK.SEMICOLON) s ~= "\n";
+            }
+            From!"std.file".write(dumpDirectory ~ "/preprocessed_" ~ path.filename.value, s);
+        }
+
         return src;
     }
 
     void parse() {
-        static if(DEBUG) writefln("parse");
-
         auto nav = mainSource.nav;
         nav.rewind();
 

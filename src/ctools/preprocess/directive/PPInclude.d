@@ -7,7 +7,7 @@ import ctools.all;
  */
 final class PPInclude {
 private:
-     enum DEBUG = true;
+     enum DEBUG = false;
 public:
     /**
      * '#include' '"' PATH '"'
@@ -83,14 +83,12 @@ private:
      */
     static void angleBracketPath(ParseState state, TokenNavigator nav, string path) {
 
-        static if(DEBUG) writefln("ANGLE BRACKET INCLUDE %s", state.includeDirectories);
-
         auto addPath = Filepath(path);
 
         // Handle absolute path
         if(addPath.isAbsolute()) {
             if(!addPath.exists()) {
-                throw new Exception("Include path not found %s".format(path));
+                throw new Exception("Include path not found '%s'".format(path));
             }
             doInclude(state, addPath, nav);
             return;
@@ -100,7 +98,7 @@ private:
         foreach(dir; state.includeDirectories) {
             auto newPath = dir.add(addPath);
 
-            static if(DEBUG) writefln("trying path %s", newPath);
+            static if(DEBUG) writefln("trying path '%s'", newPath);
 
             if(newPath.exists()) {
                 doInclude(state, newPath, nav);
@@ -111,11 +109,17 @@ private:
         throw new Exception("angle path not found %s".format(path));
     }
     static void doInclude(ParseState state, Filepath path, TokenNavigator nav) {
+
+        if(state.isIncludeOnce(path)) {
+            static if(DEBUG) writefln("Not including #pragma once file %s", path);
+            return;
+        }
+
         auto srcFile = state.preProcess(path);
 
         // add tokens to parent here
 
-        static if(DEBUG) writefln("TOKENS = %s", simpleStringOf(srcFile.tokens()));
+        //static if(DEBUG) writefln("TOKENS = %s", simpleStringOf(srcFile.tokens()));
 
         nav.insert(srcFile.tokens());
         nav.skip(srcFile.tokens.length.as!int);

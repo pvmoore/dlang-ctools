@@ -23,7 +23,12 @@ import ctools.lex.TokenNavigator;
 
 import ctools.parse.Parser;
 import ctools.parse.ast.Expr;
+import ctools.parse.ast.Func;
+import ctools.parse.ast.Node;
 import ctools.parse.ast.Stmt;
+import ctools.parse.ast.Type;
+import ctools.parse.ast.Typedef;
+import ctools.parse.ast.Var;
 
 import ctools.preprocess.PPDef;
 import ctools.preprocess.PPExpressionParser;

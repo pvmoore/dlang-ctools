@@ -7,23 +7,29 @@ public:
     /**
      * '#pragma' 'once'
      */
-    static void process(ParseState state, TokenNavigator file) {
+    static void process(ParseState state, TokenNavigator nav) {
         // # pragma
-        file.removeNext(2);
+        nav.removeNext(2);
 
-        // once
-        if("once"==file.value()) {
-            file.removeNext(1);
-
-            if(state.isIncludeOnce(state.currentFile())) {
-                // This file is already processed
-                file.removeAll();
-            } else {
+        switch(nav.value()) {
+            case "once":
+                nav.removeNext(1);
                 state.markAsIncludeOnce(state.currentFile());
-            }
-
-        } else {
-            throw new Exception("Unsupported pragma %s".format(file.value()));
+                break;
+            case "region":
+            case "endregion":
+            case "pack":
+            case "warning":
+            case "intrinsic":
+            case "deprecated":
+            case "push_macro":
+            case "pop_macro":
+            case "comment":
+                nav.removeLine();
+                break;
+            default:
+                throw new Exception("Unsupported pragma '%s' in file %s at line %s"
+                    .format(nav.value(), state.currentFile(), nav.line()));
         }
     }
 }

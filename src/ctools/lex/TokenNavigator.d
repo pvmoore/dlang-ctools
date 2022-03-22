@@ -38,6 +38,11 @@ public:
     override string toString() {
         return simpleStringOf(tokens);
     }
+    void skip(int count) {
+        pos += count;
+    }
+
+    // modifiers
     void removeAll() {
         tokens.length = 0;
     }
@@ -48,8 +53,11 @@ public:
         pos -= count;
         removeNext(count);
     }
-    void skip(int count) {
-        pos += count;
+    void removeLine() {
+        auto l = line();
+        int o = 0;
+        while(peek(o).line==l) o++;
+        removeNext(o);
     }
     void insert(Token[] toks) {
         tokens = tokens[0..pos] ~ toks ~ tokens[pos..$];

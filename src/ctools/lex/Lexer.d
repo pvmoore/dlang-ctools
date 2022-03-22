@@ -135,6 +135,19 @@ public:
                     addToken();
                     dquote();
                     break;
+                case 'L':
+                    if(peek(1)=='"') {
+                        // Lstring
+                        addToken();
+                        dquote();
+                    } else if(peek(1)=='\'') {
+                        // Lchar
+                        addToken();
+                        squote();
+                    } else {
+                        pos++;
+                    }
+                    break;
                 case '.':
                     if(isDigit(peek(-1)) || isDigit(peek(1))) {
                         // float literal
@@ -227,9 +240,14 @@ private:
         tokenStart = pos;
     }
     void squote() {
+        // 'c'
+        // L'c'
+        if(peek(0)=='L') pos++;
         pos++;
         while(pos<src.length) {
-            if(peek(0)=='\\' && peek(1)=='\'') {
+            if(peek(0)=='\\' && peek(1)=='\\') {
+                pos+=2;
+            } else if(peek(0)=='\\' && peek(1)=='\'') {
                 pos+=2;
             } else if(peek(0)=='\'') {
                 pos++;
@@ -242,9 +260,13 @@ private:
     }
     void dquote() {
         // " string "
+        // L" string "
+        if(peek(0)=='L') pos++;
         pos++;
         while(pos<src.length) {
-            if(peek(0)=='\\' && peek(1)=='"') {
+            if(peek(0)=='\\' && peek(1)=='\\') {
+                pos+=2;
+            } else if(peek(0)=='\\' && peek(1)=='"') {
                 pos+=2;
             } else if(peek(0)=='"') {
                 pos++;
@@ -270,8 +292,8 @@ private:
     }
     TK determineKind(string s) {
         if(s.length==0) return TK.ID;
-        if(s[0]=='\'') return TK.CHAR;
-        if(s[0]=='"') return TK.STRING;
+        if(s[0]=='\'' || s.startsWith("L'")) return TK.CHAR;
+        if(s[0]=='"' || s.startsWith("L\"")) return TK.STRING;
         if(s[0]=='<') return TK.ANGLE_STRING;
         if(isDigit(s[0])) return TK.NUMBER;
         return TK.ID;
