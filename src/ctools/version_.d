@@ -20,6 +20,7 @@ Version History:
 
 0.1.1 - Move current test files to 'test/pp' subdirectory to make room for non-preprocessor tests
       - Start adding files for Parsing
+      - Fix some preprocessing bugs
 0.1.0 - Initial commit
 
 */
