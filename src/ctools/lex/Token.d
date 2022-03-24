@@ -31,7 +31,9 @@ public:
 
     string toString() {
         string e;
-        if(lengthOf(kind)==0) {
+        if(kind==TK.NONE) {
+            e = " NONE";
+        } else if(lengthOf(kind)==0) {
             e = " '%s'".format(value);
         }
         if(marked()) {
@@ -43,6 +45,36 @@ public:
         return "Token(%s%s, %s..%s L%s C%s)".format(stringOf(kind), e, start, start+length, line, column);
     }
 }
+
+// Serialisation ───────────────────────────────────────────────────────────────────────────────────
+void serialise(Token t, ByteWriter w) {
+    w.write!int(t.kind);
+    w.write!int(t.start);
+    w.write!int(t.length);
+    w.write!int(t.line);
+    w.write!int(t.column);
+    Serialiser.serialise(t.value, w);
+    w.write!int(t.flags);
+}
+void serialise(Token[] tokens, ByteWriter w) {
+    w.write!uint(tokens.length.as!uint);
+    foreach(t; tokens) {
+        serialise(t, w);
+    }
+}
+Token deserialise(ByteReader r) {
+    Token t = Token(
+        r.read!int.as!TK,
+        r.read!int,
+        r.read!int,
+        r.read!int,
+        r.read!int,
+        Serialiser.deserialiseString(r)
+    );
+    t.flags = r.read!int;
+    return t;
+}
+//──────────────────────────────────────────────────────────────────────────────────────────────────
 
 Token[] toTokens(string str) {
     import std.string : split;
@@ -63,7 +95,9 @@ string simpleStringOf(Token[] tokens, bool includeMarks = true) {
     string s;
     foreach(i, t; tokens) {
         string v;
-        if(lengthOf(t.kind)==0) {
+        if(t.kind==TK.NONE) {
+            v ~= "NONE";
+        } else if(lengthOf(t.kind)==0) {
             v ~= t.value;
         } else {
             v ~= stringOf(t.kind);

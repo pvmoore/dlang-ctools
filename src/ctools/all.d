@@ -2,18 +2,19 @@ module ctools.all;
 
 public:
 
-import std.stdio        : writefln, File;
-import std.format       : format;
-import std.algorithm    : map, joiner, sum, all;
-import std.typecons     : Tuple, tuple;
-import std.range        : array;
+import std.stdio                : writefln, File;
+import std.format               : format;
+import std.algorithm            : map, joiner, sum, all;
+import std.typecons             : Tuple, tuple;
+import std.range                : array;
+import std.datetime.stopwatch   : StopWatch;
 
-import fs = std.file    : exists, getSize, read;
+import fs = std.file            : exists, getSize, read;
 
 import common;
 
 import ctools.ParseState;
-import ctools.SourceFile;
+import ctools.Serialiser;
 import ctools.util;
 import ctools.version_;
 

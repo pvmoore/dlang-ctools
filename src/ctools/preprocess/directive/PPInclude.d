@@ -115,13 +115,12 @@ private:
             return;
         }
 
-        auto srcFile = state.preProcess(path);
-
-        // add tokens to parent here
+        auto tokens = state.preProcess(path);
 
         //static if(DEBUG) writefln("TOKENS = %s", simpleStringOf(srcFile.tokens()));
 
-        nav.insert(srcFile.tokens());
-        nav.skip(srcFile.tokens.length.as!int);
+        // add tokens to parent here
+        nav.insert(tokens);
+        nav.skip(tokens.length.as!int);
     }
 }

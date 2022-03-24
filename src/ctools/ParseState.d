@@ -8,33 +8,15 @@ private:
     bool[Filepath] pragmaOnceSourceFiles;
 public:
     Directory[] includeDirectories;
-    SourceFile mainSource;
     Set!Filepath allSourceFiles;
+    StopWatch preprocessTime, parseTime;
+    Map!(string,PPDef) definitions;
 
+    // Debugging
     string dumpDirectory = "target";
     bool dumpIncludeFiles = false;
     bool dumpIncludeTokens = false;
-
     string log;
-
-    // dynamic
-    Map!(string,PPDef) definitions;
-
-    Filepath currentFile() {
-        throwIf(directoryStack.length==0);
-        return directoryStack[$-1];
-    }
-    Directory currentDirectory() {
-        throwIf(directoryStack.length==0);
-        return directoryStack[$-1].directory;
-    }
-    bool isIncludeOnce(Filepath path) {
-        return (path in pragmaOnceSourceFiles) !is null;
-    }
-    void markAsIncludeOnce(Filepath path) {
-        pragmaOnceSourceFiles[path] = true;
-    }
-
 
     this(string[] includeDirectories, string[string] defines) {
         this.includeDirectories = includeDirectories.map!(i=>Directory(i)).array;
@@ -51,9 +33,23 @@ public:
             definitions.add(e.key, PPDef(e.key, toTokens(e.value)));
         }
     }
+    Filepath currentFile() {
+        throwIf(directoryStack.length==0);
+        return directoryStack[$-1];
+    }
+    Directory currentDirectory() {
+        throwIf(directoryStack.length==0);
+        return directoryStack[$-1].directory;
+    }
+    bool isIncludeOnce(Filepath path) {
+        return (path in pragmaOnceSourceFiles) !is null;
+    }
+    void markAsIncludeOnce(Filepath path) {
+        pragmaOnceSourceFiles[path] = true;
+    }
 
-    SourceFile preProcess(Filepath path) {
-        auto src = new SourceFile(path);
+    Token[] preProcess(Filepath path) {
+        preprocessTime.start();
 
         bool isFirst = !allSourceFiles.contains(path);
         allSourceFiles.add(path);
@@ -62,46 +58,53 @@ public:
             writefln("%s%s", repeat("|  ", directoryStack.length), path.toString());
         }
 
-        if(!mainSource) {
-            mainSource = src;
+        if(isMainFile()) {
             pragmaOnceSourceFiles[path] = true;
         }
 
-        pushDirectory(src.path);
+        pushDirectory(path);
 
-        src.nav = readAndLex(src);
+        auto nav = readAndLex(path);
 
-        PreProcessor.process(this, src.path.filename.value, src.nav);
+        PreProcessor.process(this, path.filename.value, nav);
+        nav.rewind();
+        Token[] tokens = nav.tokens;
 
         popDirectory();
 
         if(isFirst && dumpIncludeTokens) {
             string s;
-            foreach(t; src.tokens()) {
+            foreach(t; tokens) {
                 s ~= simpleStringOf([t], false) ~ " ";
                 if(t.kind == TK.SEMICOLON) s ~= "\n";
             }
             From!"std.file".write(dumpDirectory ~ "/preprocessed_" ~ path.filename.value, s);
         }
 
-        return src;
+        preprocessTime.stop();
+        return tokens;
     }
 
-    void parse() {
-        auto nav = mainSource.nav;
+    void parse(TokenNavigator nav) {
+        parseTime.start();
         nav.rewind();
 
         Parser.process(this, nav);
+
+        parseTime.stop();
     }
 private:
+    bool isMainFile() {
+        return directoryStack.length==0;
+    }
     void pushDirectory(Filepath path) {
         directoryStack ~= path;
     }
     void popDirectory() {
         directoryStack.length--;
     }
-    TokenNavigator readAndLex(SourceFile src) {
-        string raw = cast(string)fs.read(src.path.value);
+    TokenNavigator readAndLex(Filepath path) {
+        string raw = cast(string)fs.read(path.value);
         Token[] tokens = new Lexer(raw).lex();
         return new TokenNavigator(tokens);
     }

@@ -12,6 +12,15 @@ public:
     }
     void rewind() {
         pos = 0;
+
+        // Remove all empty tokens
+        Token[] temp;
+        foreach(t; tokens) {
+            if(t.kind!=TK.NONE) {
+                temp ~= t;
+            }
+        }
+        tokens = temp;
     }
     TK kind(int offset = 0) {
         return peek(offset).kind;
@@ -41,13 +50,32 @@ public:
     void skip(int count) {
         pos += count;
     }
+    void skipToNextValidToken() {
+        while(pos<tokens.length) {
+            if(peek(0).kind!=TK.NONE) return;
+            skip(1);
+        }
+        throwIf(true, "No valid next token found");
+        assert(false);
+    }
+    int prevValidTokenPos() {
+        for(int i=-1; pos+i >= 0; i--) {
+            Token t = peek(i);
+            if(t.kind!=TK.NONE) return pos+i;
+        }
+        throwIf(true, "No valid previous token found");
+        assert(false);
+    }
 
     // modifiers
     void removeAll() {
         tokens.length = 0;
     }
     void removeNext(int count) {
-        tokens = tokens[0..pos] ~ tokens[pos+count..$];
+        foreach(ref t; tokens[pos..pos+count]) {
+            t.kind = TK.NONE;
+        }
+        pos += count;
     }
     void removePrev(int count) {
         pos -= count;

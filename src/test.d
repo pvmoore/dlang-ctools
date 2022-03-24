@@ -4,15 +4,15 @@ import std.file : read;
 import std.stdio : writefln;
 import std.format : format;
 import std.string : indexOf, lastIndexOf;
+import std.datetime : Date, DateTime, Clock;
 import ctools.all;
 
 void main(string[] args) {
 
     //string file = "C:/pvmoore/cpp/cimgui/cimgui.h";
-    //string file = "C:/work/VulkanSDK/1.3.204.1/Include/vulkan/vulkan.h";
 
     bool doTestPreProcessor = false;
-    bool doTestParser       = true;
+    bool doParseVulkan      = true;
 
     if(doTestPreProcessor) {
         testPreProcessor("test/pp/define0.h");
@@ -35,13 +35,13 @@ void main(string[] args) {
 
         testPreProcessor("test/pp/define4.h");
     }
-    if(doTestParser) {
-        testParser("C:/work/VulkanSDK/1.3.204.1/Include/vulkan/vulkan.h");
+    if(doParseVulkan) {
+        parseVulkan("C:/work/VulkanSDK/1.3.204.1/Include/vulkan/vulkan.h");
     }
 }
 
-void testParser(string filename) {
-    dbg("\nTesting Parser on file %s", filename);
+void parseVulkan(string filename) {
+    dbg("\nParsing vulkan %s", filename);
     dbg("~~~~~~~~~~~~~~~~~~~~~~~");
 
     string[string] defines = [
@@ -67,8 +67,16 @@ void testParser(string filename) {
     parseState.dumpIncludeFiles = true;
     parseState.dumpIncludeTokens = true;
 
-    parseState.preProcess(Filepath(filename));
-    auto tokens = parseState.mainSource.tokens();
+    auto tokens = parseState.preProcess(Filepath(filename));
+
+
+    {   // Serialise tokens
+        auto fw = new FileByteWriter("target/tokens.dat");
+        scope(exit) fw.close();
+        auto hash = "%s-%s".format(tokens.length, (Clock.currTime().as!Date).toISOExtString());
+        writefln("hash = %s", hash);
+        Serialiser.begin(fw, hash);
+    }
 
     if(false) {
         writefln("Definitions:");
@@ -77,7 +85,9 @@ void testParser(string filename) {
         }
     }
 
-    //writefln("tokens = %s", tokens.length);
+    // tokens = 148,265
+
+    writefln("Preprocess time %s seconds", parseState.preprocessTime.peek().total!"nsecs"/1_000_000_000.0);
 
     writefln("\nstate.log = \n%s", parseState.log);
     //writefln("_Field_range_ = %s", parseState.definitions.get("_Field_range_").toString());
@@ -93,11 +103,11 @@ void testPreProcessor(string filename) {
 
     auto parseState = new ParseState(includeDirs, defines);
 
-    parseState.preProcess(Filepath(filename));
+    auto tokens = parseState.preProcess(Filepath(filename));
 
     string src = cast(string)read(filename);
     auto expectedTokens = extractExpectedTokens(src);
-    auto actualTokens = simpleStringOf(parseState.mainSource.tokens, false);
+    auto actualTokens = simpleStringOf(tokens, false);
     auto actualDefinitions = parseState.definitions;
 
     if(actualTokens != expectedTokens) {

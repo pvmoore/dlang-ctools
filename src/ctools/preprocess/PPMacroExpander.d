@@ -51,36 +51,6 @@ private:
      */
     static bool tryExpand(ParseState state, TokenNavigator nav, string indent) {
 
-        // void dd(string s) {
-        //     if(state.currentFile().filename.value=="winuser.h" && nav.line==6774) {
-        //         writefln(s);
-        //     }
-        // }
-
-        // if(state.currentFile().filename.value=="winuser.h" && nav.line==6774) {
-        //     writefln("tryExpand %s %s", nav.value, nav.peek(0));
-
-        //     foreach(s; [
-        //         "_In_reads_bytes_opt_",
-        //         "_Pre_opt_bytecount_",
-        //         "_SAL2_Source_",
-        //         "__bytecount_impl",
-        //         "_Pre1_impl_",
-        //         "_Group_",
-        //         "_SA_annotes3",
-        //         "_Group_impl_",
-        //         "_SAL1_1_Source_",
-        //         "SAL_name",
-        //         "_SAL_nop_impl_",
-        //         "__maybenull_impl_notref",
-        //         "_Deref_pre_readonly_",
-        //         "_Pre_valid_impl_"
-        //     ]) {
-        //         auto v = state.definitions.get(s);
-        //         writefln("%s = %s", s, v?v.toString():"null");
-        //     }
-        // }
-
         if(nav.kind()==TK.ID && !nav.peek(0).blue) {
             string val = nav.value();
 
@@ -112,7 +82,7 @@ private:
      * 5) Expand the remaining tokens
      */
     static void replaceMacroToken(ParseState state, TokenNavigator nav, PPDef* def, string indent) {
-        static if(DEBUG) writefln("%sreplaceMacroToken: %s", indent, simpleStringOf(nav.tokens));
+        static if(DEBUG) writefln("%sreplaceMacroToken: %s pos=%s", indent, simpleStringOf(nav.tokens), nav.pos);
         nav.removeNext(2);
 
         // Extract and remove identifier ( args )
@@ -128,9 +98,7 @@ private:
         expandParameterTokens(state, nav2, indent ~ "   ");
 
         expandAll(state, nav2, false, indent ~ "-->");
-        // while(!nav2.isEof()) {
-        //     expandOrSkip(nav2, indent ~ "-->");
-        // }
+
         static if(DEBUG) writefln("%safter replace = %s", indent, simpleStringOf(nav2.tokens));
 
         nav.insert(nav2.tokens);
@@ -143,7 +111,7 @@ private:
         int start = nav.pos;
 
         static if(DEBUG) writefln("%s\tdef = %s", indent, def.toString());
-        static if(DEBUG) writefln("%s\ttokens before = %s", indent, simpleStringOf(nav.tokens));
+        static if(DEBUG) writefln("%s\ttokens before = %s pos=%s", indent, simpleStringOf(nav.tokens), nav.pos);
 
         void _add() {
             int count = nav.pos-start;
@@ -151,7 +119,7 @@ private:
 
             if(n < def.numParameters()) {
                 string name = def.params[n];
-                args[name] = nav.tokens[start..nav.pos];
+                args[name] = nav.tokens[start..nav.pos].dup;
             }
 
             nav.skip(-count);
@@ -245,12 +213,14 @@ private:
                 // A ## B
 
                 // A
-                auto prev = nav.peek(-1);
+                int prevPos = nav.prevValidTokenPos();
+                auto prev = nav.tokens[prevPos];
 
                 // ##
                 nav.removeNext(1);
 
                 // B
+                nav.skipToNextValidToken();
                 auto curr = nav.peek(0);
 
                 switch(prev.kind) {
@@ -260,7 +230,10 @@ private:
                         nav.removeNext(1);
                         prev.length += curr.length;
                         prev.value ~= curr.value;
-                        nav.tokens[nav.pos-1] = prev;
+
+                        // Update A
+                        nav.tokens[prevPos] = prev;
+
                         break;
                     case TK.STRING:
                     case TK.CHAR:
