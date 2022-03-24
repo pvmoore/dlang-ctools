@@ -5,6 +5,7 @@ import std.stdio : writefln;
 import std.format : format;
 import std.string : indexOf, lastIndexOf;
 import std.datetime : Date, DateTime, Clock;
+import std.process : environment;
 import ctools.all;
 
 void main(string[] args) {
@@ -36,13 +37,21 @@ void main(string[] args) {
         testPreProcessor("test/pp/define4.h");
     }
     if(doParseVulkan) {
-        parseVulkan("C:/work/VulkanSDK/1.3.204.1/Include/vulkan/vulkan.h");
+        parseVulkan();
+    }
+
+    if(false) {
+        auto a = environment.toAA();
+        writefln("Environment:");
+        foreach(e; a.byKeyValue()) {
+            writefln("\t%s = %s", e.key, e.value);
+        }
     }
 }
 
-void parseVulkan(string filename) {
-    dbg("\nParsing vulkan %s", filename);
-    dbg("~~~~~~~~~~~~~~~~~~~~~~~");
+void parseVulkan() {
+    dbg("\nParsing vulkan");
+    dbg("~~~~~~~~~~~~~~~~");
 
     string[string] defines = [
         "__STDC__" : "1",
@@ -54,12 +63,28 @@ void parseVulkan(string filename) {
         "VK_USE_PLATFORM_WIN32_KHR": "1",
         "WIN32_LEAN_AND_MEAN" : "1",
     ];
-    string[] includeDirs = [
-        "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22000.0/ucrt",
-        "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22000.0/um",
-        "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22000.0/shared",
-        "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.31.31103/include"
-    ];
+    string[] includeDirs;
+    //  = [
+    //     "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22000.0/ucrt",
+    //     "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22000.0/um",
+    //     "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22000.0/shared",
+    //     "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.31.31103/include"
+    // ];
+
+    string windowsSdkDir = environment.get("WINDOWSSDKDIR");
+    string windowsSdkVer = environment.get("WINDOWSSDKVERSION");
+    string vcToolsInstallDir = environment.get("VCTOOLSINSTALLDIR");
+    string vulkanSdk = environment.get("VULKAN_SDK");
+
+    includeDirs ~= windowsSdkDir ~ "include/" ~ windowsSdkVer ~ "/ucrt";
+    includeDirs ~= windowsSdkDir ~ "include/" ~ windowsSdkVer ~ "/um";
+    includeDirs ~= windowsSdkDir ~ "include/" ~ windowsSdkVer ~ "/shared";
+    includeDirs ~= vcToolsInstallDir ~ "include";
+
+    writefln("Include dirs:");
+    foreach(d; includeDirs) {
+        writefln("\t%s", d);
+    }
 
     auto parseState = new ParseState(includeDirs, defines);
 
@@ -67,8 +92,9 @@ void parseVulkan(string filename) {
     parseState.dumpIncludeFiles = true;
     parseState.dumpIncludeTokens = true;
 
-    auto tokens = parseState.preProcess(Filepath(filename));
+    string vulkanH = vulkanSdk ~ "/Include/vulkan/vulkan.h";
 
+    auto tokens = parseState.preProcess(Filepath(vulkanH));
 
     {   // Serialise tokens
         auto fw = new FileByteWriter("target/tokens.dat");
