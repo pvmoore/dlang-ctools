@@ -55,7 +55,7 @@ void parseVulkan() {
 
     string[string] defines = [
         "__STDC__" : "1",
-        "_MSC_VER" : "1910",            // VS 2017
+        "_MSC_VER" : "1920",            // VS 2019
         "_WIN32" : "1",
         "_WIN64" : "1",
         "_AMD64_" : "",
