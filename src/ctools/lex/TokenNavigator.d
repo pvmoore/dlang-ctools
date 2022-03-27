@@ -50,6 +50,14 @@ public:
     void skip(int count) {
         pos += count;
     }
+    void skip(TK k) {
+        throwIf(kind()!=k, "Expecting %s", k);
+        skip(1);
+    }
+    void skip(string val) {
+        throwIf(value()!=val, "Expecting %s", val);
+        skip(1);
+    }
     void skipToNextValidToken() {
         while(pos<tokens.length) {
             if(peek(0).kind!=TK.NONE) return;
@@ -65,6 +73,13 @@ public:
         }
         throwIf(true, "No valid previous token found");
         assert(false);
+    }
+    bool isKind(TK k, int offset = 0) {
+        return peek(offset).kind == k;
+    }
+    bool isValue(string s, int offset = 0) {
+        auto t = peek(offset);
+        return t.kind==TK.ID && s==t.value;
     }
 
     // modifiers

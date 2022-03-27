@@ -13,4 +13,8 @@ import ctools.all;
 final class Typedef : Stmt {
 public:
     string name;
+
+    Type type() {
+        return first().as!Type;
+    }
 }

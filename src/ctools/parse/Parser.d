@@ -2,123 +2,200 @@ module ctools.parse.Parser;
 
 import ctools.all;
 
+private enum DEBUG = true;
+
+void plog(A...)(string fmt, A args) {
+    static if(DEBUG) writefln(format(fmt, args));
+}
+
 final class Parser {
 private:
-    enum DEBUG = true;
+    TokenNavigator nav;
+    TypeParser typeParser;
+    Metadata meta;
+    int[] pragmaPackStack;
 public:
-    static void process(ParseState state, TokenNavigator nav) {
+    this(TokenNavigator nav) {
+        this.nav = nav;
+        this.typeParser = new TypeParser(nav);
+    }
+    void process() {
         Node parent = new Node();
         parent.isRoot = true;
 
         while(!nav.isEof()) {
-            switch(nav.kind()) {
-                case TK.ID:
-                    switch(nav.value()) {
-                        case "typedef":
-                            parseTypedef(parent, nav);
-                            break;
-                        default:
-                            throw new Exception("Unsupported TK.ID at %s".format(nav));
-                    }
-                    break;
-                default:
-                    throw new Exception("Unsupported kind at %s".format(nav));
-            }
+            parseStatement(parent);
+
+            nav.skip(TK.SEMICOLON);
         }
     }
 private:
-    /**
-     *
-     */
-    static bool isType(Node parent, TokenNavigator nav) {
-        if(nav.kind()!=TK.ID) return false;
-        switch(nav.value()) {
-            case "char":
-            case "short":
-            case "int":
-            case "__int64":
-            case "long":
-            case "float":
-            case "double":
-            case "void":
-            case "struct":
-            case "enum":
-            case "unsigned":
-                return true;
-            default:
-                // is it a typedef?
-                Node n = parent.hasChildren() ? parent.last() : parent;
-                return n.findTypedef(nav.value()) !is null;
+    void parseStatement(Node parent) {
+        plog("parseStatement %s", nav.pos);
+
+        meta.reset();
+
+        if(nav.isValue("extern")) {
+            meta.isExtern = true;
+            nav.skip(1);
+
+            // must now be a type or a func
         }
-        assert(false);
+        if(nav.isValue("static")) {
+            meta.isStatic = true;
+            nav.skip(1);
+
+            // must now be a type
+        }
+
+        switch(nav.kind()) {
+            plog("kind = %s", nav.kind());
+
+            case TK.ID:
+                plog("1");
+                if(Type type = typeParser.parse(parent, meta)) {
+                    plog("type %s", type);
+                    // TYPE __cdecl NAME (
+                    // TYPE NAME (
+                    bool isFunc = nav.isKind(TK.ID) && nav.isKind(TK.ID, 1) && nav.isKind(TK.LBRACKET, 2);
+                    isFunc |= nav.isKind(TK.ID) && nav.isKind(TK.LBRACKET, 1);
+
+                    if(isFunc) {
+                        parseFunc(parent, type);
+                    } else {
+                        parseVar(parent, type);
+                    }
+                    return;
+                }
+
+                switch(nav.value()) {
+                    case "typedef":
+                        parseTypedef(parent);
+                        break;
+                    case "__pragma":
+                        // ms specific
+                        parsePragma(parent);
+                        parseStatement(parent);
+                        break;
+                    case "__declspec":
+                        parseDeclSpec(parent);
+                        parseStatement(parent);
+                        break;
+                    default:
+                        throw new Exception("Unsupported TK.ID at %s".format(nav));
+                }
+
+                todo();
+
+                break;
+            default:
+                throw new Exception("Unsupported kind at %s".format(nav));
+        }
     }
+    void pushPragmaPack(int value) {
+        pragmaPackStack ~= value;
+        meta.alignment = value;
+    }
+    void popPragmaPack() {
+        pragmaPackStack.length--;
+        meta.alignment = pragmaPackStack.length==0 ? 4 : pragmaPackStack[$-1];
+    }
+
     /**
      * 'typedef' type name ';'
      */
-    static void parseTypedef(Node parent, TokenNavigator nav) {
+    void parseTypedef(Node parent) {
+        auto t = new Typedef;
+        parent.add(t);
 
+        // typedef
+        nav.skip("typedef");
+
+        typeParser.parse(t, meta);
+
+        // name
+        t.name = nav.value();
+        nav.skip(1);
+
+        // ;
+        nav.skip(TK.SEMICOLON);
     }
     /**
-     * [ 'unsigned' ] char|short|int|long|float|double { '*' }
-     * 'struct' name '{' '}' ;'
+     *  '__pragma' '(' PRAGMA ')'
+     *
+     *  PACK_PRAGMA ::= 'pack' '(' 'push' ',' NUMBER ')'
      */
-    static void parseType(Node parent, TokenNavigator nav) {
-        bool unsigned = nav.value()=="unsigned";
-        if(unsigned) nav.skip(1);
+    void parsePragma(Node parent) {
+        // __pragma
+        nav.skip("__pragma");
 
-        Type type;
+        // (
+        nav.skip(TK.LBRACKET);
 
         switch(nav.value()) {
-            case "char":
-                type = new PrimitiveType(TKind.CHAR);
-                nav.skip(1);
-                break;
-            case "short":
-                type = new PrimitiveType(TKind.SHORT);
-                nav.skip(1);
-                break;
-            case "int":
-                type = new PrimitiveType(TKind.INT);
-                nav.skip(1);
-                break;
-            case "__int64":
-                type = new PrimitiveType(TKind.LONG_LONG);
-                nav.skip(1);
-                break;
-            case "long":
-                if(nav.peek(1).value=="long") {
-                    type = new PrimitiveType(TKind.LONG_LONG);
-                    nav.skip(2);
-                } else {
-                    type = new PrimitiveType(TKind.LONG);
+            case "pack":
+                // 'pack' '(' 'push' ',' NUMBER ')'
+                // 'pack' '(' 'pop' ')'
+                nav.skip("pack");
+                nav.skip(TK.LBRACKET);
+                if("push"==nav.value()) {
+                    nav.skip("push");
+                    nav.skip(TK.COMMA);
+                    pushPragmaPack(nav.value().to!int);
                     nav.skip(1);
+                } else if("pop"==nav.value()) {
+                    nav.skip("pop");
+                    popPragmaPack();
+                } else {
+                    throwIf(true, "unsupported pragma pack %s", nav.value());
                 }
+                nav.skip(TK.RBRACKET);
                 break;
-            case "float":
-                type = new PrimitiveType(TKind.FLOAT);
-                nav.skip(1);
-                break;
-            case "double":
-                type = new PrimitiveType(TKind.DOUBLE);
-                nav.skip(1);
-                break;
-            case "struct":
-                type = parseStruct(parent, nav);
-                break;
-            default:
-                throw new Exception("Type %s not found".format(nav.value()));
+            default: throwIf(true, "Unhandled __pragma %s", nav.value());
         }
-        while(nav.kind==TK.STAR) {
-            type.ptrDepth++;
-            nav.skip(1);
-        }
-        parent.add(type);
     }
     /**
-     * 'struct' name '{' '}' ;'
+     *  '__declspec'
+     *
+     *  '__declspec' '(' 'noreturn' ')'
+     *  '__declspec' '(' 'dllimport' ')'
      */
-    static Type parseStruct(Node parent, TokenNavigator nav) {
+    void parseDeclSpec(Node parent) {
+        nav.skip("__declspec");
+        nav.skip(TK.LBRACKET);
+        switch(nav.value()) {
+            case "noreturn":
+                // ignore
+                nav.skip(1);
+                break;
+            case "dllimport":
+                // ignore for now
+                nav.skip(1);
+                break;
+            default:
+                throwIf(true, "Unsupported __declspec %s", nav.value());
+                break;
+        }
+        nav.skip(TK.RBRACKET);
+    }
+    /**
+     *  FUNCTION   ::= TYPE NAME '(' PARAMETERS ')' [ '{' { STATEMENT } '}' ]
+     *  PARAMETERS ::= { PARAM [ ',' PARAM ] }
+     */
+    void parseFunc(Node parent, Type returnType) {
         todo();
-        return null;
+        // return type
+
+        // name
+
+        // parameters
+
+        // body
+    }
+    /**
+     *  VAR ::= TYPE NAME ';'
+     */
+    void parseVar(Node parent, Type type) {
+        todo();
     }
 }

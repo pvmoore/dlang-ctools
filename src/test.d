@@ -63,19 +63,13 @@ void parseVulkan() {
         "VK_USE_PLATFORM_WIN32_KHR": "1",
         "WIN32_LEAN_AND_MEAN" : "1",
     ];
-    string[] includeDirs;
-    //  = [
-    //     "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22000.0/ucrt",
-    //     "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22000.0/um",
-    //     "C:/Program Files (x86)/Windows Kits/10/Include/10.0.22000.0/shared",
-    //     "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.31.31103/include"
-    // ];
 
     string windowsSdkDir = environment.get("WINDOWSSDKDIR");
     string windowsSdkVer = environment.get("WINDOWSSDKVERSION");
     string vcToolsInstallDir = environment.get("VCTOOLSINSTALLDIR");
     string vulkanSdk = environment.get("VULKAN_SDK");
 
+    string[] includeDirs;
     includeDirs ~= windowsSdkDir ~ "include/" ~ windowsSdkVer ~ "/ucrt";
     includeDirs ~= windowsSdkDir ~ "include/" ~ windowsSdkVer ~ "/um";
     includeDirs ~= windowsSdkDir ~ "include/" ~ windowsSdkVer ~ "/shared";
@@ -117,6 +111,9 @@ void parseVulkan() {
 
     writefln("\nstate.log = \n%s", parseState.log);
     //writefln("_Field_range_ = %s", parseState.definitions.get("_Field_range_").toString());
+
+    auto parser = new Parser(new TokenNavigator(tokens));
+    parser.process();
 }
 
 void testPreProcessor(string filename) {

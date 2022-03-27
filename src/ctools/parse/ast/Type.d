@@ -3,6 +3,7 @@ module ctools.parse.ast.Type;
 import ctools.all;
 
 enum TKind {
+    BOOL,
     CHAR,
     SHORT,
     INT,
@@ -25,9 +26,11 @@ abstract class Type : Node {
 public:
     TKind kind;
     int ptrDepth;
+    Metadata meta;
 
-    this(TKind kind, int ptrDepth = 0) {
+    this(TKind kind, Metadata meta, int ptrDepth = 0) {
         this.kind = kind;
+        this.meta = meta;
         this.ptrDepth = ptrDepth;
     }
 }
@@ -36,8 +39,8 @@ final class PrimitiveType : Type {
 public:
     bool unsigned;
 
-    this(TKind k) {
-        super(k);
+    this(TKind k, Metadata meta) {
+        super(k, meta);
     }
     auto setUnsigned() { this.unsigned = true; return this; }
 }
@@ -47,8 +50,8 @@ public:
     Type decorated;
     string name;
 
-    this(string name, Type decorated) {
-        super(decorated.kind, decorated.ptrDepth);
+    this(Metadata meta, string name, Type decorated) {
+        super(decorated.kind, meta, decorated.ptrDepth);
         this.name = name;
         this.decorated = decorated;
     }
@@ -60,22 +63,22 @@ public:
     Var[] vars;
     Func[] funcs;
 
-    this(string name) {
-        super(TKind.STRUCT);
+    this(Metadata meta, string name) {
+        super(TKind.STRUCT, meta);
         this.name = name;
     }
 }
 
 final class Enum : Type {
 public:
-    this() {
-        super(TKind.ENUM);
+    this(Metadata meta) {
+        super(TKind.ENUM, meta);
     }
 }
 
 final class FunctionPtr : Type {
 public:
-    this() {
-        super(TKind.FP, 1);
+    this(Metadata meta) {
+        super(TKind.FP, meta, 1);
     }
 }

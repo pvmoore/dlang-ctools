@@ -8,6 +8,7 @@ import std.algorithm            : map, joiner, sum, all;
 import std.typecons             : Tuple, tuple;
 import std.range                : array;
 import std.datetime.stopwatch   : StopWatch;
+import std.conv                 : to;
 
 import fs = std.file            : exists, getSize, read;
 
@@ -23,6 +24,8 @@ import ctools.lex.Token;
 import ctools.lex.TokenNavigator;
 
 import ctools.parse.Parser;
+import ctools.parse.TypeParser;
+import ctools.parse.Metadata;
 import ctools.parse.ast.Expr;
 import ctools.parse.ast.Func;
 import ctools.parse.ast.Node;

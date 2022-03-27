@@ -12,6 +12,7 @@ public:
     StopWatch preprocessTime, parseTime;
     Map!(string,PPDef) definitions;
 
+
     // Debugging
     string dumpDirectory = "target";
     bool dumpIncludeFiles = false;
@@ -89,7 +90,7 @@ public:
         parseTime.start();
         nav.rewind();
 
-        Parser.process(this, nav);
+        new Parser(nav).process();
 
         parseTime.stop();
     }

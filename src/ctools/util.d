@@ -1,7 +1,6 @@
 module ctools.util;
 
 import ctools.all;
-import std.conv : to;
 
 bool isDigit(char c) {
     return c >= '0' && c <= '9';
