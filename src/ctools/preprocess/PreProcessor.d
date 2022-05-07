@@ -48,7 +48,7 @@ public:
             _updateState();
         }
 
-        __gshared static int counter = 0;
+        //__gshared static int counter = 0;
 
         while(!file.isEof()) {
             //if((counter++%8192)==0) writefln("...%s %s", state.currentFile(), file.pos);

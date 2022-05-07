@@ -117,7 +117,7 @@ private:
 
         auto tokens = state.preProcess(path);
 
-        //static if(DEBUG) writefln("TOKENS = %s", simpleStringOf(srcFile.tokens()));
+        static if(DEBUG) writefln("TOKENS = %s", simpleStringOf(tokens));
 
         // add tokens to parent here
         nav.insert(tokens);

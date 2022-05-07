@@ -2,9 +2,25 @@ module ctools.preprocess.PPMacroExpander;
 
 import ctools.all;
 
+private enum EDEBUG = false;
+
+__gshared private File dlog;
+
+static this() { dlog = File("target/macro_expander.txt", "w"); }
+static ~this() { dlog.close(); }
+
+private void elog(A...)(ParseState state, string fmt, A args) {
+    static if(EDEBUG) {
+        if(state.currentFile().filename.value=="test.h") {
+            writefln(format(fmt, args));
+            dlog.writefln(format(fmt, args));
+        }
+    }
+}
+
 final class PPMacroExpander {
 private:
-    enum DEBUG = false;
+
 public:
     /**
      * Expand all macros/objects within the TokenNavigator and rewind it
@@ -60,7 +76,7 @@ private:
                 if(nav.kind(1)==TK.LBRACKET) {
                     replaceMacroToken(state, nav, state.definitions[val], indent);
                     return true;
-                } else if(!def.isFunc()) {
+                } else if(!def.isFunc) {
                     replaceObjectToken(nav, state.definitions[val]);
                     return true;
                 } else {
@@ -82,36 +98,45 @@ private:
      * 5) Expand the remaining tokens
      */
     static void replaceMacroToken(ParseState state, TokenNavigator nav, PPDef* def, string indent) {
-        static if(DEBUG) writefln("%sreplaceMacroToken: %s pos=%s", indent, simpleStringOf(nav.tokens), nav.pos);
-        nav.removeNext(2);
+        elog(state, "%sreplaceMacroToken: '%s' file=%s line=%s pos=%s tokens=%s",
+            indent, nav.value(), state.currentFile().filename, nav.line(), nav.pos, simpleStringOfTrunc(nav.tokens, false, false));
 
-        // Extract and remove identifier ( args )
-        Token[][string] args = extractArgs(nav, def, indent ~ "   ");
+        Token[][string] args;
+
+        if(!def.isFunc) {
+            nav.removeNext(1);
+
+        } else {
+            nav.removeNext(2);
+
+            // Extract and remove identifier ( args )
+            args = extractArgs(state, nav, def, indent ~ "   ");
+        }
 
         // We are now left with the macro tokens
 
         auto nav2 = new TokenNavigator(def.tokens.dup);
 
-        stringify(nav2, args, indent ~ "   ");
-        replaceParams(nav2, args, indent ~ "   ");
-        concatenate(nav2, indent ~ "   ");
+        stringify(state, nav2, args, indent ~ "   ");
+        replaceParams(state, nav2, args, indent ~ "   ");
+        concatenate(state, nav2, indent ~ "   ");
         expandParameterTokens(state, nav2, indent ~ "   ");
 
         expandAll(state, nav2, false, indent ~ "-->");
 
-        static if(DEBUG) writefln("%safter replace = %s", indent, simpleStringOf(nav2.tokens));
+        elog(state, "%safter replace = %s", indent ~ "-->", simpleStringOf(nav2.tokens, false, false));
 
         nav.insert(nav2.tokens);
     }
 private:
-    static Token[][string] extractArgs(TokenNavigator nav, PPDef* def, string indent) {
-        static if(DEBUG) writefln("%sextractArgs {", indent);
+    static Token[][string] extractArgs(ParseState state, TokenNavigator nav, PPDef* def, string indent) {
+        elog(state, "%sextractArgs {", indent);
 
         Token[][string] args;
         int start = nav.pos;
 
-        static if(DEBUG) writefln("%s\tdef = %s", indent, def.toString());
-        static if(DEBUG) writefln("%s\ttokens before = %s pos=%s", indent, simpleStringOf(nav.tokens), nav.pos);
+        elog(state, "%s\tdef = %s", indent, def.toString());
+        elog(state, "%s\ttokens before = %s pos=%s", indent, simpleStringOfTrunc(nav.tokens, false, false), nav.pos);
 
         void _add() {
             int count = nav.pos-start;
@@ -151,20 +176,20 @@ private:
             nav.skip(1);
         }
 
-        static if(DEBUG) writefln("\tArgs:");
+        elog(state, "\tArgs: (%s)", args.length);
         foreach(e; args.byKeyValue()) {
-            static if(DEBUG) writefln("%s\t\t%s = %s", indent, e.key, simpleStringOf(e.value));
+            elog(state, "%s\t\t%s = %s", indent, e.key, simpleStringOfTrunc(e.value, false, false));
             foreach(ref t; e.value) {
                 t.marked(true);
             }
         }
-        static if(DEBUG) writefln("%s\ttokens = %s", indent, nav);
-        static if(DEBUG) writefln("%s}", indent);
+        elog(state, "%s\ttokens = %s", indent, simpleStringOfTrunc(nav.tokens, true, true));
+        elog(state, "%s}", indent);
         return args;
     }
-    static void stringify(TokenNavigator nav, Token[][string] args, string indent) {
-        static if(DEBUG) writefln("%sstringify {", indent);
-        static if(DEBUG) writefln("%s\t%s", indent, nav);
+    static void stringify(ParseState state, TokenNavigator nav, Token[][string] args, string indent) {
+        elog(state, "%sstringify {", indent);
+        //elog("%s\t%s", indent, nav);
         while(!nav.isEof()) {
             if(nav.kind()==TK.HASH) {
                 auto t = nav.peek(0);
@@ -173,7 +198,7 @@ private:
                     nav.removeNext(1);
 
                     t.kind = TK.STRING;
-                    t.value = "\"" ~ simpleStringOf(*ptr, false) ~ "\"";
+                    t.value = "\"" ~ simpleStringOfTrunc(*ptr, false, false) ~ "\"";
 
                     nav.insert([t]);
                 } else {
@@ -184,12 +209,12 @@ private:
             }
         }
         nav.rewind();
-        static if(DEBUG) writefln("%s\t%s", indent, nav);
-        static if(DEBUG) writefln("%s}", indent);
+        elog(state, "%s\t%s", indent, simpleStringOfTrunc(nav.tokens, true, true));
+        elog(state, "%s}", indent);
     }
-    static void replaceParams(TokenNavigator nav, Token[][string] args, string indent) {
-        static if(DEBUG) writefln("%sreplaceParams {", indent);
-        static if(DEBUG) writefln("%s\t%s", indent, nav);
+    static void replaceParams(ParseState state, TokenNavigator nav, Token[][string] args, string indent) {
+        elog(state, "%sreplaceParams {", indent);
+        elog(state, "%s\t%s", indent, simpleStringOfTrunc(nav.tokens, true, true));
         while(!nav.isEof()) {
             if(nav.kind()==TK.ID) {
                 if(auto ptr = nav.value() in args) {
@@ -203,11 +228,11 @@ private:
             }
         }
         nav.rewind();
-        static if(DEBUG) writefln("%s\t%s", indent, nav);
-        static if(DEBUG) writefln("%s}", indent);
+        elog(state, "%s\t%s", indent, simpleStringOfTrunc(nav.tokens, true, true));
+        elog(state, "%s}", indent);
     }
-    static void concatenate(TokenNavigator nav, string indent) {
-        static if(DEBUG) writefln("%sconcatenate { %s", indent, nav);
+    static void concatenate(ParseState state, TokenNavigator nav, string indent) {
+        elog(state, "%sconcatenate { %s", indent, simpleStringOfTrunc(nav.tokens, true, true));
         while(!nav.isEof()) {
             if(nav.kind()==TK.DHASH) {
                 // A ## B
@@ -248,11 +273,11 @@ private:
             }
         }
         nav.rewind();
-        static if(DEBUG) writefln("%s\ttokens = %s", indent, nav);
-        static if(DEBUG) writefln("%s}", indent);
+        elog(state, "%s\ttokens = %s", indent, simpleStringOfTrunc(nav.tokens, true, true));
+        elog(state, "%s}", indent);
     }
     static void expandParameterTokens(ParseState state, TokenNavigator nav, string indent) {
-        static if(DEBUG) writefln("%sexpandParameterTokens { %s", indent, nav);
+        elog(state, "%sexpandParameterTokens { %s", indent, simpleStringOfTrunc(nav.tokens, true, true));
         while(!nav.isEof()) {
             if(nav.peek(0).marked()) {
                 expandOrSkip(state, nav, indent ~ "   ");
@@ -267,7 +292,7 @@ private:
             t.marked(false);
         }
 
-        static if(DEBUG) writefln("%s\ttokens = %s", indent, nav);
-        static if(DEBUG) writefln("%s}", indent);
+        elog(state, "%s\ttokens = %s", indent, simpleStringOfTrunc(nav.tokens, true, true));
+        elog(state, "%s}", indent);
     }
 }

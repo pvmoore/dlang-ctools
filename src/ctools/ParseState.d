@@ -15,7 +15,7 @@ public:
 
     // Debugging
     string dumpDirectory = "target";
-    bool dumpIncludeFiles = false;
+    bool dumpIncludeFilenames = false;
     bool dumpIncludeTokens = false;
     string log;
 
@@ -55,7 +55,7 @@ public:
         bool isFirst = !allSourceFiles.contains(path);
         allSourceFiles.add(path);
 
-        if(isFirst && dumpIncludeFiles) {
+        if(isFirst && dumpIncludeFilenames) {
             writefln("%s%s", repeat("|  ", directoryStack.length), path.toString());
         }
 
@@ -76,7 +76,8 @@ public:
         if(isFirst && dumpIncludeTokens) {
             string s;
             foreach(t; tokens) {
-                s ~= simpleStringOf([t], false) ~ " ";
+                s ~= simpleStringOf([t], false, false) ~ " ";
+                //s ~= t.toString() ~ " ";
                 if(t.kind == TK.SEMICOLON) s ~= "\n";
             }
             From!"std.file".write(dumpDirectory ~ "/preprocessed_" ~ path.filename.value, s);
@@ -86,13 +87,13 @@ public:
         return tokens;
     }
 
-    void parse(TokenNavigator nav) {
+    Node parse(Token[] tokens) {
         parseTime.start();
-        nav.rewind();
 
-        new Parser(nav).process();
+        Node parent = new StmtParser(new TokenNavigator(tokens)).process();
 
         parseTime.stop();
+        return parent;
     }
 private:
     bool isMainFile() {
@@ -106,7 +107,7 @@ private:
     }
     TokenNavigator readAndLex(Filepath path) {
         string raw = cast(string)fs.read(path.value);
-        Token[] tokens = new Lexer(raw).lex();
+        Token[] tokens = new Lexer(raw, path.filename.value).lex();
         return new TokenNavigator(tokens);
     }
 }

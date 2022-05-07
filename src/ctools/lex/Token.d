@@ -16,9 +16,12 @@ public:
     string value;
     int flags;
 
-    this(TK kind, int start, int length, int line, int column, string value = null) {
+    string file;
+
+    this(TK kind, int start, int length, int line, int column, string value, string file = null) {
         this.kind = kind; this.start = start; this.length = length;
         this.line = line; this.column = column; this.value = value;
+        this.file = file;
     }
     this(TK kind, string value) {
         this(kind, 0, 0, 0, 0, value);
@@ -31,6 +34,7 @@ public:
 
     string toString() {
         string e;
+        string f;
         if(kind==TK.NONE) {
             e = " NONE";
         } else if(lengthOf(kind)==0) {
@@ -42,7 +46,10 @@ public:
         if(blue()) {
             e ~= "º";
         }
-        return "Token(%s%s, %s..%s L%s C%s)".format(stringOf(kind), e, start, start+length, line, column);
+        if(file) {
+            f = ", " ~ file;
+        }
+        return "Token(%s%s, %s..%s L%s C%s%s)".format(stringOf(kind), e, start, start+length, line, column, f);
     }
 }
 
@@ -91,11 +98,19 @@ string stringOf(Token[] tokens) {
     return s;
 }
 
-string simpleStringOf(Token[] tokens, bool includeMarks = true) {
+string simpleStringOfTrunc(Token[] tokens, bool includeNone, bool includeMarks) {
+    if(tokens.length>8) {
+        return simpleStringOf(tokens[0..8], includeNone, includeMarks) ~ "...";
+    }
+    return simpleStringOf(tokens, includeNone, includeMarks);
+}
+
+string simpleStringOf(Token[] tokens, bool includeNone, bool includeMarks) {
     string s;
     foreach(i, t; tokens) {
         string v;
         if(t.kind==TK.NONE) {
+            if(!includeNone) continue;
             v ~= "NONE";
         } else if(lengthOf(t.kind)==0) {
             v ~= t.value;
@@ -187,6 +202,8 @@ enum TK {
     COMMA,          // ,
     SEMICOLON,      // ;
     COLON,          // :
+    RT_ARROW,       // ->
+    ELIPSIS         // ...
 }
 
 int lengthOf(TK tk) {
@@ -202,9 +219,9 @@ int lengthOf(TK tk) {
         case DEQ: case NEQ: case LTE: case GTE: case DLT: case DGT:
         case PLUS_EQ: case MINUS_EQ: case STAR_EQ: case SLASH_EQ:
         case PERCENT_EQ: case AMP_EQ: case PIPE_EQ: case HAT_EQ:
-        case DAMP: case DPIPE: case DHASH:
+        case DAMP: case DPIPE: case DHASH: case RT_ARROW:
             return 2;
-        case DLT_EQ: case DGT_EQ:
+        case DLT_EQ: case DGT_EQ: case ELIPSIS:
             return 3;
         case NONE: case ID: case NUMBER: case STRING: case ANGLE_STRING: case CHAR:
             return 0;
@@ -265,6 +282,8 @@ string stringOf(TK tk) {
         case DAMP: return "&&";
         case DPIPE: return "||";
         case DHASH: return "##";
+        case RT_ARROW: return "->";
+        case ELIPSIS: return "...";
     }
     assert(false);
 }

@@ -45,7 +45,7 @@ public:
         return col == prev;
     }
     override string toString() {
-        return simpleStringOf(tokens);
+        return simpleStringOf(tokens, false, true);
     }
     void skip(int count) {
         pos += count;
@@ -57,6 +57,12 @@ public:
     void skip(string val) {
         throwIf(value()!=val, "Expecting %s", val);
         skip(1);
+    }
+    int skipAll(TK kind, int offset = 0) {
+        int count = 0;
+        while(isKind(kind, offset+count)) { count++; }
+        skip(count);
+        return count;
     }
     void skipToNextValidToken() {
         while(pos<tokens.length) {
@@ -89,6 +95,7 @@ public:
     void removeNext(int count) {
         foreach(ref t; tokens[pos..pos+count]) {
             t.kind = TK.NONE;
+            t.value = null;
         }
         pos += count;
     }
@@ -103,27 +110,65 @@ public:
         removeNext(o);
     }
     void insert(Token[] toks) {
+        //if(toks.length == 0) { writefln("EMPTY"); }
         tokens = tokens[0..pos] ~ toks ~ tokens[pos..$];
     }
 }
 
 Tuple!(Token[],int) currentLine(TokenNavigator nav, bool includeSplicedLines) {
-        Token[] toks;
-        int line = nav.peek(0).line;
-        int offset = 0;
-        int count = 0;
-        while(true) {
-            Token t = nav.peek(offset);
-            if(includeSplicedLines && t.kind==TK.BSLASH) {
-                count++;
-                line++;
-            } else if(t.line!=line) {
-                break;
-            } else {
-                toks ~= t;
-                count++;
-            }
-            offset++;
+    Token[] toks;
+    int line = nav.peek(0).line;
+    int offset = 0;
+    int count = 0;
+    while(true) {
+        Token t = nav.peek(offset);
+        if(includeSplicedLines && t.kind==TK.BSLASH) {
+            count++;
+            line++;
+        } else if(t.line!=line) {
+            break;
+        } else {
+            toks ~= t;
+            count++;
         }
-        return tuple(toks, count);
+        offset++;
     }
+    return tuple(toks, count);
+}
+
+bool matches(TokenNavigator nav, int offset, const TK[] kinds...) {
+    foreach(k; kinds) {
+        if(!nav.isKind(k, offset++)) return false;
+    }
+    return true;
+}
+bool matchesAny(TokenNavigator nav, int offset, const TK[][] kinds...) {
+    foreach(k; kinds) {
+        if(!matches(nav, offset, k)) return false;
+    }
+    return true;
+}
+
+/**
+ *  Skip all tokens between startKind and endKind. These are expected to be
+ *  opening and closing bracket of some variety eg '[' and ']'
+ *  We expect to start on 'startKind' and skip past 'endKind'.
+ */
+void skipBetween(TokenNavigator nav, TK startKind, TK endKind) {
+    throwIf(!nav.isKind(startKind));
+    nav.skip(1);
+    int count = 1;
+    while(!nav.isEof()) {
+        auto k = nav.kind();
+        if(k==startKind) {
+            count++;
+        } else if(k==endKind) {
+            count--;
+            if(count==0) {
+                nav.skip(1);
+                return;
+            }
+        }
+        nav.skip(1);
+    }
+}

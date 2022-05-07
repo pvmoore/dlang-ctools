@@ -17,4 +17,8 @@ public:
     Type type() {
         return first().as!Type;
     }
+
+    override string toString() {
+        return "Typedef '%s'".format(name);
+    }
 }

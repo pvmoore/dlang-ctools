@@ -28,6 +28,9 @@ CCC;
 
 EMPTY();
 
+#define InterlockedAdd _InlineInterlockedAdd
+
+void InterlockedAdd(int a) { }
 
 /*
 TOKENS:
@@ -35,4 +38,5 @@ TOKENS:
     5 + 1 ;
     5 + 1 ;
     ;
+    void _InlineInterlockedAdd ( int a ) { }
 */

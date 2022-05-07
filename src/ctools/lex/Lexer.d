@@ -6,14 +6,16 @@ final class Lexer {
 private:
     enum DEBUG = false;
     string src;
+    string filename;
     Token[] tokens;
     int pos;
     int line;
     int lineStart;
     int tokenStart;
 public:
-    this(string src) {
+    this(string src, string filename) {
         this.src = src;
+        this.filename = filename;
     }
     Token[] lex() {
         while(pos<src.length) {
@@ -89,7 +91,9 @@ public:
                     }
                     break;
                 case '-':
-                    if(peek(1)=='=') {
+                    if(peek(1)=='>') {
+                        addToken(TK.RT_ARROW);
+                    } else if(peek(1)=='=') {
                         addToken(TK.MINUS_EQ);
                     } else {
                         addToken(TK.MINUS);
@@ -149,7 +153,9 @@ public:
                     }
                     break;
                 case '.':
-                    if(isDigit(peek(-1)) || isDigit(peek(1))) {
+                    if(peek(1)=='.' && peek(2)=='.') {
+                        addToken(TK.ELIPSIS);
+                    } else if(isDigit(peek(-1)) || isDigit(peek(1))) {
                         // float literal
                         pos++;
                     } else {
@@ -164,7 +170,6 @@ public:
                     }
                     break;
                 case '~': addToken(TK.TILDE); break;
-                case '\\': addToken(TK.BSLASH); break;
                 case '?': addToken(TK.QMARK); break;
                 case ',': addToken(TK.COMMA); break;
                 case ';': addToken(TK.SEMICOLON); break;
@@ -175,6 +180,14 @@ public:
                 case '}': addToken(TK.RBRACE); break;
                 case '[': addToken(TK.LSQUARE); break;
                 case ']': addToken(TK.RSQUARE); break;
+                case '\\':
+                    if(peek(1)=='t') {
+                        // handle \t which appears in driverspecs.h
+                        pos++;
+                    } else {
+                        addToken(TK.BSLASH);
+                    }
+                    break;
 
                 default:
                     pos++;
@@ -296,6 +309,8 @@ private:
         if(s[0]=='"' || s.startsWith("L\"")) return TK.STRING;
         if(s[0]=='<') return TK.ANGLE_STRING;
         if(isDigit(s[0])) return TK.NUMBER;
+        if(s.length>1 && s[0]=='-' && isDigit(s[1])) return TK.NUMBER;
+        if(s.length>1 && s[0]=='.' && isDigit(s[1])) return TK.NUMBER;
         return TK.ID;
     }
     void addToken(TK tk = TK.NONE) {
@@ -303,11 +318,11 @@ private:
             string value = src[tokenStart..pos];
             TK tk2 = determineKind(value);
             int column = tokenStart-lineStart;
-            tokens ~= Token(tk2, tokenStart, pos-tokenStart, line, column, value);
+            tokens ~= Token(tk2, tokenStart, pos-tokenStart, line, column, value, filename);
         }
         if(tk!=TK.NONE) {
             int column = pos-lineStart;
-            tokens ~= Token(tk, pos, lengthOf(tk), line, column);
+            tokens ~= Token(tk, pos, lengthOf(tk), line, column, null, filename);
             pos += lengthOf(tk);
         }
         tokenStart = pos;

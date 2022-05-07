@@ -6,6 +6,7 @@ struct PPDef {
     string name;
     string[] params;    // empty if this is not a function
     Token[] tokens;
+    bool isFunc;
 
     this(string name, Token[] tokens) {
         this.name = name;
@@ -15,9 +16,6 @@ struct PPDef {
         this(name, tokens);
         this.params = params;
     }
-    bool isFunc() {
-        return params.length > 0;
-    }
     bool isEmpty() {
         return tokens.length == 0;
     }
@@ -25,7 +23,7 @@ struct PPDef {
         return cast(int)params.length;
     }
     string toString() {
-        return (isFunc() ? "fn(%s) ".format(params.joiner(",")) : "") ~ simpleStringOf(tokens);
+        return (isFunc ? "fn(%s) ".format(params.joiner(",")) : "") ~ simpleStringOf(tokens, true, true);
     }
 }
 

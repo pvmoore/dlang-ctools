@@ -6,37 +6,38 @@ import std.format : format;
 import std.string : indexOf, lastIndexOf;
 import std.datetime : Date, DateTime, Clock;
 import std.process : environment;
+
 import ctools.all;
+import test_parse;
+import test_preprocess;
+
+///
+/// Show GC stats after program exits
+///
+// extern(C) __gshared string[] rt_options = [
+//     "gcopt=profile:1"
+// ];
 
 void main(string[] args) {
+    // C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\ucrt
+    // C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um
+    // C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\shared
+    // C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.31.31103\include
 
     //string file = "C:/pvmoore/cpp/cimgui/cimgui.h";
 
-    bool doTestPreProcessor = false;
-    bool doParseVulkan      = true;
+    // if(true) {
+    //     parseSingleFile();
+    //     float aa = 0; if(aa < 1) return;
+    // }
 
-    if(doTestPreProcessor) {
-        testPreProcessor("test/pp/define0.h");
-        testPreProcessor("test/pp/define1.h");
-        testPreProcessor("test/pp/define2.h");
-        testPreProcessor("test/pp/define3.h");
-        testPreProcessor("test/pp/example1.h");
-        testPreProcessor("test/pp/example2.h");
-        testPreProcessor("test/pp/example3.h");
-        testPreProcessor("test/pp/example4.h");
-        testPreProcessor("test/pp/if_expr1.h");
-        testPreProcessor("test/pp/if_expr2.h");
-        testPreProcessor("test/pp/if.h");
-        testPreProcessor("test/pp/ifdef.h");
-        testPreProcessor("test/pp/ifndef.h");
-        testPreProcessor("test/pp/recursion1.h");
-        testPreProcessor("test/pp/recursion2.h");
-        testPreProcessor("test/pp/include1.h");
-        testPreProcessor("test/pp/pragma.h");
-
-        testPreProcessor("test/pp/define4.h");
+    if(true) {
+        testPreProcessor();
     }
-    if(doParseVulkan) {
+    if(true) {
+        testParse();
+    }
+    if(true) {
         parseVulkan();
     }
 
@@ -47,6 +48,38 @@ void main(string[] args) {
             writefln("\t%s = %s", e.key, e.value);
         }
     }
+}
+
+void parseSingleFile() {
+    string dir = "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.31.31103\\include\\";
+
+    string[string] defines;
+    string[] includeDirs;
+
+    string windowsSdkDir = environment.get("WINDOWSSDKDIR");
+    string windowsSdkVer = environment.get("WINDOWSSDKVERSION");
+    string vcToolsInstallDir = environment.get("VCTOOLSINSTALLDIR");
+
+    string shared_ = windowsSdkDir ~ "include\\" ~ windowsSdkVer ~ "shared";
+
+    includeDirs ~= windowsSdkDir ~ "include\\" ~ windowsSdkVer ~ "ucrt";
+    includeDirs ~= windowsSdkDir ~ "include\\" ~ windowsSdkVer ~ "um";
+    includeDirs ~= shared_;
+    includeDirs ~= vcToolsInstallDir ~ "include";
+
+    writefln("Include dirs:");
+    foreach(d; includeDirs) {
+        writefln("\t%s", d);
+    }
+
+    auto parseState = new ParseState(includeDirs, defines);
+    parseState.dumpDirectory = "target";
+    parseState.dumpIncludeFilenames = true;
+    parseState.dumpIncludeTokens = true;
+
+    auto tokens = parseState.preProcess(Filepath(shared_ ~ "\\driverspecs.h"));
+
+
 }
 
 void parseVulkan() {
@@ -83,8 +116,8 @@ void parseVulkan() {
     auto parseState = new ParseState(includeDirs, defines);
 
     parseState.dumpDirectory = "target";
-    parseState.dumpIncludeFiles = true;
-    parseState.dumpIncludeTokens = true;
+    parseState.dumpIncludeFilenames = true;
+    parseState.dumpIncludeTokens = false;
 
     string vulkanH = vulkanSdk ~ "/Include/vulkan/vulkan.h";
 
@@ -98,58 +131,26 @@ void parseVulkan() {
         Serialiser.begin(fw, hash);
     }
 
-    if(false) {
-        writefln("Definitions:");
+    if(true) {
+        auto f = File("target/defs.txt", "w");
+        f.writefln("Definitions:");
         foreach(e; parseState.definitions.byKeyValue()) {
-            writefln("\t%s = %s", e.key, e.value);
+            f.writefln("\t%s = %s", e.key, e.value);
         }
     }
-
-    // tokens = 148,265
-
-    writefln("Preprocess time %s seconds", parseState.preprocessTime.peek().total!"nsecs"/1_000_000_000.0);
 
     writefln("\nstate.log = \n%s", parseState.log);
     //writefln("_Field_range_ = %s", parseState.definitions.get("_Field_range_").toString());
 
-    auto parser = new Parser(new TokenNavigator(tokens));
-    parser.process();
-}
+    auto parent = parseState.parse(tokens);
 
-void testPreProcessor(string filename) {
+    // auto parser = new StmtParser(new TokenNavigator(tokens));
+    // parser.process();
 
-    dbg("Testing PreProcessor on file %s", filename);
-    dbg("~~~~~~~~~~~~~~~~~~~~~~~");
+    writefln("Preprocess time %s seconds", parseState.preprocessTime.peek().total!"nsecs"/1_000_000_000.0);
+    writefln("Parse time %s seconds", parseState.parseTime.peek().total!"nsecs"/1_000_000_000.0);
 
-    string[string] defines;
-    string[] includeDirs = ["c:/pvmoore/d/libs/ctools/test/pp/incpath"];
-
-    auto parseState = new ParseState(includeDirs, defines);
-
-    auto tokens = parseState.preProcess(Filepath(filename));
-
-    string src = cast(string)read(filename);
-    auto expectedTokens = extractExpectedTokens(src);
-    auto actualTokens = simpleStringOf(tokens, false);
-    auto actualDefinitions = parseState.definitions;
-
-    if(actualTokens != expectedTokens) {
-        writefln("=======================================");
-        writefln("Expected Tokens:\n\t%s\n", expectedTokens);
-        writefln("Actual tokens:\n\t%s", actualTokens);
-        writefln("=======================================\n");
-
-        throw new Exception("Tokens are not correct");
-    }
-    writefln("PASS - %s", filename);
-
-    //writefln("%s", .toString(actualDefinitions));
-}
-string extractExpectedTokens(string src) {
-    auto s = src.indexOf("TOKENS:") + 8;
-    auto e = src.lastIndexOf("*/");
-    string value = src[s..e];
-    return normaliseWhitespace(value);
+    // 250 seconds
 }
 string normaliseWhitespace(string s) {
     string result;
