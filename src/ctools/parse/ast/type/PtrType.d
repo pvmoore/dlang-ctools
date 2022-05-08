@@ -20,6 +20,7 @@ public:
 
     this(TKind kind, int ptrDepth) {
         super(kind);
+        this.nid = Nid.PTRTYPE;
         this.ptrDepth = ptrDepth;
     }
     override string toString() {

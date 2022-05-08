@@ -16,6 +16,7 @@ public:
 
     this() {
         super(TKind.STRUCT);
+        this.nid = Nid.STRUCTDEF;
     }
     override string toString() {
         return "struct%s".format(name?" " ~ name:"");

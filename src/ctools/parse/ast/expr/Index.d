@@ -11,6 +11,10 @@ final class Index : Expr {
 private:
 
 public:
+    this() {
+        this.nid = Nid.INDEX;
+    }
+
     override int precedence() { return 1; }
 
     override string toString() {

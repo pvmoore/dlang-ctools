@@ -11,6 +11,7 @@ public:
 
     this() {
         super(TKind.UNION);
+        this.nid = Nid.UNION;
     }
     override string toString() {
         return "union%s".format(name?" " ~ name:"");

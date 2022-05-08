@@ -26,6 +26,7 @@ public:
 
     this() {
         super(TKind.FUNC);
+        this.nid = Nid.FUNCDECL;
     }
 
     override string toString() {

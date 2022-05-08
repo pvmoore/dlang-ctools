@@ -8,6 +8,7 @@ public:
 
     this(TKind k) {
         super(k);
+        this.nid = Nid.PRIMITIVETYPE;
     }
     override string toString() {
         return "%s%s".format(unsigned ? "unsigned " : "", stringOf(kind));

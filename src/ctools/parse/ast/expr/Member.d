@@ -13,6 +13,10 @@ private:
 public:
     bool isArrow;   // ->
 
+    this() {
+        this.nid = Nid.MEMBER;
+    }
+
     Expr left() { return first().as!Expr; }
     Expr right() { return last().as!Expr; }
 

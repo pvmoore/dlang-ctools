@@ -36,7 +36,7 @@ public:
                  .withTypeParser(typeParser);
     }
     Node process() {
-        Node parent = new Node();
+        Node parent = new Scope(true);
         parent.isRoot = true;
         int count = 0;
 

@@ -11,6 +11,9 @@ import ctools.all;
 final class Ternary : Expr {
 private:
 public:
+    this() {
+        this.nid = Nid.TERNARY;
+    }
 
     override int precedence() { return 13; }
 

@@ -18,6 +18,10 @@ public:
         return first().as!Type;
     }
 
+    this() {
+        this.nid = Nid.TYPEDEF;
+    }
+
     override string toString() {
         return "Typedef '%s'".format(name);
     }

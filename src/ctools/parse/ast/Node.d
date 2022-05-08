@@ -2,8 +2,17 @@ module ctools.parse.ast.Node;
 
 import ctools.all;
 
-class Node {
+enum Nid {
+    ROOT,
+    IF, RETURN, SCOPE, TYPEDEF, VAR,
+    ADDRESSOF, BINARY, CALL, CAST, CHAR, DEREF, IDENTIFIER, INDEX, MEMBER, NUMBER,
+    PARENS, STRING, TERNARY, UNARY,
+    ARRAYTYPE, ENUM, FUNCDECL, FUNCDEF, PRIMITIVETYPE, PTRTYPE, STRUCTDEF, TYPEREF, UNION
+}
+
+abstract class Node {
 public:
+    Nid nid;
     bool isRoot;
     Node parent;
     Node[] children;
@@ -40,6 +49,12 @@ public:
     final int indexOf(Node child) {
         return children.indexOf(child);
     }
+    final void iterate(void delegate(Node n) functor) {
+        functor(this);
+        foreach(ch; children) {
+            ch.iterate(functor);
+        }
+    }
     final Node find(bool delegate(Node n) filter) {
         if(filter(this)) return this;
         if(parent is null) return null;
@@ -64,9 +79,6 @@ public:
             s ~= ch.dumpToString(indent ~ "  ");
         }
         return s;
-    }
-    override string toString() {
-        return "Parent";
     }
 }
 

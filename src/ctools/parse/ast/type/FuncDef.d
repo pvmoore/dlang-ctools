@@ -9,6 +9,9 @@ import ctools.all;
  */
 final class FuncDef : Stmt {
 public:
+    this() {
+        this.nid = Nid.FUNCDEF;
+    }
 
     string getName() { return first().as!FuncDecl.name; }
 

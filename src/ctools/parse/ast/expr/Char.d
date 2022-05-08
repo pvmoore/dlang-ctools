@@ -11,6 +11,10 @@ private:
 public:
     string stringValue;
 
+    this() {
+        this.nid = Nid.CHAR;
+    }
+
     override int precedence() { return 16; }
 
     override string toString() {

@@ -10,6 +10,7 @@ public:
     string name;
 
     this(string name) {
+        this.nid = Nid.IDENTIFIER;
         this.name = name;
     }
 

@@ -11,6 +11,10 @@ private:
 public:
     string stringValue;
 
+    this() {
+        this.nid = Nid.NUMBER;
+    }
+
     Number withValue(string value) {
         this.stringValue = value;
         return this;

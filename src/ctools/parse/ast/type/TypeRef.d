@@ -14,6 +14,7 @@ public:
 
     this(Type type, string name = null) {
         super(type.kind);
+        this.nid = Nid.TYPEREF;
         this.type = type;
         this.name = name;
     }

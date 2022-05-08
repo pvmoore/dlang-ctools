@@ -5,12 +5,11 @@ import ctools.all;
 /**
  *  Array
  *      Type
- *      { Expr } (dimenion(s)) 
+ *      { Expr } (dimenion(s))
  */
 final class ArrayType : Type {
 private:
 public:
-
     Type type() { return first().as!Type; }
 
     override bool isPtr() { return type().isPtr(); }
@@ -19,6 +18,7 @@ public:
 
     this(TKind kind) {
         super(kind);
+        this.nid = Nid.ARRAYTYPE;
     }
     override string toString() {
         return "%s".format(repeat("[]", numChildren()-1));

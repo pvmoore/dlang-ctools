@@ -1,6 +1,6 @@
 module ctools.version_;
 
-enum VERSION = "0.1.2";
+enum VERSION = "0.1.3";
 
 /**
 Todo:
@@ -16,7 +16,8 @@ Todo:
 Version History:
 ====================================================================================================
 
-0.1.2 - More parsing.
+0.1.3 -
+0.1.2 - More parsing. Parse vulkan test now passes without errors
         Optimise TokenNavigator (now 20x speedup)
 0.1.1 - Move current test files to 'test/pp' subdirectory to make room for non-preprocessor tests
       - Start adding files for Parsing

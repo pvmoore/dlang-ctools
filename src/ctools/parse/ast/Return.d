@@ -12,6 +12,10 @@ private:
 public:
     bool hasExpr() { return hasChildren(); }
 
+    this() {
+        this.nid = Nid.RETURN;
+    }
+
     override string toString() {
         return "Return";
     }

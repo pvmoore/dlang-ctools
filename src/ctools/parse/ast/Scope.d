@@ -8,7 +8,12 @@ import ctools.all;
  */
 final class Scope : Stmt {
 public:
+
+    this(bool isRoot = false) {
+        this.nid = isRoot ? Nid.ROOT : Nid.SCOPE;
+    }
+
     override string toString() {
-        return "Scope";
+        return nid==Nid.ROOT ? "Parent" : "Scope";
     }
 }

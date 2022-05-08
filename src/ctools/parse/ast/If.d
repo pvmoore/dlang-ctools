@@ -16,6 +16,10 @@ public:
 
     bool hasElse() { return elseStmtIndex!=-1; }
 
+    this() {
+        this.nid = Nid.IF;
+    }
+
     override string toString() {
         return "If";
     }

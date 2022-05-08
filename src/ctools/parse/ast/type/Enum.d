@@ -13,6 +13,7 @@ public:
 
     this(string name) {
         super(TKind.ENUM);
+        this.nid = Nid.ENUM;
         this.name = name;
     }
     override string toString() {

@@ -10,6 +10,9 @@ final class Deref : Expr {
 private:
 
 public:
+    this() {
+        this.nid = Nid.DEREF;
+    }
 
     override int precedence() { return 2; }
 

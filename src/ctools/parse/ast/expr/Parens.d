@@ -6,6 +6,9 @@ final class Parens : Expr {
 private:
 
 public:
+    this() {
+        this.nid = Nid.PARENS;
+    }
 
     override int precedence() { return 16; }
 

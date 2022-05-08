@@ -10,6 +10,7 @@ import std.process : environment;
 import ctools.all;
 import test_parse;
 import test_preprocess;
+import test_extractor;
 
 ///
 /// Show GC stats after program exits
@@ -39,6 +40,10 @@ void main(string[] args) {
     }
     if(true) {
         parseVulkan();
+
+        if(true) {
+            testExtractor();
+        }
     }
 
     if(false) {

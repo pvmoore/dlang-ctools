@@ -19,6 +19,10 @@ public:
     Expr bitfield() { return children[1].as!Expr; }
     Expr initialiser() { return last().as!Expr; }
 
+    this() {
+        this.nid = Nid.VAR;
+    }
+
     override string toString() {
         string b = hasBitfieldBits ? " : BITFIELD" : "";
         return "Var%s%s".format(name ? " " ~ name : "", b);

@@ -11,6 +11,9 @@ final class Cast : Expr {
 private:
 
 public:
+    this() {
+        this.nid = Nid.CAST;
+    }
 
     override int precedence() { return 2; }
 

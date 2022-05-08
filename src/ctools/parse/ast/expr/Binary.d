@@ -13,6 +13,10 @@ private:
 public:
     Operator op;
 
+    this() {
+        this.nid = Nid.BINARY;
+    }
+
     override int precedence() { return precedenceOf(op); }
 
     override string toString() {
