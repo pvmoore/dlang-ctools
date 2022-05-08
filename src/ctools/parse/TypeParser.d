@@ -2,12 +2,6 @@ module ctools.parse.TypeParser;
 
 import ctools.all;
 
-private enum TDEBUG = false;
-
-private void tlog(A...)(string fmt, A args) {
-    static if(TDEBUG) writefln(format(fmt, args));
-}
-
 struct TypeAndName {
     Type type;
     string name;
@@ -68,7 +62,7 @@ public:
         auto tan = parse(parent, false);
         if(!tan.hasType()) {
             nav.pos = start;
-            tlog("This is not a type. rolling back");
+            this.log("This is not a type. rolling back");
         }
         return tan;
     }
@@ -82,7 +76,7 @@ public:
      * STRUCT       ::= 'struct' NAME '{' '}'
      */
     TypeAndName parse(Node parent, bool throwIfNull = true) {
-        tlog("parsing type value: %s, kind: %s", nav.value(), nav.kind());
+        this.log("parsing type value: %s, kind: %s", nav.value(), nav.kind());
         string value = nav.value();
         bool isUnsigned;
         bool isConst;
@@ -203,15 +197,15 @@ public:
 
             tan = parseSubsequent(parent, type);
 
-            tlog("\tparsed typeAndName = %s", tan);
-            tlog("\tvalue: %s, kind: %s", nav.value(), nav.kind());
+            this.log("\tparsed typeAndName = %s", tan);
+            this.log("\tvalue: %s, kind: %s", nav.value(), nav.kind());
         } else if(throwIfNull) {
             throwIf(true, "Type is null: %s", value);
         }
         return tan;
     }
     TypeAndName parseSubsequent(Node parent, Type type) {
-        tlog("\tparseSubsequent type=%s", type);
+        this.log("\tparseSubsequent type=%s", type);
 
         bool isStatic;
 
@@ -241,7 +235,7 @@ public:
             }
         }
 
-        tlog("\tparseSubsequent type=%s", type);
+        this.log("\tparseSubsequent type=%s", type);
 
         TypeAndName tan;
 
@@ -254,7 +248,7 @@ public:
             tan.type = type;
         }
 
-        tlog("returning type %s", tan);
+        this.log("returning type %s", tan);
 
         return tan;
     }
@@ -267,7 +261,7 @@ private:
      *   (cconv *ID[1]) (...)
      */
     bool isFuncPtrOrDecl() {
-        tlog("isFuncPtrOrDecl '%s' %s", nav.value(), nav.kind());
+        this.log("isFuncPtrOrDecl '%s' %s", nav.value(), nav.kind());
 
         if(nav.kind()==TK.ID) {
             int i = 1;
@@ -289,7 +283,7 @@ private:
         return false;
     }
     Typedef findTypedef(string name, Node parent) {
-        tlog("findTypedef '%s'", name);
+        this.log("findTypedef '%s'", name);
         auto ptr = name in typedefs;
         if(ptr && (*ptr).count==1) {
             return (*ptr).node.as!Typedef;
@@ -297,7 +291,7 @@ private:
         return .findTypedef(parent.lastChildOrSelf(), name);
     }
     StructDef findStructDefFast(string name, Node parent) {
-        tlog("findStructDefFast '%s'", name);
+        this.log("findStructDefFast '%s'", name);
         auto ptr = name in structs;
         if(ptr && (*ptr).count==1) {
             return (*ptr).node.as!StructDef;
@@ -305,12 +299,12 @@ private:
         return null;
     }
     StructDef findStructDef(string name, Node parent) {
-        tlog("findStructDef %s", name);
+        this.log("findStructDef %s", name);
         auto sd = findStructDefFast(name, parent);
         if(sd) return sd;
 
         // Use the slow method
-        Node found = parent.lastChildOrSelf().find((Node node) {
+        Node found = findNode(parent.lastChildOrSelf(), (Node node) {
             Typedef td = node.as!Typedef;
             if(td && td.hasChildren() && td.type().isA!StructDef) {
                 auto s = td.type().as!StructDef;
@@ -333,7 +327,7 @@ private:
      *  TYPE '(' [CCONV] '*' NAME ')' '(' PARAMS ')'
      */
     TypeAndName parseFuncPtr(Node parent, Type returnType, bool isStatic) {
-        tlog("\tparseFuncPtr returnType = %s (value:'%s' kind:%s)", returnType, nav.value(), nav.kind());
+        this.log("\tparseFuncPtr returnType = %s (value:'%s' kind:%s)", returnType, nav.value(), nav.kind());
 
         // void* __stdcall name()
         //       ^^^^^
@@ -435,7 +429,7 @@ private:
 
         // Struct ref
         if(nav.isKind(TK.ID) && !nav.isKind(TK.LBRACE, 1)) {
-            tlog("\tLooking for struct %s", nav.value());
+            this.log("\tLooking for struct %s", nav.value());
             // struct NAME
             // This is a reference to a struct defined elsewhere
             string name = nav.value(); nav.skip(1);

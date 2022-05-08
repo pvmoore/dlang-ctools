@@ -2,12 +2,6 @@ module ctools.parse.StmtParser;
 
 import ctools.all;
 
-private enum DEBUG = false;
-
-private void plog(A...)(string fmt, A args) {
-    static if(DEBUG) writefln("Stmt: " ~ format(fmt, args));
-}
-
 final class StmtParser {
 private:
     TokenNavigator nav;
@@ -37,7 +31,6 @@ public:
     }
     Node process() {
         Node parent = new Scope(true);
-        parent.isRoot = true;
         int count = 0;
 
         try{
@@ -50,7 +43,7 @@ public:
                 //writefln("count = %s", count);
             }
         }catch(Exception e) {
-            plog("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            this.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             auto lastChild = parent.last();
             lastChild.dump();
             writefln("count = %s", count);
@@ -70,14 +63,14 @@ public:
         return parent;
     }
     void parse(Node parent) {
-        plog("parseStatement pos=%s, line=%s token=%s", nav.pos, nav.line(), nav.peek(0));
+        this.log("parseStatement pos=%s, line=%s token=%s", nav.pos, nav.line(), nav.peek(0));
 
         bool isExtern;
         bool isStatic;
 
         consumeExternOrStatic(isExtern , isStatic);
 
-        plog("kind = %s '%s'", nav.kind(), nav.value());
+        this.log("kind = %s '%s'", nav.kind(), nav.value());
 
         switch(nav.kind()) {
             case TK.ID:
@@ -102,7 +95,7 @@ public:
                         TypeAndName tan = typeParser.tryParse(parent);
                         if(tan.hasType()) {
                             Type type = tan.type;
-                            plog("type = %s kind: %s (nav value: %s kind: %s)",
+                            this.log("type = %s kind: %s (nav value: %s kind: %s)",
                                 type, type.kind, nav.value(), nav.kind());
 
                             // bool isNotVar =
@@ -125,7 +118,7 @@ public:
                             }
                             return;
                         }
-                        plog("not a type");
+                        this.log("not a type");
 
                         exprParser.parse(parent);
                         nav.skip(TK.SEMICOLON);
@@ -160,7 +153,7 @@ public:
             case "noreturn":
                 // ignore
                 nav.skip(1);
-                plog("__declspec(noreturn)");
+                this.log("__declspec(noreturn)");
                 break;
             case "dllimport":
                 // ignore for now
@@ -208,10 +201,10 @@ private:
     void pushPragmaPack(int value) {
         pragmaPackStack ~= value;
         alignment = value;
-        plog("push pragma pack %s", value);
+        this.log("push pragma pack %s", value);
     }
     void popPragmaPack() {
-        plog("pop pragma pack");
+        this.log("pop pragma pack");
         pragmaPackStack.length--;
         alignment = pragmaPackStack.length==0 ? 4 : pragmaPackStack[$-1];
     }
@@ -247,7 +240,7 @@ private:
             } else {
                 tan = typeParser.parseSubsequent(parent, tan.type);
                 t.name = tan.name;
-                plog("tan2 = %s", tan);
+                this.log("tan2 = %s", tan);
             }
 
             nav.skip(TK.RBRACKET);
@@ -391,7 +384,7 @@ private:
      *  CCONV      ::= ('__cdecl' | '__stdcall' | '')
      */
     void parseFunc(Node parent, FuncDecl decl, bool isExtern, bool isStatic) {
-        plog("parseFunc decl = %s", decl);
+        this.log("parseFunc decl = %s", decl);
 
         decl.isStatic = decl.isStatic | isStatic;
         decl.isExtern = isExtern;

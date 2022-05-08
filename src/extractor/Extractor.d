@@ -14,6 +14,11 @@ public:
     }
 private:
     void evaluate(Node n) {
-        
+
+        switch(n.nid) with(Nid) {
+            case SCOPE: break;
+
+            default: throwIf(true, "Implement %s", n.nid);
+        }
     }
 }

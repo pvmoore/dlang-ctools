@@ -13,7 +13,6 @@ enum Nid {
 abstract class Node {
 public:
     Nid nid;
-    bool isRoot;
     Node parent;
     Node[] children;
 
@@ -55,11 +54,6 @@ public:
             ch.iterate(functor);
         }
     }
-    final Node find(bool delegate(Node n) filter) {
-        if(filter(this)) return this;
-        if(parent is null) return null;
-        return up().find(filter);
-    }
     final Node up() {
         int i = index();
         if(i==0) {
@@ -84,8 +78,6 @@ public:
 
 Typedef findTypedef(Node node, string name) {
 
-    //int idx = node.index();
-
     while(node.parent) {
         auto td = node.as!Typedef;
         if(td && td.name==name) return td;
@@ -93,4 +85,10 @@ Typedef findTypedef(Node node, string name) {
         node = node.up();
     }
     return null;
+}
+
+Node findNode(Node node, bool delegate(Node n) filter) {
+    if(filter(node)) return node;
+    if(node.parent is null) return null;
+    return findNode(node.up(), filter);
 }

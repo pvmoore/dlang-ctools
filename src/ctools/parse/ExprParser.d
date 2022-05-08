@@ -2,12 +2,6 @@ module ctools.parse.ExprParser;
 
 import ctools.all;
 
-private enum EDEBUG = false;
-
-private void elog(A...)(string fmt, A args) {
-    static if(EDEBUG) writefln("Expr: " ~ format(fmt, args));
-}
-
 final class ExprParser {
 private:
     StmtParser stmtParser;
@@ -31,12 +25,12 @@ public:
         return this;
     }
     void parse(Node parent) {
-        elog("parse value=%s, kind=%s", nav.value(), nav.kind());
+        this.log("parse value=%s, kind=%s", nav.value(), nav.kind());
 
         lhs(parent);
         rhs(parent);
 
-        elog("end of parse expression:");
+        this.log("end of parse expression:");
         //parent.dump();
     }
 private:
@@ -215,7 +209,6 @@ private:
         nav.skip(TK.RBRACKET);
     }
     void parseCast(Node parent, Type type) {
-        elog("cast type=%s", type);
         auto c = new Cast();
         parent.add(c);
         c.add(type);
@@ -225,7 +218,6 @@ private:
         parse(c);
     }
     void parseParens(Node parent) {
-        elog("parens");
         auto p = new Parens();
         parent.add(p);
 

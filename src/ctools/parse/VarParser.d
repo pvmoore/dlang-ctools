@@ -2,12 +2,6 @@ module ctools.parse.VarParser;
 
 import ctools.all;
 
-private enum VDEBUG = false;
-
-private void vlog(A...)(string fmt, A args) {
-    static if(VDEBUG) writefln(format(fmt, args));
-}
-
 final class VarParser {
 private:
     TokenNavigator nav;
@@ -31,7 +25,7 @@ public:
      * @return true if this is a genuine parameter, false if it is just void
      */
     bool parseParameter(Node parent) {
-        vlog("--- parseParameter value=%s kind=%s token=%s", nav.value(), nav.kind(), nav.peek(0));
+        this.log("--- parseParameter value=%s kind=%s token=%s", nav.value(), nav.kind(), nav.peek(0));
 
         auto typeAndName = typeParser.parse(parent);
 
@@ -54,7 +48,7 @@ public:
      *  uint8_t pipelineCacheUUID [ 16U ] ;
      */
     void parseVar(Node parent, TypeAndName typeAndName, bool isExtern, bool isStatic) {
-        vlog("parseVar value: %s kind: %s", nav.value(), nav.kind());
+        this.log("parseVar value: %s kind: %s", nav.value(), nav.kind());
 
         auto var = new Var();
         parent.add(var);

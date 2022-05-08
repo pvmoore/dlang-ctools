@@ -14,6 +14,7 @@ import fs = std.file            : exists, getSize, read;
 
 import common;
 
+import ctools.logs;
 import ctools.ParseState;
 import ctools.Serialiser;
 import ctools.util;
