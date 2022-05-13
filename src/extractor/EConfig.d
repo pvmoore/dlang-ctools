@@ -5,10 +5,10 @@ import extractor.all;
 final class EConfig {
 private:
 public:
-    string[] requiredFunctionNames;
+    Set!string requiredFunctionNames;
 
     this() {
-
+        this.requiredFunctionNames = new Set!string;
     }
     this(string filename) {
 

@@ -6,10 +6,16 @@ private {
         // "StmtParser" : true,
         // "TypeParser" : true,
         // "VarParser"  : true,
-        "" : true
+		"Extractor" : true,
+        "..." : true
     ];
 }
 
+/**
+ * Write log if class name is in the ENABLED_LOGS map
+ *
+ * this.log("fmt", args);
+ */
 void log(T, A...)(T src, string fmt, A args) if(is(T==class) || is(T==interface)) {
 	import std;
 

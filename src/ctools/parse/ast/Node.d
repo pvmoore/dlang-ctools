@@ -10,11 +10,18 @@ enum Nid {
     ARRAYTYPE, ENUM, FUNCDECL, FUNCDEF, PRIMITIVETYPE, PTRTYPE, STRUCTDEF, TYPEREF, UNION
 }
 
+__gshared int uids = 0;
+
 abstract class Node {
 public:
-    Nid nid;
+    Nid nid;    // node type id
+    int uid;    // unique id
     Node parent;
     Node[] children;
+
+    this() {
+        this.uid = uids++;
+    }
 
     final Node add(Node child) {
         detach(child);

@@ -39,10 +39,10 @@ void main(string[] args) {
         testParse();
     }
     if(true) {
-        parseVulkan();
+        auto parent = parseVulkan();
 
         if(true) {
-            testExtractor();
+            testExtractor(parent);
         }
     }
 
@@ -87,7 +87,7 @@ void parseSingleFile() {
 
 }
 
-void parseVulkan() {
+Node parseVulkan() {
     dbg("\nParsing vulkan");
     dbg("~~~~~~~~~~~~~~~~");
 
@@ -156,6 +156,7 @@ void parseVulkan() {
     writefln("Parse time %s seconds", parseState.parseTime.peek().total!"nsecs"/1_000_000_000.0);
 
     // 250 seconds
+    return parent;
 }
 string normaliseWhitespace(string s) {
     string result;
