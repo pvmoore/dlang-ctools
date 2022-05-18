@@ -11,6 +11,12 @@ final class Enum : Type {
 public:
     string name;
 
+    override string getName() { return name ? name : ""; }
+
+    Identifier[] getIdentifiers() {
+        return children.as!(Identifier[]);
+    }
+
     this(string name) {
         super(TKind.ENUM);
         this.nid = Nid.ENUM;

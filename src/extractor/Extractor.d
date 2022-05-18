@@ -7,11 +7,15 @@ private:
     EConfig config;
     bool modified;
 
-    // FuncDecl[int] funcDecls;
-    // StructDef[int] structDefs;
-
-    Node[int] included;
 public:
+    FuncDef[string] funcDefs;
+    FuncDecl[string] funcDecls;
+    StructDef[string] structDefs;
+    Enum[string] enums;
+    Var[string] vars;
+    //Typedef[string] typedefs;
+    TypeRef[string] aliases;
+
     this(EConfig config) {
         this.config = config;
     }
@@ -20,15 +24,41 @@ public:
 
         modified = true;
 
+        int iteration = 0;
         while(modified) {
             modified = false;
             parent.iterate(&evaluate);
+
+            this.log("Finished iteration %s", iteration);
+            iteration++;
 
             // remove this line later
             break;
         }
 
-        this.log("Finished");
+        this.log("Results:::::::::::");
+        foreach(n; funcDefs) {
+            this.log("\tFuncDef: %s", n);
+        }
+        foreach(n; funcDecls) {
+            this.log("\tFuncDecl: %s", n);
+        }
+        foreach(n; enums) {
+            this.log("\tEnum: %s", n);
+        }
+        foreach(n; structDefs) {
+            this.log("\tStructDef: %s", n);
+        }
+        foreach(n; vars) {
+            this.log("\tVar: %s", n);
+        }
+        // foreach(n; typedefs) {
+        //     this.log("\tTypedef: %s", n);
+        // }
+        foreach(n; aliases) {
+            this.log("\tAlias: %s", n);
+        }
+        this.log("::::::::::::::::::");
     }
 private:
     void evaluate(Node n) {
@@ -43,8 +73,12 @@ private:
             case ENUM: break;
             case FUNCDECL: {
                 auto fd = n.as!FuncDecl;
-                if(config.requiredFunctionNames.contains(fd.name) && fd.uid !in included) {
-                    include(fd);
+                if(config.requiredFunctionNames.contains(fd.name)) {
+                    if(auto def = fd.parent.as!FuncDef) {
+                        include(def);
+                    } else {
+                        include(fd);
+                    }
                 }
                 break;
             }
@@ -63,51 +97,117 @@ private:
             case STRING: break;
             case STRUCTDEF: {
                 auto sd = n.as!StructDef;
-                if(sd.uid !in included) {
-                    include(sd);
+                if(sd.name !is null) {
+                    if(config.requiredStructNames.contains(sd.name)) {
+                        include(sd);
+                    }
                 }
                 break;
             }
             case TERNARY: break;
-            case TYPEDEF: break;
+            case TYPEDEF: {
+                auto td = n.as!Typedef;
+                if(config.requiredStructNames.contains(td.name)) {
+                    include(td);
+                }
+                break;
+            }
             case TYPEREF: break;
             case UNARY: break;
             case UNION: break;
             case VAR: break;
         }
     }
-    void include(FuncDecl fd) {
-        this.log("Including FuncDecl %s", fd.name);
+    void include(Node n) {
+        switch(n.nid) with(Nid) {
+            case VAR: include(n.as!Var); break;
+            case TYPEDEF: include(n.as!Typedef); break;
+            default: throwIf(true, "support me %s", n.nid);
+        }
+    }
+    void include(FuncDef fd) {
+        if(fd.getName() in funcDefs) return;
 
-        included[fd.uid] = fd;
+        funcDefs[fd.getName()] = fd;
+        modified = true;
+    }
+    void include(Type type) {
+        //if(type.isBuiltin()) return;
+        if(auto tr = type.as!TypeRef) {
+            include(tr);
+        } else if(auto pt = type.as!PtrType) {
+            include(pt.type());
+        } else if(auto e = type.as!Enum) {
+            include(e);
+        } else if(auto sd = type.as!StructDef) {
+            include(sd);
+        } else {
+            this.log("Ignoring Type (%s) %s", type.className(), type);
+        }
+    }
+    void include(FuncDecl fd) {
+        if(fd.name in funcDecls) return;
+
+        funcDecls[fd.name] = fd;
         modified = true;
 
-        // collect parameters and return type
+        // collect return type
         auto returnType = fd.returnType();
+        include(returnType);
 
-
-        foreach(p; fd.parameters()) {
-
+        // collect parameters
+        foreach(Var v; fd.parameterVars()) {
+            include(v);
         }
-
 
         // collect body statements
     }
     void include(StructDef sd) {
-        this.log("Include StructDef %s", sd.name);
+        throwIf(sd.name is null);
+        if(sd.name in structDefs) return;
 
-        included[sd.uid] = sd;
+        structDefs[sd.name] = sd;
+        modified = true;
+
         // collect body statements
+        foreach(stmt; sd.statements()) {
+            include(stmt);
+        }
+    }
+    void include(Enum e) {
+        if(e.name && e.name in enums) return;
+
+        enums[e.name] = e;
+        modified = true;
+    }
+    void include(TypeRef tr) {
+        if(tr.name in aliases) return;
+
+        if(tr.type.isFuncPtr() || tr.name != tr.type.getName()) {
+            aliases[tr.name] = tr;
+            modified = true;
+        }
+        include(tr.type);
     }
     void include(Var var) {
-        this.log("Include Var %s", var.name);
-        // include type if it is a Typedef, StructDef or FuncDecl
-
-        included[var.uid] = var;
+        //this.log("Include Var %s %s", var.name, var.type());
+        // Include var if it is global
+        if(var.isGlobal() && var.name !in vars) {
+            vars[var.name] = var;
+            modified = true;
+        }
+        include(var.type());
     }
-    void include(Type type) {
-        this.log("Include Type %s", type);
+    // void include(Typedef td) {
+    //     Type type = td.type();
+    //     Type baseType = type.getBaseType();
+    //     if(Enum e = baseType.as!Enum) {
+    //         string name = firstNotNull(e.name, td.name);
+    //         enums[name] = e;
+    //     }
 
-        included[type.uid] = type;
-    }
+    //     this.log("Include Typedef %s", td.name);
+    //     include(td.type());
+    // }
+
 }

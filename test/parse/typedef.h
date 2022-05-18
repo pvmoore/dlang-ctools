@@ -33,11 +33,11 @@ Parent
 
   Typedef 'int8_2'
     []
-      pint8
+      pint8 (= int*)
       Number (2)
   Typedef 'pint8_2'
     *
-      pint8
+      pint8 (= int*)
 
 
   Typedef 'PCHAR_T'

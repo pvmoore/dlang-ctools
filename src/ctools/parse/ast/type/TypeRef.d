@@ -19,6 +19,6 @@ public:
         this.name = name;
     }
     override string toString() {
-        return name ? name : type.toString();
+        return name ? "%s (= %s)".format(name, fullString(type)) : fullString(type);
     }
 }

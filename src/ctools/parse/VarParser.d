@@ -91,6 +91,8 @@ public:
         if(nav.kind() == TK.EQ) {
             nav.skip(TK.EQ);
 
+            var.hasInitialiser = true;
+
             exprParser.parse(var);
         }
 

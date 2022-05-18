@@ -20,8 +20,11 @@ public:
     Type returnType() {
         return first().as!Type;
     }
-    Type[] parameters() {
+    Type[] parameterTypes() {
         return children[1..$].map!(it=>it.as!Var.type()).array;
+    }
+    Var[] parameterVars() {
+        return children[1..$].map!(it=>it.as!Var).array;
     }
 
     this() {

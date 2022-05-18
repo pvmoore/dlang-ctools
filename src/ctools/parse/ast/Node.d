@@ -47,6 +47,7 @@ public:
     final Node last() { return children[$-1]; }
     final Node lastChildOrSelf() { return hasChildren() ? last() : this; }
     final Node getRoot() { if(parent) return parent.getRoot(); return this; }
+    final bool isGlobal() { return parent.nid==Nid.ROOT; }
 
     final int index() {
         throwIf(!parent);

@@ -31,13 +31,13 @@ Parent
         int
   Typedef 'PROUTINE'
     *
-      ROUTINE
+      ROUTINE (= FuncDecl ROUTINE)
   FuncDecl e1
     int
     Var
       int
   Var e2
-    ROUTINE
+    ROUTINE (= FuncDecl ROUTINE)
 
   Typedef 'ENCLAVE_TARGET_FUNCTION'
     FuncDecl ENCLAVE_TARGET_FUNCTION
@@ -47,8 +47,8 @@ Parent
         int
   Typedef 'PENCLAVE_TARGET_FUNCTION'
     *
-      ENCLAVE_TARGET_FUNCTION
+      ENCLAVE_TARGET_FUNCTION (= FuncDecl ENCLAVE_TARGET_FUNCTION)
   Typedef 'PENCLAVE_TARGET_FUNCTION2'
-    ENCLAVE_TARGET_FUNCTION
+    ENCLAVE_TARGET_FUNCTION (= FuncDecl ENCLAVE_TARGET_FUNCTION)
 
 */

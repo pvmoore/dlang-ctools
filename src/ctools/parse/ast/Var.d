@@ -14,6 +14,7 @@ final class Var : Stmt {
 public:
     string name;
     bool hasBitfieldBits;   // set if this declaration has a bitfield value eg. int name : 1;
+    bool hasInitialiser;
 
     Type type() { return first().as!Type; }
     Expr bitfield() { return children[1].as!Expr; }
