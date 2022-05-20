@@ -5,12 +5,13 @@ import ctools.all;
 /**
  *  Array
  *      Type
- *      { Expr } (dimenion(s))
+ *      { Expr } (dimension(s))
  */
 final class ArrayType : Type {
 private:
 public:
     Type type() { return first().as!Type; }
+    Expr[] dimensions() { return children[1..$].as!(Expr[]); }
 
     override bool isPtr() { return type().isPtr(); }
     override bool isArray() { return true; }

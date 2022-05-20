@@ -70,10 +70,15 @@ private:
             case CAST: break;
             case CHAR: break;
             case DEREF: break;
-            case ENUM: break;
+            case ENUM:
+                auto en = n.as!Enum;
+                if(en.name && config.requiredEnumNames.contains(en.name)) {
+                    include(en);
+                }
+                break;
             case FUNCDECL: {
                 auto fd = n.as!FuncDecl;
-                if(config.requiredFunctionNames.contains(fd.name)) {
+                if(config.isRequiredFunction(fd.name)) {
                     if(auto def = fd.parent.as!FuncDef) {
                         include(def);
                     } else {

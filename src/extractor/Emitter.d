@@ -7,14 +7,26 @@ private:
     File file;
     Extractor extractor;
     string moduleName;
+    Plugin[] plugins;
 public:
+    interface Plugin {
+        void emit(File);
+    }
+
     this(Extractor extractor) {
         this.extractor = extractor;
         this.moduleName = "emit";
     }
+    auto add(Plugin plugin) {
+        plugins ~= plugin;
+        return this;
+    }
     void emitTo(string filename) {
         this.file = File(filename, "wb");
         prolog();
+        foreach(p; plugins) {
+            p.emit(file);
+        }
         foreach(tr; extractor.aliases) {
             emit(tr);
         }
@@ -31,9 +43,11 @@ public:
             emit(v);
         }
         file.writeln();
+        file.writefln("extern(Windows) { __gshared {");
         foreach(fd; extractor.funcDecls) {
             emit(fd);
         }
+        file.writefln("}}");
         file.writeln();
         foreach(fd; extractor.funcDefs) {
             emit(fd);
@@ -44,9 +58,20 @@ public:
 private:
     void prolog() {
         file.writefln("module %s;\n",moduleName);
+        file.writefln("public:\n");
     }
     void epilog() {
 
+    }
+    string dname(string name) {
+        switch(name) {
+            case "scope":
+            case "module":
+            case "version":
+                return name ~ "_";
+            default: return name;
+        }
+        assert(false);
     }
     void emit(Stmt stmt) {
         if(auto v = stmt.as!Var) {
@@ -80,13 +105,18 @@ private:
         file.writeln("}");
     }
     void emit(FuncDef fd) {
-
+        todo("Emit FuncDef not implemented");
     }
     void emit(FuncDecl fd) {
-
+        file.writef("%s function(", convert(fd.returnType()));
+        foreach(i, v; fd.parameterVars()) {
+            file.writef("%s %s", convert(v.type()), v.name);
+            if(i < fd.numParameters()-1) file.write(", ");
+        }
+        file.writefln(") %s;", fd.name);
     }
     void emit(Var v) {
-        file.writef("%s %s", convert(v.type()), v.name);
+        file.writef("%s %s", convert(v.type()), dname(v.name));
         if(v.hasInitialiser) {
             file.write(" = ");
             emit(v.initialiser());
@@ -105,6 +135,13 @@ private:
         if(auto pt = t.as!PrimitiveType) { return convert(pt); }
         if(auto tr = t.as!TypeRef) { return convert(tr); }
         if(auto fd = t.as!FuncDecl) { return convert(fd); }
+        if(auto at = t.as!ArrayType) {
+            auto s = convert(at.type());
+            foreach(dim; at.dimensions()) {
+                s ~= "[%s]".format(convert(dim));
+            }
+            return s;
+        }
         throwIf(true, "handle %s", t);
         return t.toString();
     }

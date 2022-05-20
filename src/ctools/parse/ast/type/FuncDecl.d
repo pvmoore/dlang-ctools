@@ -26,6 +26,9 @@ public:
     Var[] parameterVars() {
         return children[1..$].map!(it=>it.as!Var).array;
     }
+    int numParameters() {
+        return numChildren()-1;
+    }
 
     this() {
         super(TKind.FUNC);
