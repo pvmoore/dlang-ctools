@@ -4,7 +4,6 @@ import ctools.all;
 
 /**
  *  FuncDef
- *      FuncDecl    - the declaration
  *      { Stmt }    - body
  */
 final class FuncDef : Stmt {
@@ -13,7 +12,10 @@ public:
         this.nid = Nid.FUNCDEF;
     }
 
-    string getName() { return first().as!FuncDecl.name; }
+    string getName() {
+        throwIf(parent.as!FuncDecl is null);
+        return parent.as!FuncDecl.name;
+    }
 
     override string toString() {
         return "FuncDef";

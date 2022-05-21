@@ -18,15 +18,15 @@ Parent
     Var a
       int
 
-  FuncDef
-    FuncDecl bar
-      float
-      Var a
-        int
-      Var b
-        double
-    Return
-      Identifier 'a'
+  FuncDecl bar
+    float
+    Var a
+      int
+    Var b
+      double
+    FuncDef
+      Return
+        Identifier 'a'
 
   Typedef 'name'
     *
@@ -37,18 +37,18 @@ Parent
           *
             void
 
-  FuncDef
-    FuncDecl name
-      *
-        void
-      Var a
-        int
+  FuncDecl name
+    *
+      void
+    Var a
+      int
+    FuncDef
       Return
         Number (0)
 
-  FuncDef
-    FuncDecl ua_wcscpy
-      void
-      Var a
-        int
+  FuncDecl ua_wcscpy
+    void
+    Var a
+      int
+    FuncDef
 */

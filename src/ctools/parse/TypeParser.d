@@ -405,7 +405,7 @@ private:
 
             } else {
                 if(varParser.parseParameter(decl)) {
-
+                    decl.numParameters++;
                 }
             }
             if(nav.kind()==TK.COMMA) {

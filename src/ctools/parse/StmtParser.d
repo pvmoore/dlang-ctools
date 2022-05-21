@@ -103,9 +103,10 @@ public:
                             //     (type.isA!StructDef || type.isA!Union || type.isA!Enum);
 
                             bool parentIsAStruct = parent.isA!StructDef;
+                            bool isFuncDef = type.isA!FuncDecl && nav.isKind(TK.LBRACE);
 
-                            if(type.isA!FuncDecl && nav.isKind(TK.LBRACE)) {
-                                parseFunc(parent, tan.type.as!FuncDecl, isExtern, isStatic);
+                            if(isFuncDef) {
+                                parseFuncDef(parent, type.as!FuncDecl, isExtern, isStatic);
                             } else if(type.isA!FuncDecl) {
                                 parent.add(type);
                             } else if(!tan.hasName() && !parentIsAStruct) {
@@ -383,33 +384,24 @@ private:
      *  PARAM      ::= TYPE [ NAME ]
      *  CCONV      ::= ('__cdecl' | '__stdcall' | '')
      */
-    void parseFunc(Node parent, FuncDecl decl, bool isExtern, bool isStatic) {
-        this.log("parseFunc decl = %s", decl);
+    void parseFuncDef(Node parent, FuncDecl decl, bool isExtern, bool isStatic) {
+        this.log("parseFuncDef decl = %s", decl);
+        throwIf(nav.kind()!=TK.LBRACE);
 
+        decl.isDefinition = true;
         decl.isStatic = decl.isStatic | isStatic;
         decl.isExtern = isExtern;
 
         parent.add(decl);
 
-        // body
-        auto hasBody = nav.kind() == TK.LBRACE;
+        auto def = new FuncDef();
+        decl.add(def);
 
-        throwIf(!hasBody, "expecting a body");
+        nav.skip(TK.LBRACE);
 
-        if(hasBody) {
-            // This is a definition and not a declaration
-            auto def = new FuncDef();
-            def.add(decl);
-            parent.add(def);
-
-            nav.skip(TK.LBRACE);
-
-            while(nav.kind() != TK.RBRACE) {
-                parse(def);
-            }
-            nav.skip(TK.RBRACE);
-        } else {
-            nav.skip(TK.SEMICOLON);
+        while(nav.kind() != TK.RBRACE) {
+            parse(def);
         }
+        nav.skip(TK.RBRACE);
     }
 }

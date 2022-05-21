@@ -3,9 +3,10 @@ module ctools.parse.ast.type.FuncDecl;
 import ctools.all;
 
 /**
- *  FuncDef
+ *  FuncDecl
  *      Type        - return type
- *      { Var }     - parameters (numParams)
+ *      { Var }     - parameters (numParameters)
+ *      [ FuncDef ] - Body if there is one
  */
 final class FuncDecl : Type {
 public:
@@ -14,6 +15,8 @@ public:
     bool hasElipsis;            // varargs
     bool isStatic;
     bool isExtern;
+    bool isDefinition;          // true if there is a body
+    int numParameters;
 
     override string getName() { return name; }
 
@@ -21,13 +24,16 @@ public:
         return first().as!Type;
     }
     Type[] parameterTypes() {
-        return children[1..$].map!(it=>it.as!Var.type()).array;
+        return children[1..numParameters+1]
+                .map!(it=>it.as!Var.type()).array;
     }
     Var[] parameterVars() {
-        return children[1..$].map!(it=>it.as!Var).array;
+        return children[1..numParameters+1]
+                .map!(it=>it.as!Var).array;
     }
-    int numParameters() {
-        return numChildren()-1;
+    FuncDef definition() {
+        throwIf(!isDefinition);
+        return last().as!FuncDef;
     }
 
     this() {

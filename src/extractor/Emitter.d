@@ -111,7 +111,7 @@ private:
         file.writef("%s function(", convert(fd.returnType()));
         foreach(i, v; fd.parameterVars()) {
             file.writef("%s %s", convert(v.type()), v.name);
-            if(i < fd.numParameters()-1) file.write(", ");
+            if(i < fd.numParameters-1) file.write(", ");
         }
         file.writefln(") %s;", fd.name);
     }
