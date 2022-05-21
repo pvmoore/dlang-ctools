@@ -37,9 +37,5 @@ string[] getWindowsSDKIncludeDirs() {
     includeDirs ~= windowsSdkDir ~ "include/" ~ windowsSdkVer ~ "/shared";
     includeDirs ~= vcToolsInstallDir ~ "include";
 
-    writefln("Include dirs:");
-    foreach(d; includeDirs) {
-        writefln("\t%s", d);
-    }
     return includeDirs;
 }

@@ -9,6 +9,7 @@ import std.process : environment;
 
 import common;
 import ctools;
+import extractor;
 import test_parse;
 import test_preprocess;
 import processor_vulkan;
@@ -42,16 +43,15 @@ void main(string[] args) {
     }
 
     // Extract Vulkan
-    if(true) {
-        import extractor;
-
+    if(false) {
         auto vulkanProcessor = new VulkanProcessor();
         vulkanProcessor.process();
     }
 
     // Extract GLFW
     if(true) {
-
+        auto glfwProcessor = new GLFWProcessor();
+        glfwProcessor.process();
     }
 
     if(false) {

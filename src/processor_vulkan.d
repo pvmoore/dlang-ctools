@@ -9,6 +9,7 @@ private:
     Emitter emitter;
 public:
     void process() {
+        prepare();
 
         string vulkanSdk = environment.get("VULKAN_SDK");
         string vulkanH = vulkanSdk ~ "/Include/vulkan/vulkan.h";
@@ -21,8 +22,8 @@ private:
     void extract() {
         this.config = new EConfig();
 
-        config.requiredFunctionRegexes ~= regex(r"vk.*");
-        config.requiredEnumRegexes ~= regex(r"Vk.*");
+        config.requiredFunctionRegexes ~= regex(r"^vk.*");
+        config.requiredEnumRegexes ~= regex(r"^Vk.*");
 
         this.extractor = new Extractor(config);
         extractor.process(parent);

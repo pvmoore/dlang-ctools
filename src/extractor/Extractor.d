@@ -171,6 +171,7 @@ private:
     void include(StructDef sd) {
         throwIf(sd.name is null);
         if(sd.name in structDefs) return;
+        if(config.isExcluded(sd.name)) return;
 
         structDefs[sd.name] = sd;
         modified = true;
@@ -182,6 +183,7 @@ private:
     }
     void include(Enum e) {
         if(e.name && e.name in enums) return;
+        if(config.isExcluded(e.name)) return;
 
         enums[e.name] = e;
         modified = true;
@@ -190,15 +192,17 @@ private:
         if(tr.name in aliases) return;
 
         if(tr.type.isFuncPtr() || tr.name != tr.type.getName()) {
-            aliases[tr.name] = tr;
-            modified = true;
+            if(!config.isExcluded(tr.name)) {
+                aliases[tr.name] = tr;
+                modified = true;
+            }
         }
         include(tr.type);
     }
     void include(Var var) {
         //this.log("Include Var %s %s", var.name, var.type());
         // Include var if it is global
-        if(var.isGlobal() && var.name !in vars) {
+        if(var.isGlobal() && var.name !in vars && !config.isExcluded(var.name)) {
             vars[var.name] = var;
             modified = true;
         }

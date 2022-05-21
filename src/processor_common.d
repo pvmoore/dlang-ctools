@@ -14,16 +14,36 @@ protected:
     Token[] tokens;
     Node parent;
 public:
-    this() {
-        this.parseState = new ParseState(
-            getWindowsSDKIncludeDirs(),
-            WIN64_DEFINES
-        );
+    void prepare() {
+        auto defines = WIN64_DEFINES.dup;
+        adjustDefines(defines);
+
+        writefln("Defines:");
+        foreach(e; defines.byKeyValue()) {
+            writefln("\t%s = %s", e.key, e.value);
+        }
+
+        auto includeDirs = getWindowsSDKIncludeDirs().dup;
+        adjustIncludes(includeDirs);
+
+        writefln("Include dirs:");
+        foreach(d; includeDirs) {
+            writefln("\t%s", d);
+        }
+
+        this.parseState = new ParseState(includeDirs,defines);
+
         parseState.dumpDirectory = "target";
         parseState.dumpIncludeFilenames = true;
         parseState.dumpIncludeTokens = false;
     }
 protected:
+    void adjustDefines(ref string[string] defines) {
+
+    }
+    void adjustIncludes(ref string[] includeDirs) {
+
+    }
     void parse(Filepath path) {
 
         this.tokens = parseState.preProcess(path);
