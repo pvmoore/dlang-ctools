@@ -1,6 +1,7 @@
 module extractor.Emitter;
 
-import extractor.all;
+import ctools.all;
+import extractor;
 
 final class Emitter {
 private:

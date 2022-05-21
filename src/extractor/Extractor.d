@@ -1,6 +1,7 @@
 module extractor.Extractor;
 
-import extractor.all;
+import ctools.all;
+import extractor;
 
 final class Extractor {
 private:
@@ -72,15 +73,15 @@ private:
             case DEREF: break;
             case ENUM:
                 auto en = n.as!Enum;
-                if(en.name && config.requiredEnumNames.contains(en.name)) {
+                if(config.isRequiredEnum(en.name)) {
                     include(en);
                 }
                 break;
             case FUNCDECL: {
                 auto fd = n.as!FuncDecl;
                 if(config.isRequiredFunction(fd.name)) {
-                    if(auto def = fd.parent.as!FuncDef) {
-                        include(def);
+                    if(fd.isDefinition) {
+                        include(fd.definition());
                     } else {
                         include(fd);
                     }
@@ -103,7 +104,7 @@ private:
             case STRUCTDEF: {
                 auto sd = n.as!StructDef;
                 if(sd.name !is null) {
-                    if(config.requiredStructNames.contains(sd.name)) {
+                    if(config.isRequiredStruct(sd.name)) {
                         include(sd);
                     }
                 }
@@ -111,10 +112,10 @@ private:
             }
             case TERNARY: break;
             case TYPEDEF: {
-                auto td = n.as!Typedef;
-                if(config.requiredStructNames.contains(td.name)) {
-                    include(td);
-                }
+                // auto td = n.as!Typedef;
+                // if(config.isRequiredStruct(td.name)) {
+                //     include(td);
+                // }
                 break;
             }
             case TYPEREF: break;

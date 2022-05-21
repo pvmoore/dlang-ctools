@@ -10,7 +10,7 @@ import std.process : environment;
 import ctools.all;
 import test : normaliseWhitespace;
 
-void testParse() {
+void testParser() {
     testParse("test/parse/cast.h");
     testParse("test/parse/enums.h");
     testParse("test/parse/expr1.h");

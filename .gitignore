@@ -13,3 +13,5 @@ target/
 *.lib
 *.lnk
 *.pdb
+
+_emit*.d

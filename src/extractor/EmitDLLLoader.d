@@ -1,6 +1,7 @@
 module extractor.EmitDLLLoader;
 
-import extractor.all;
+import ctools.all;
+import extractor;
 import core.sys.windows.windows;
 
 final class EmitDLLLoader : Emitter.Plugin {
