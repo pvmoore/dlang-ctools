@@ -1,4 +1,4 @@
-module ctools.parse.ast.type.FuncDef;
+module ctools.parse.ast.FuncDef;
 
 import ctools.all;
 
