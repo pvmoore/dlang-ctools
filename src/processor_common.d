@@ -68,3 +68,43 @@ public:
         file.writeln();
     }
 }
+
+final class DefineEmitter : Emitter.Plugin {
+private:
+    Map!(string,PPDef) definitions;
+    Regex!char[] includes;
+public:
+    this(Map!(string,PPDef) definitions, Regex!char[] includes) {
+        this.definitions = definitions;
+        this.includes = includes;
+    }
+    override void emit(File file) {
+        string[] keys;
+
+        foreach(e; definitions.byKeyValue()) {
+            if(accept(e.key)) {
+                keys ~= e.key;
+            }
+        }
+
+        if(!keys) return;
+
+        import std.algorithm.sorting : sort;
+        keys.sort();
+
+        file.writefln("// Definitions");
+
+        foreach(k; keys) {
+            file.writefln("enum %s = %s;", k, *definitions[k]);
+        }
+        file.writefln("// End Definitions");
+    }
+private:
+    bool accept(string key) {
+        foreach(r; includes) {
+            auto c = matchFirst(key, r);
+            if(!c.empty) return true;
+        }
+        return false;
+    }
+}

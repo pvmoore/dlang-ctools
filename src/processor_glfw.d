@@ -54,7 +54,14 @@ private:
             "  ** Exit program"
         ];
 
+        auto de = new DefineEmitter(
+            parseState.definitions,
+            [regex(r"^GLFW_.*")]
+        );
+
         this.emitter = new Emitter(extractor);
+
+        emitter.add(de);
 
         emitter.emitTo("_emit_glfw.d");
     }
