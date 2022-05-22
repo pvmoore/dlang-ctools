@@ -23,6 +23,7 @@ public:
 protected:
     override void adjustDefines(ref string[string] defines) {
         defines["GLFW_INCLUDE_VULKAN"] = "1";
+        defines["VK_USE_PLATFORM_WIN32_KHR"] = "1";
     }
     override void adjustIncludes(ref string[] includeDirs) {
         string vulkanSdk = environment.get("VULKAN_SDK");

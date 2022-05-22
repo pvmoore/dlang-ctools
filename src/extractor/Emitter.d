@@ -78,7 +78,6 @@ private:
         if(auto v = stmt.as!Var) {
             emit(v);
         } else {
-
             throwIf(true, "Unhandled emit %s", stmt);
         }
     }
@@ -114,6 +113,10 @@ private:
             file.writef("%s %s", convert(v.type()), v.name);
             if(i < fd.numParameters-1) file.write(", ");
         }
+        if(fd.hasElipsis) {
+            if(fd.numParameters>0) file.write(", ");
+            file.write("...");
+        }
         file.writefln(") %s;", fd.name);
     }
     void emit(Var v) {
@@ -128,6 +131,8 @@ private:
     string convert(Node n) {
         if(auto nu = n.as!Number) return convert(nu);
         if(auto id = n.as!Identifier) return convert(id);
+        if(auto b = n.as!Binary) return convert(b);
+        if(auto p = n.as!Parens) return convert(p);
         throwIf(true, "Unhandled convert %s", n);
         return null;
     }
@@ -143,6 +148,9 @@ private:
             }
             return s;
         }
+        if(auto e = t.as!Enum) { return "$enum %s$".format(e.name); }
+        if(auto u = t.as!Union) { return "$union %s$".format(u.name); }
+        if(auto sd = t.as!StructDef) { return "$struct %s$".format(sd.name); }
         throwIf(true, "handle %s", t);
         return t.toString();
     }
@@ -152,7 +160,7 @@ private:
         return convert(pt.type()) ~ "*".repeat(depth);
     }
     string convert(TypeRef tr) {
-        return tr.name;
+        return tr.hasName() ? tr.name : convert(tr.type);
     }
     /**
      * float function(int a) name;
@@ -187,5 +195,11 @@ private:
     }
     string convert(Number n) {
         return n.stringValue;
+    }
+    string convert(Binary b) {
+        return "%s + %s".format(convert(b.left()), convert(b.right()));
+    }
+    string convert(Parens p) {
+        return "(%s)".format(convert(p.expr()));
     }
 }

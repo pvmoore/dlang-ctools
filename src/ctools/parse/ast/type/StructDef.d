@@ -11,6 +11,7 @@ public:
     string name;
 
     bool hasName() { return name !is null; }
+    bool hasBody() { return hasChildren(); }
     Stmt[] statements() { return children.as!(Stmt[]); }
 
     override string getName() { return name ? name : ""; }

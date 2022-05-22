@@ -8,6 +8,7 @@ public:
     Type type;
     string name;
 
+    bool hasName() { return name !is null; }
     override bool isPtr() { return type.isPtr(); }
     override bool isArray() { return type.isArray(); }
     override string getName() { return name; }

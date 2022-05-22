@@ -21,6 +21,7 @@ private:
     static struct NodeAndCount { Node node; int count; }
     NodeAndCount[string] typedefs;
     NodeAndCount[string] structs;
+    StructDef[string] forwardDeclStructs;
 public:
     this(TokenNavigator nav) {
         this.nav = nav;
@@ -44,9 +45,28 @@ public:
         } else {
             typedefs[td.name] = NodeAndCount(td, 1);
         }
+        if(auto sd = td.type().as!StructDef) {
+            addStructDef(sd);
+        }
     }
     void addStructDef(StructDef sd) {
         if(!sd.hasName()) return;
+        if(!sd.hasBody()) {
+            if(sd.name !in forwardDeclStructs) {
+                forwardDeclStructs[sd.name] = sd;
+            }
+        } else if(auto p = sd.name in forwardDeclStructs) {
+            // This is a bit of a hack. We should implement
+            // a proper symbol table to avoid this
+
+            // Add the body of this StructDecl to the original
+            // forward declaration because that one will be
+            // the one that is referenced in every TypeRef
+            while(sd.hasChildren()) {
+                (*p).add(sd.first());
+            }
+            forwardDeclStructs.remove(sd.name);
+        }
         auto ptr = sd.name in structs;
         if(ptr) {
             (*ptr).count++;
@@ -176,7 +196,10 @@ public:
                         type = new TypeRef(td.type, td.name);
                         nav.skip(1);
                     } else {
-                        //tlog("\tnot found %s", nav.value());
+                        // unsigned name;
+                        if(isUnsigned) {
+                            type = new PrimitiveType(TKind.INT);
+                        }
                     }
                     break;
             }
@@ -423,17 +446,28 @@ private:
      * BODY   ::= '{' { VAR|FUNC } '}'
      */
     Type parseStruct(Node parent) {
+        this.log("parseStruct %s", nav.value(1));
 
         // "struct"
         nav.skip("struct");
 
-        // Struct ref
-        if(nav.isKind(TK.ID) && !nav.isKind(TK.LBRACE, 1)) {
+        bool inTypedef = parent.isA!Typedef;
+
+        if(inTypedef && nav.matches(0, TK.ID, TK.ID, TK.SEMICOLON)) {
+            // Forward declaration in typedef
+
+        } else if(!inTypedef && nav.matches(0, TK.ID, TK.SEMICOLON)) {
+            // Forward declaration
+
+        } else if(nav.isKind(TK.ID) && !nav.isKind(TK.LBRACE, 1)) {
+            // Struct ref
+
             this.log("\tLooking for struct %s", nav.value());
             // struct NAME
-            // This is a reference to a struct defined elsewhere
+            // This is a reference to a struct declared previously
             string name = nav.value(); nav.skip(1);
             auto s = findStructDef(name, parent);
+            this.log("\tFound %s", s);
             return new TypeRef(s, name);
         }
 

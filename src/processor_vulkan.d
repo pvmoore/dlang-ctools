@@ -18,6 +18,13 @@ public:
         extract();
     	emit();
     }
+protected:
+    override void adjustDefines(ref string[string] defines) {
+        defines["VK_USE_PLATFORM_WIN32_KHR"] = "1";
+    }
+    override void adjustIncludes(ref string[] includeDirs) {
+
+    }
 private:
     void extract() {
         this.config = new EConfig();

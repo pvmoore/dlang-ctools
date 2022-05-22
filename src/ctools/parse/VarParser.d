@@ -66,29 +66,34 @@ public:
         }
 
         // ,
-        while(nav.isKind(TK.COMMA)) {
-            nav.skip(TK.COMMA);
+        if(nav.isKind(TK.COMMA)) {
 
-            // Remove ptr/array
-            Type type2 = createTypeRefStripPtrAndArray(typeAndName.type);
-            Var var2 = new Var();
+            while(nav.isKind(TK.COMMA)) {
+                nav.skip(TK.COMMA);
 
-            auto tan2 = typeParser.parseSubsequent(parent, type2);
-            var2.name = tan2.name;
+                // Remove ptr/array
+                Type type2 = createTypeRefStripPtrAndArray(typeAndName.type);
+                Var var2 = new Var();
 
-            var2.add(tan2.type);
-            parent.add(var2);
+                auto tan2 = typeParser.parseSubsequent(parent, type2);
+                var2.name = tan2.name;
 
-            // expression
-            if(nav.kind() == TK.EQ) {
-                nav.skip(TK.EQ);
+                var2.add(tan2.type);
+                parent.add(var2);
 
-                exprParser.parse(var2);
+                // expression
+                if(nav.kind() == TK.EQ) {
+                    nav.skip(TK.EQ);
+
+                    var2.hasInitialiser = true;
+
+                    exprParser.parse(var2);
+                }
             }
-        }
 
-        // expression
-        if(nav.kind() == TK.EQ) {
+        // Expression
+        } else if(nav.kind() == TK.EQ) {
+
             nav.skip(TK.EQ);
 
             var.hasInitialiser = true;

@@ -12,6 +12,7 @@ import ctools;
 import extractor;
 import test_parse;
 import test_preprocess;
+import processor_cimgui;
 import processor_vulkan;
 import processor_glfw;
 
@@ -47,11 +48,15 @@ void main(string[] args) {
         auto vulkanProcessor = new VulkanProcessor();
         vulkanProcessor.process();
     }
-
     // Extract GLFW
-    if(true) {
+    if(false) {
         auto glfwProcessor = new GLFWProcessor();
         glfwProcessor.process();
+    }
+    // Extract CImgui
+    if(true) {
+        auto cimguiProcessor = new CImguiProcessor();
+        cimguiProcessor.process();
     }
 
     if(false) {

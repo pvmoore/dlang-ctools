@@ -145,6 +145,8 @@ public:
      *
      *  '__declspec' '(' 'noreturn' ')'
      *  '__declspec' '(' 'dllimport' ')'
+     *  '__declspec' '(' 'dllexport' ')'
+     *  '__declspec' '(' 'noinline' ')'
      *  '__declspec' '('' deprecated [ '(' { "" } ')' ] ')'
      */
     void parseDeclspec(Node parent) {
@@ -152,11 +154,12 @@ public:
         nav.skip(TK.LBRACKET);
         switch(nav.value()) {
             case "noreturn":
+            case "noinline":
                 // ignore
                 nav.skip(1);
-                this.log("__declspec(noreturn)");
                 break;
             case "dllimport":
+            case "dllexport":
                 // ignore for now
                 nav.skip(1);
                 break;
@@ -225,8 +228,6 @@ private:
         auto tan = typeParser.parse(t);
         t.name = tan.name;
 
-        typeParser.addTypedef(t);
-
         // Handle this:
         // typedef Type ( NAME );
         // typedef Type (( NAME ));
@@ -249,6 +250,7 @@ private:
         }
 
         t.add(tan.type);
+        typeParser.addTypedef(t);
 
         // , extra
         while(nav.isKind(TK.COMMA)) {
@@ -261,9 +263,8 @@ private:
             auto tan2 = typeParser.parseSubsequent(parent, type2);
             td2.name = tan2.name;
 
-            typeParser.addTypedef(td2);
-
             td2.add(tan2.type);
+            typeParser.addTypedef(td2);
             parent.add(td2);
         }
 

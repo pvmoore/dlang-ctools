@@ -19,7 +19,7 @@ enum string[string] WIN64_DEFINES = [
     "_WIN64" : "1",
     "_AMD64_" : "",
     "_M_AMD64" : "100",
-    "VK_USE_PLATFORM_WIN32_KHR": "1",
+    "_M_X64" : "100",
     "WIN32_LEAN_AND_MEAN" : "1",
 ];
 

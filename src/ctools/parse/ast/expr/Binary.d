@@ -13,6 +13,9 @@ private:
 public:
     Operator op;
 
+    Expr left() { return first().as!Expr; }
+    Expr right() { return last().as!Expr; }
+
     this() {
         this.nid = Nid.BINARY;
     }

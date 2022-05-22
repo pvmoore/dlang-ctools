@@ -17,6 +17,7 @@ void testParser() {
     testParse("test/parse/functions.h");
     testParse("test/parse/index.h");
     testParse("test/parse/member.h");
+    testParse("test/parse/structs.h");
     testParse("test/parse/ternary.h");
     testParse("test/parse/typedef.h");
     testParse("test/parse/typedef2.h");

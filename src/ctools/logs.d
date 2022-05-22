@@ -3,10 +3,11 @@ module ctools.logs;
 private {
     __gshared static immutable enum ENABLED_LOGS = [
         // "ExprParser" : true,
-        // "StmtParser" : true,
-        // "TypeParser" : true,
+        //"StmtParser" : true,
+        //"TypeParser" : true,
         // "VarParser"  : true,
-		"Extractor" : true,
+		//"Extractor" : true,
+		//"Emitter" : true,
         "..." : true
     ];
 }
