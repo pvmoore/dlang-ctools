@@ -63,6 +63,55 @@ enum Operator {
     COMMA           // ,
 }
 
+string stringOf(Operator op) {
+    final switch(op) with(Operator) {
+        case PLUS_PLUS_S: return "++";
+        case MINUS_MINUS_S: return "--";
+        case FUNC_CALL: return "FUNC_CALL";
+        case ARRAY_INDEX: return "ARRAY_INDEX";
+        case DOT: return ".";
+        case RT_ARROW: return "->";
+        case PLUS_PLUS_P: return "++";
+        case MINUS_MINUS_P: return "--";
+        case UNARY_PLUS: return "+";
+        case UNARY_MINUS: return "-";
+        case BOOL_NOT: return "!";
+        case BIT_NOT: return "~";
+        case ADDRESS_OF: return "&";
+        case MUL: return "*";
+        case DIV: return "/";
+        case MOD: return "%";
+        case ADD: return "+";
+        case SUB: return "-";
+        case SHL: return "<<";
+        case SHR: return ">>";
+        case LT: return "<";
+        case LTE: return "<=";
+        case GT: return ">";
+        case GTE: return ">=";
+        case EQ: return "==";
+        case NEQ: return "!=";
+        case BIT_AND: return "&";
+        case BIT_XOR: return "^";
+        case BIT_OR: return "|";
+        case BOOL_AND: return "&&";
+        case BOOL_OR: return "||";
+        case TERNARY: return "TERNARY";
+        case ASSIGN: return "=";
+        case ADD_ASSIGN: return "+=";
+        case SUB_ASSIGN: return "-=";
+        case MUL_ASSIGN: return "*=";
+        case DIV_ASSIGN: return "/=";
+        case MOD_ASSIGN: return "%=";
+        case SHL_ASSIGN: return "<<=";
+        case SHR_ASSIGN: return ">>=";
+        case AND_ASSIGN: return "&=";
+        case XOR_ASSIGN: return "^=";
+        case OR_ASSIGN: return "|=";
+        case COMMA: return ",";
+    }
+}
+
 /**
  *  Lower numbers have higher precedence.
  */

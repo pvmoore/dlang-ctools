@@ -69,6 +69,21 @@ public:
     }
 }
 
+final class Includes : Emitter.Plugin {
+private:
+    string[] lines;
+public:
+    this(string[] lines) {
+        this.lines = lines;
+    }
+    override void emit(File file) {
+        foreach(line; lines) {
+            file.writefln("import %s;", line);
+        }
+        file.writeln();
+    }
+}
+
 final class DefineEmitter : Emitter.Plugin {
 private:
     Map!(string,PPDef) definitions;

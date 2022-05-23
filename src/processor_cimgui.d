@@ -18,14 +18,6 @@ public:
 
         parse(Filepath(cimguiH));
 
-        // parent.iterate((n) {
-        //     if(auto sd = n.as!StructDef) {
-        //         if(sd.name=="ImGuiMenuColumns") {
-        //             sd.dump();
-        //         }
-        //     }
-        // });
-
         extract();
     	emit();
     }
@@ -47,7 +39,7 @@ private:
 
         config.requiredFunctionRegexes ~= regex(r"^ImGui.*");
 
-        //config.excludeRegexes ~= regex(r"^(Vk|vk).*");
+        config.excludeRegexes ~= regex(r"^FILE$");
 
         this.extractor = new Extractor(config);
         extractor.process(parent);
@@ -65,9 +57,21 @@ private:
             "  ** Exit program"
         ];
 
+        enum string[] INCLUDES = [
+            "core.stdc.stdio"
+        ];
+
         this.emitter = new Emitter(extractor);
 
+        import std : map, array;
+        auto loader = new EmitDLLLoader("CImguiLoader", "cimgui.dll")
+            .loadFunctions(extractor.funcDecls.values()
+                                              .map!(it=>it.name)
+                                              .array);
+
         emitter.add(new Comment(COMMENTS));
+        emitter.add(new Includes(INCLUDES));
+        emitter.add(loader);
 
         emitter.emitTo("_emit_cimgui.d");
     }

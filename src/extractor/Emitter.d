@@ -29,7 +29,7 @@ public:
             p.emit(file);
         }
         foreach(tr; extractor.aliases) {
-            emit(tr);
+            emit(tr, false);
         }
         file.writeln();
         foreach(e; extractor.enums) {
@@ -46,7 +46,7 @@ public:
         file.writeln();
         file.writefln("extern(Windows) { __gshared {");
         foreach(fd; extractor.funcDecls) {
-            emit(fd);
+            emit(fd, false);
         }
         file.writefln("}}");
         file.writeln();
@@ -69,112 +69,48 @@ private:
             case "scope":
             case "module":
             case "version":
+            case "out":
                 return name ~ "_";
             default: return name;
         }
         assert(false);
     }
-    void emit(Stmt stmt) {
-        if(auto v = stmt.as!Var) {
-            emit(v);
-        } else {
-            throwIf(true, "Unhandled emit %s", stmt);
+    void emit(Node n) {
+        final switch(n.nid) with(Nid) {
+            case VAR: emit(n.as!Var); break;
+            case BINARY: emit(n.as!Binary); break;
+            case IDENTIFIER: emit(n.as!Identifier); break;
+            case NUMBER: emit(n.as!Number); break;
+            case PARENS: emit(n.as!Parens); break;
+            case ARRAYTYPE: emit(n.as!ArrayType); break;
+            case ENUM: emit(n.as!Enum); break;
+            case FUNCDECL: emit(n.as!FuncDecl, true); break;
+            case FUNCDEF: emit(n.as!FuncDef); break;
+            case PRIMITIVETYPE: emit(n.as!PrimitiveType); break;
+            case PTRTYPE: emit(n.as!PtrType); break;
+            case STRUCTDEF: emit(n.as!StructDef); break;
+            case TYPEREF: emit(n.as!TypeRef, true); break;
+            case UNION: emit(n.as!Union); break;
+            case STRING:
+            case TERNARY:
+            case UNARY:
+            case INDEX:
+            case MEMBER:
+            case CALL:
+            case CAST:
+            case CHAR:
+            case ADDRESSOF:
+            case DEREF:
+            case IF:
+            case RETURN:
+            case SCOPE:
+            case TYPEDEF:
+            case ROOT:
+                throwIf(true, "Unhandled Node %s", n.nid);
+                break;
         }
     }
-    void emit(TypeRef tr) {
-        file.writefln("alias %s = %s;", tr.name, convert(tr.type));
-    }
-    void emit(Enum e) {
-        string s = "enum %s {\n".format(e.name);
-        foreach(id; e.getIdentifiers()) {
-            s ~= "\t%s".format(id.name);
-            if(id.hasChildren()) {
-                s ~= " = " ~ convert(id.first());
-            }
-            s ~= ",\n";
-        }
-        s ~= "}\n";
-        file.write(s);
-    }
-    void emit(StructDef sd) {
-        file.writefln("struct %s {", sd.name);
-        foreach(st; sd.statements()) {
-            file.write("\t");
-            emit(st);
-        }
-        file.writeln("}");
-    }
-    void emit(FuncDef fd) {
-        todo("Emit FuncDef not implemented");
-    }
-    void emit(FuncDecl fd) {
-        file.writef("%s function(", convert(fd.returnType()));
-        foreach(i, v; fd.parameterVars()) {
-            file.writef("%s %s", convert(v.type()), v.name);
-            if(i < fd.numParameters-1) file.write(", ");
-        }
-        if(fd.hasElipsis) {
-            if(fd.numParameters>0) file.write(", ");
-            file.write("...");
-        }
-        file.writefln(") %s;", fd.name);
-    }
-    void emit(Var v) {
-        file.writef("%s %s", convert(v.type()), dname(v.name));
-        if(v.hasInitialiser) {
-            file.write(" = ");
-            emit(v.initialiser());
-        }
-        file.writeln(";");
-    }
-
-    string convert(Node n) {
-        if(auto nu = n.as!Number) return convert(nu);
-        if(auto id = n.as!Identifier) return convert(id);
-        if(auto b = n.as!Binary) return convert(b);
-        if(auto p = n.as!Parens) return convert(p);
-        throwIf(true, "Unhandled convert %s", n);
-        return null;
-    }
-    string convert(Type t) {
-        if(auto pt = t.as!PtrType) { return convert(pt); }
-        if(auto pt = t.as!PrimitiveType) { return convert(pt); }
-        if(auto tr = t.as!TypeRef) { return convert(tr); }
-        if(auto fd = t.as!FuncDecl) { return convert(fd); }
-        if(auto at = t.as!ArrayType) {
-            auto s = convert(at.type());
-            foreach(dim; at.dimensions()) {
-                s ~= "[%s]".format(convert(dim));
-            }
-            return s;
-        }
-        if(auto e = t.as!Enum) { return "$enum %s$".format(e.name); }
-        if(auto u = t.as!Union) { return "$union %s$".format(u.name); }
-        if(auto sd = t.as!StructDef) { return "$struct %s$".format(sd.name); }
-        throwIf(true, "handle %s", t);
-        return t.toString();
-    }
-    string convert(PtrType pt) {
-        int depth = pt.ptrDepth;
-        if(pt.type().isA!FuncDecl) depth--;
-        return convert(pt.type()) ~ "*".repeat(depth);
-    }
-    string convert(TypeRef tr) {
-        return tr.hasName() ? tr.name : convert(tr.type);
-    }
-    /**
-     * float function(int a) name;
-     */
-    string convert(FuncDecl fd) {
-        string s = convert(fd.returnType()) ~ " function(";
-        foreach(i, Var v; fd.parameterVars()) {
-            if(i>0) s ~= ", ";
-            s ~= convert(v.type());
-            if(v.name) s ~= " " ~ v.name;
-        }
-        return s ~ ")";
-    }
-    string convert(PrimitiveType t) {
+    void emit(PrimitiveType t) {
         string s = t.unsigned ? "u" : "";
         switch(t.kind) with(TKind) {
             case BOOL: s = "bool"; break;
@@ -188,18 +124,121 @@ private:
             case VOID: s = "void"; break;
             default: throwIf(true, "Unhandled PrimitiveType %s", t); break;
         }
-        return s;
+        file.writef("%s", s);
     }
-    string convert(Identifier id) {
-        return id.name;
+    void emit(PtrType pt) {
+        int depth = pt.ptrDepth;
+        if(pt.type().isA!FuncDecl) depth--;
+        emit(pt.type());
+        file.write("*".repeat(depth));
     }
-    string convert(Number n) {
-        return n.stringValue;
+    void emit(TypeRef tr, bool isType) {
+        if(isType) {
+            if(tr.hasName()) {
+                file.write(tr.name);
+            } else {
+                emit(tr.type);
+            }
+        } else {
+            if(auto e = tr.type.as!Enum) {
+                e.name = tr.name;
+                emit(e);
+                return;
+            }
+            if(auto sd = tr.type.as!StructDef) {
+                sd.name = tr.name;
+                emit(sd);
+                return;
+            }
+
+            file.writef("alias %s = ", tr.name);
+            emit(tr.type);
+            file.writeln(";");
+        }
     }
-    string convert(Binary b) {
-        return "%s + %s".format(convert(b.left()), convert(b.right()));
+    void emit(ArrayType at) {
+        emit(at.type());
+        foreach(dim; at.dimensions()) {
+            file.write("[");
+            emit(dim);
+            file.write("]");
+        }
     }
-    string convert(Parens p) {
-        return "(%s)".format(convert(p.expr()));
+    void emit(Enum e) {
+        file.writef("enum %s {\n", e.name);
+        foreach(id; e.getIdentifiers()) {
+            file.writef("\t%s", id.name);
+            if(id.hasChildren()) {
+                file.write(" = ");
+                emit(id.first());
+            }
+            file.write(",\n");
+        }
+        file.write("}\n");
+    }
+    void emit(StructDef sd) {
+        this.log("StructDef %s", sd.name);
+        file.writefln("struct %s {", sd.name);
+        foreach(st; sd.statements()) {
+            file.write("\t");
+            emit(st);
+        }
+        file.writeln("}");
+    }
+    void emit(Union u) {
+        file.writefln("union %s {", u.name);
+        foreach(v; u.vars()) {
+            file.write("\t");
+            emit(v);
+        }
+        file.write("}");
+    }
+    void emit(FuncDef fd) {
+        todo("Emit FuncDef not implemented");
+    }
+    void emit(FuncDecl fd, bool isType) {
+        emit(fd.returnType());
+        file.write(" function(");
+
+        foreach(i, v; fd.parameterVars()) {
+            emit(v.type());
+            file.writef(" %s", dname(v.name));
+            if(i < fd.numParameters-1) file.write(", ");
+        }
+        if(fd.hasElipsis) {
+            if(fd.numParameters>0) file.write(", ");
+            file.write("...");
+        }
+        if(isType) {
+            file.write(")");
+        } else {
+            file.writefln(") %s;", fd.name);
+        }
+    }
+    void emit(Var v) {
+        emit(v.type());
+        file.writef(" %s", dname(v.name));
+        if(v.hasInitialiser) {
+            file.write(" = ");
+            emit(v.initialiser());
+        }
+        file.writeln(";");
+        this.log("end");
+    }
+    void emit(Identifier id) {
+        file.write(id.name);
+    }
+    void emit(Number n) {
+        file.write(n.stringValue);
+    }
+    void emit(Binary b) {
+        emit(b.left());
+        file.writef(" %s ", stringOf(b.op));
+        emit(b.right());
+    }
+    void emit(Parens p) {
+        file.write("(");
+        emit(p.expr());
+        file.write(")");
     }
 }

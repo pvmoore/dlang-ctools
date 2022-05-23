@@ -58,6 +58,7 @@ private:
     }
 }
 
+
 final class LoadInstanceFunctions : Emitter.Plugin {
 private:
     FuncDecl[] funcDecls;
