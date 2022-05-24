@@ -49,7 +49,9 @@ private:
             "  ** Exit program"
         ];
 
-        this.emitter = new Emitter(extractor);
+        auto flags = Emitter.Flag.UNQUALIFIED_ENUM | Emitter.Flag.QUALIFIED_ENUM;
+
+        this.emitter = new Emitter(extractor, flags);
         emitter.add(new Comment(COMMENTS));
         emitter.add(new EmitDLLLoader("VulkanLoader", "vulkan-1.dll")
                         .loadFunctions("vkGetInstanceProcAddr"));

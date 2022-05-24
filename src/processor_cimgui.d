@@ -61,7 +61,9 @@ private:
             "core.stdc.stdio"
         ];
 
-        this.emitter = new Emitter(extractor);
+        auto flags = Emitter.Flag.UNQUALIFIED_ENUM;
+
+        this.emitter = new Emitter(extractor, flags);
 
         import std : map, array;
         auto loader = new EmitDLLLoader("CImguiLoader", "cimgui.dll")

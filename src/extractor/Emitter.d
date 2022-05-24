@@ -5,17 +5,25 @@ import extractor;
 
 final class Emitter {
 private:
+    enum DEFAULT_FLAGS = Flag.QUALIFIED_ENUM;
     File file;
     Extractor extractor;
     string moduleName;
     Plugin[] plugins;
+    Flag flags;
 public:
     interface Plugin {
         void emit(File);
     }
+    enum Flag {
+        NONE                = 0,
+        QUALIFIED_ENUM      = 1<<0,
+        UNQUALIFIED_ENUM    = 1<<1,
+    }
 
-    this(Extractor extractor) {
+    this(Extractor extractor, Flag flags = DEFAULT_FLAGS) {
         this.extractor = extractor;
+        this.flags = flags;
         this.moduleName = "emit";
     }
     auto add(Plugin plugin) {
@@ -57,6 +65,9 @@ public:
         file.close();
     }
 private:
+    bool flag(Flag f) {
+        return (flags&f) != 0;
+    }
     void prolog() {
         file.writefln("module %s;\n",moduleName);
         file.writefln("public:\n");
@@ -165,16 +176,40 @@ private:
         }
     }
     void emit(Enum e) {
-        file.writef("enum %s {\n", e.name);
-        foreach(id; e.getIdentifiers()) {
-            file.writef("\t%s", id.name);
-            if(id.hasChildren()) {
-                file.write(" = ");
-                emit(id.first());
+        if(flag(Flag.QUALIFIED_ENUM)) {
+            // QUALIFIED enums
+            file.writef("enum %s {\n", e.name);
+            foreach(id; e.getIdentifiers()) {
+                file.writef("\t%s", id.name);
+                if(id.hasChildren()) {
+                    file.write(" = ");
+                    emit(id.first());
+                }
+                file.write(",\n");
             }
-            file.write(",\n");
+            file.write("}\n");
+
+            // Both QUALIFIED and UNQUALIFIED enums
+            if(flag(Flag.UNQUALIFIED_ENUM)) {
+                file.writef("enum : %s {\n", e.name);
+                foreach(id; e.getIdentifiers()) {
+                    file.writefln("\t%s = %s.%s,", id.name, e.name, id.name);
+                }
+                file.write("}\n");
+            }
+        } else if(flag(Flag.UNQUALIFIED_ENUM)) {
+            // Only UNQUALIFIED enums
+            file.write("enum {\n");
+            foreach(id; e.getIdentifiers()) {
+                file.writef("\t%s", id.name);
+                if(id.hasChildren()) {
+                    file.write(" = ");
+                    emit(id.first());
+                }
+                file.write(",\n");
+            }
+            file.write("}\n");
         }
-        file.write("}\n");
     }
     void emit(StructDef sd) {
         this.log("StructDef %s", sd.name);

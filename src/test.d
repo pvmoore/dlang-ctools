@@ -24,6 +24,7 @@ import processor_glfw;
 // ];
 
 void main(string[] args) {
+
     // C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\ucrt
     // C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um
     // C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\shared
@@ -44,7 +45,7 @@ void main(string[] args) {
     }
 
     // Extract Vulkan
-    if(false) {
+    if(true) {
         auto vulkanProcessor = new VulkanProcessor();
         vulkanProcessor.process();
     }
@@ -54,7 +55,7 @@ void main(string[] args) {
         glfwProcessor.process();
     }
     // Extract CImgui
-    if(true) {
+    if(false) {
         auto cimguiProcessor = new CImguiProcessor();
         cimguiProcessor.process();
     }
