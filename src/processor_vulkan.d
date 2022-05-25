@@ -7,6 +7,7 @@ private:
     EConfig config;
     Extractor extractor;
     Emitter emitter;
+    enum vulkanVersion = "1.2.141.2";
 public:
     void process() {
         prepare();
@@ -37,7 +38,7 @@ private:
     }
     void emit() {
         enum string[] COMMENTS = [
-            "Vulkan include files converted to D (This is a generated file)",
+            "Vulkan %s Include files converted to D (This is a generated file)".format(vulkanVersion),
             "",
             "Usage:",
             "  ** Start program",
@@ -82,6 +83,7 @@ private:
     void prolog(File file) {
         file.writefln("// Load Instance Functions");
         file.writefln("void vkLoadInstanceFunctions(VkInstance instance) {");
+        file.writefln("\timport common : throwIf;");
     }
     void epilog(File file) {
         file.writefln("}");
@@ -89,6 +91,6 @@ private:
     }
     void load(File file, FuncDecl fd) {
         file.writef("\t*(cast(void**)&%s) = vkGetInstanceProcAddr(instance, \"%s\");", fd.name, fd.name);
-        file.writefln("throwIf(!%s);", fd.name);
+        file.writefln(" throwIf(!%s);", fd.name);
     }
 }

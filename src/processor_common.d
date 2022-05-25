@@ -5,7 +5,8 @@ public:
 import ctools;
 import extractor;
 
-import std.stdio : writefln;
+import std.stdio    : writefln;
+import std.format   : format;
 
 abstract class Processor {
 private:
@@ -69,21 +70,6 @@ public:
     }
 }
 
-final class Includes : Emitter.Plugin {
-private:
-    string[] lines;
-public:
-    this(string[] lines) {
-        this.lines = lines;
-    }
-    override void emit(File file) {
-        foreach(line; lines) {
-            file.writefln("import %s;", line);
-        }
-        file.writeln();
-    }
-}
-
 final class DefineEmitter : Emitter.Plugin {
 private:
     Map!(string,PPDef) definitions;
@@ -112,7 +98,7 @@ public:
         foreach(k; keys) {
             file.writefln("enum %s = %s;", k, *definitions[k]);
         }
-        file.writefln("// End Definitions");
+        file.writefln("// End Definitions\n");
     }
 private:
     bool accept(string key) {

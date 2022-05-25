@@ -7,13 +7,14 @@ private:
     EConfig config;
     Extractor extractor;
     Emitter emitter;
+    enum glfwVersion = "3.3.7";
 public:
     void process() {
         prepare();
 
         parseState.dumpIncludeTokens = false;
 
-        string base = "C:/work/glfw-3.3.7.bin.WIN64/";
+        string base = "C:/work/glfw-%s.bin.WIN64/".format(glfwVersion);
         string glfwH = base ~ "include/GLFW/glfw3.h";
 
         parse(Filepath(glfwH));
@@ -45,7 +46,7 @@ private:
     void emit() {
 
         enum string[] COMMENTS = [
-            "GLFW include files converted to D (This is a generated file)",
+            "GLFW %s Include files converted to D (This is a generated file)".format(glfwVersion),
             "",
             "Usage:",
             "  ** Start program",
@@ -62,10 +63,18 @@ private:
         enum string[] INCLUDES = [
             "vulkan_api"
         ];
+        import std : map, array;
+        auto loader = new EmitDLLLoader("GLFWLoader", "glfw3.dll")
+            .loadFunctions(extractor.getOrderedValues(extractor.funcDecls)
+                                              .map!(it=>it.name)
+                                              .array);
 
         this.emitter = new Emitter(extractor, "glfw_api");
 
-        emitter.add(new Includes(INCLUDES));
+        emitter.privateImports(INCLUDES);
+
+        emitter.add(new Comment(COMMENTS));
+        emitter.add(loader);
         emitter.add(de);
 
         emitter.emitTo("generated/glfw_api.d");

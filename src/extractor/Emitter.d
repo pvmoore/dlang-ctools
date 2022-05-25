@@ -11,6 +11,8 @@ private:
     string moduleName;
     Plugin[] plugins;
     Flag flags;
+    string[] pvtImports;
+    string[] pubImports;
 public:
     interface Plugin {
         void emit(File);
@@ -28,6 +30,14 @@ public:
     }
     auto add(Plugin plugin) {
         plugins ~= plugin;
+        return this;
+    }
+    auto privateImports(string[] imports) {
+        this.pvtImports = imports;
+        return this;
+    }
+    auto publicImports(string[] imports) {
+        this.pubImports = imports;
         return this;
     }
     void emitTo(string filename) {
@@ -78,8 +88,24 @@ private:
         return tab(n.parent);
     }
     void prolog() {
-        file.writefln("module %s;\n",moduleName);
-        file.writefln("public:\n");
+        file.writefln("module %s;",moduleName);
+        file.writeln();
+        if(pvtImports.length>0) {
+            file.writefln("private:");
+            file.writeln(); 
+            foreach(i; pvtImports) {
+                file.writefln("import %s;", i);
+            }
+            file.writeln();
+        }
+        file.writefln("public:");
+        if(pubImports.length>0) {
+            file.writeln();
+        }
+        foreach(i; pubImports) {
+            file.writefln("import %s;", i);
+        }
+        file.writeln();
     }
     void epilog() {
 

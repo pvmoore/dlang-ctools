@@ -73,8 +73,9 @@ private:
                                               .map!(it=>it.name)
                                               .array);
 
+        emitter.privateImports(INCLUDES);
+
         emitter.add(new Comment(COMMENTS));
-        emitter.add(new Includes(INCLUDES));
         emitter.add(loader);
 
         emitter.emitTo("generated/cimgui_api.d");

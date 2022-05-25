@@ -3,6 +3,8 @@
 #### Features
 - Lexer
 - PreProcessor
+- Parser
+- Include file extractor (emit as D imports)
 
 #### Requirements
 - Dlang https://dlang.org/

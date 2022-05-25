@@ -1,8 +1,155 @@
 module glfw_api;
 
-public:
+private:
 
 import vulkan_api;
+
+public:
+
+// GLFW 3.3.7 Include files converted to D (This is a generated file)
+// 
+// Usage:
+//   ** Start program
+//   GLFWLoader.load();
+//   ** 
+//   GLFWLoader.unload();
+//   ** Exit program
+
+// GLFWLoader
+private struct _GLFWLoader {
+	import core.sys.windows.windows;
+	import common : throwIf;
+	HANDLE handle;
+	void load() {
+		this.handle = LoadLibraryA("glfw3.dll");
+		if(!handle) throw new Exception("Unable to load 'glfw3.dll'");
+		
+		*(cast(void**)&glfwCreateCursor) = GetProcAddr(handle, "glfwCreateCursor"); throwIf(!glfwCreateCursor);
+		*(cast(void**)&glfwCreateStandardCursor) = GetProcAddr(handle, "glfwCreateStandardCursor"); throwIf(!glfwCreateStandardCursor);
+		*(cast(void**)&glfwCreateWindow) = GetProcAddr(handle, "glfwCreateWindow"); throwIf(!glfwCreateWindow);
+		*(cast(void**)&glfwCreateWindowSurface) = GetProcAddr(handle, "glfwCreateWindowSurface"); throwIf(!glfwCreateWindowSurface);
+		*(cast(void**)&glfwDefaultWindowHints) = GetProcAddr(handle, "glfwDefaultWindowHints"); throwIf(!glfwDefaultWindowHints);
+		*(cast(void**)&glfwDestroyCursor) = GetProcAddr(handle, "glfwDestroyCursor"); throwIf(!glfwDestroyCursor);
+		*(cast(void**)&glfwDestroyWindow) = GetProcAddr(handle, "glfwDestroyWindow"); throwIf(!glfwDestroyWindow);
+		*(cast(void**)&glfwExtensionSupported) = GetProcAddr(handle, "glfwExtensionSupported"); throwIf(!glfwExtensionSupported);
+		*(cast(void**)&glfwFocusWindow) = GetProcAddr(handle, "glfwFocusWindow"); throwIf(!glfwFocusWindow);
+		*(cast(void**)&glfwGetClipboardString) = GetProcAddr(handle, "glfwGetClipboardString"); throwIf(!glfwGetClipboardString);
+		*(cast(void**)&glfwGetCurrentContext) = GetProcAddr(handle, "glfwGetCurrentContext"); throwIf(!glfwGetCurrentContext);
+		*(cast(void**)&glfwGetCursorPos) = GetProcAddr(handle, "glfwGetCursorPos"); throwIf(!glfwGetCursorPos);
+		*(cast(void**)&glfwGetError) = GetProcAddr(handle, "glfwGetError"); throwIf(!glfwGetError);
+		*(cast(void**)&glfwGetFramebufferSize) = GetProcAddr(handle, "glfwGetFramebufferSize"); throwIf(!glfwGetFramebufferSize);
+		*(cast(void**)&glfwGetGamepadName) = GetProcAddr(handle, "glfwGetGamepadName"); throwIf(!glfwGetGamepadName);
+		*(cast(void**)&glfwGetGamepadState) = GetProcAddr(handle, "glfwGetGamepadState"); throwIf(!glfwGetGamepadState);
+		*(cast(void**)&glfwGetGammaRamp) = GetProcAddr(handle, "glfwGetGammaRamp"); throwIf(!glfwGetGammaRamp);
+		*(cast(void**)&glfwGetInputMode) = GetProcAddr(handle, "glfwGetInputMode"); throwIf(!glfwGetInputMode);
+		*(cast(void**)&glfwGetInstanceProcAddress) = GetProcAddr(handle, "glfwGetInstanceProcAddress"); throwIf(!glfwGetInstanceProcAddress);
+		*(cast(void**)&glfwGetJoystickAxes) = GetProcAddr(handle, "glfwGetJoystickAxes"); throwIf(!glfwGetJoystickAxes);
+		*(cast(void**)&glfwGetJoystickButtons) = GetProcAddr(handle, "glfwGetJoystickButtons"); throwIf(!glfwGetJoystickButtons);
+		*(cast(void**)&glfwGetJoystickGUID) = GetProcAddr(handle, "glfwGetJoystickGUID"); throwIf(!glfwGetJoystickGUID);
+		*(cast(void**)&glfwGetJoystickHats) = GetProcAddr(handle, "glfwGetJoystickHats"); throwIf(!glfwGetJoystickHats);
+		*(cast(void**)&glfwGetJoystickName) = GetProcAddr(handle, "glfwGetJoystickName"); throwIf(!glfwGetJoystickName);
+		*(cast(void**)&glfwGetJoystickUserPointer) = GetProcAddr(handle, "glfwGetJoystickUserPointer"); throwIf(!glfwGetJoystickUserPointer);
+		*(cast(void**)&glfwGetKey) = GetProcAddr(handle, "glfwGetKey"); throwIf(!glfwGetKey);
+		*(cast(void**)&glfwGetKeyName) = GetProcAddr(handle, "glfwGetKeyName"); throwIf(!glfwGetKeyName);
+		*(cast(void**)&glfwGetKeyScancode) = GetProcAddr(handle, "glfwGetKeyScancode"); throwIf(!glfwGetKeyScancode);
+		*(cast(void**)&glfwGetMonitorContentScale) = GetProcAddr(handle, "glfwGetMonitorContentScale"); throwIf(!glfwGetMonitorContentScale);
+		*(cast(void**)&glfwGetMonitorName) = GetProcAddr(handle, "glfwGetMonitorName"); throwIf(!glfwGetMonitorName);
+		*(cast(void**)&glfwGetMonitorPhysicalSize) = GetProcAddr(handle, "glfwGetMonitorPhysicalSize"); throwIf(!glfwGetMonitorPhysicalSize);
+		*(cast(void**)&glfwGetMonitorPos) = GetProcAddr(handle, "glfwGetMonitorPos"); throwIf(!glfwGetMonitorPos);
+		*(cast(void**)&glfwGetMonitorUserPointer) = GetProcAddr(handle, "glfwGetMonitorUserPointer"); throwIf(!glfwGetMonitorUserPointer);
+		*(cast(void**)&glfwGetMonitorWorkarea) = GetProcAddr(handle, "glfwGetMonitorWorkarea"); throwIf(!glfwGetMonitorWorkarea);
+		*(cast(void**)&glfwGetMonitors) = GetProcAddr(handle, "glfwGetMonitors"); throwIf(!glfwGetMonitors);
+		*(cast(void**)&glfwGetMouseButton) = GetProcAddr(handle, "glfwGetMouseButton"); throwIf(!glfwGetMouseButton);
+		*(cast(void**)&glfwGetPhysicalDevicePresentationSupport) = GetProcAddr(handle, "glfwGetPhysicalDevicePresentationSupport"); throwIf(!glfwGetPhysicalDevicePresentationSupport);
+		*(cast(void**)&glfwGetPrimaryMonitor) = GetProcAddr(handle, "glfwGetPrimaryMonitor"); throwIf(!glfwGetPrimaryMonitor);
+		*(cast(void**)&glfwGetProcAddress) = GetProcAddr(handle, "glfwGetProcAddress"); throwIf(!glfwGetProcAddress);
+		*(cast(void**)&glfwGetRequiredInstanceExtensions) = GetProcAddr(handle, "glfwGetRequiredInstanceExtensions"); throwIf(!glfwGetRequiredInstanceExtensions);
+		*(cast(void**)&glfwGetTime) = GetProcAddr(handle, "glfwGetTime"); throwIf(!glfwGetTime);
+		*(cast(void**)&glfwGetTimerFrequency) = GetProcAddr(handle, "glfwGetTimerFrequency"); throwIf(!glfwGetTimerFrequency);
+		*(cast(void**)&glfwGetTimerValue) = GetProcAddr(handle, "glfwGetTimerValue"); throwIf(!glfwGetTimerValue);
+		*(cast(void**)&glfwGetVersion) = GetProcAddr(handle, "glfwGetVersion"); throwIf(!glfwGetVersion);
+		*(cast(void**)&glfwGetVersionString) = GetProcAddr(handle, "glfwGetVersionString"); throwIf(!glfwGetVersionString);
+		*(cast(void**)&glfwGetVideoMode) = GetProcAddr(handle, "glfwGetVideoMode"); throwIf(!glfwGetVideoMode);
+		*(cast(void**)&glfwGetVideoModes) = GetProcAddr(handle, "glfwGetVideoModes"); throwIf(!glfwGetVideoModes);
+		*(cast(void**)&glfwGetWindowAttrib) = GetProcAddr(handle, "glfwGetWindowAttrib"); throwIf(!glfwGetWindowAttrib);
+		*(cast(void**)&glfwGetWindowContentScale) = GetProcAddr(handle, "glfwGetWindowContentScale"); throwIf(!glfwGetWindowContentScale);
+		*(cast(void**)&glfwGetWindowFrameSize) = GetProcAddr(handle, "glfwGetWindowFrameSize"); throwIf(!glfwGetWindowFrameSize);
+		*(cast(void**)&glfwGetWindowMonitor) = GetProcAddr(handle, "glfwGetWindowMonitor"); throwIf(!glfwGetWindowMonitor);
+		*(cast(void**)&glfwGetWindowOpacity) = GetProcAddr(handle, "glfwGetWindowOpacity"); throwIf(!glfwGetWindowOpacity);
+		*(cast(void**)&glfwGetWindowPos) = GetProcAddr(handle, "glfwGetWindowPos"); throwIf(!glfwGetWindowPos);
+		*(cast(void**)&glfwGetWindowSize) = GetProcAddr(handle, "glfwGetWindowSize"); throwIf(!glfwGetWindowSize);
+		*(cast(void**)&glfwGetWindowUserPointer) = GetProcAddr(handle, "glfwGetWindowUserPointer"); throwIf(!glfwGetWindowUserPointer);
+		*(cast(void**)&glfwHideWindow) = GetProcAddr(handle, "glfwHideWindow"); throwIf(!glfwHideWindow);
+		*(cast(void**)&glfwIconifyWindow) = GetProcAddr(handle, "glfwIconifyWindow"); throwIf(!glfwIconifyWindow);
+		*(cast(void**)&glfwInit) = GetProcAddr(handle, "glfwInit"); throwIf(!glfwInit);
+		*(cast(void**)&glfwInitHint) = GetProcAddr(handle, "glfwInitHint"); throwIf(!glfwInitHint);
+		*(cast(void**)&glfwJoystickIsGamepad) = GetProcAddr(handle, "glfwJoystickIsGamepad"); throwIf(!glfwJoystickIsGamepad);
+		*(cast(void**)&glfwJoystickPresent) = GetProcAddr(handle, "glfwJoystickPresent"); throwIf(!glfwJoystickPresent);
+		*(cast(void**)&glfwMakeContextCurrent) = GetProcAddr(handle, "glfwMakeContextCurrent"); throwIf(!glfwMakeContextCurrent);
+		*(cast(void**)&glfwMaximizeWindow) = GetProcAddr(handle, "glfwMaximizeWindow"); throwIf(!glfwMaximizeWindow);
+		*(cast(void**)&glfwPollEvents) = GetProcAddr(handle, "glfwPollEvents"); throwIf(!glfwPollEvents);
+		*(cast(void**)&glfwPostEmptyEvent) = GetProcAddr(handle, "glfwPostEmptyEvent"); throwIf(!glfwPostEmptyEvent);
+		*(cast(void**)&glfwRawMouseMotionSupported) = GetProcAddr(handle, "glfwRawMouseMotionSupported"); throwIf(!glfwRawMouseMotionSupported);
+		*(cast(void**)&glfwRequestWindowAttention) = GetProcAddr(handle, "glfwRequestWindowAttention"); throwIf(!glfwRequestWindowAttention);
+		*(cast(void**)&glfwRestoreWindow) = GetProcAddr(handle, "glfwRestoreWindow"); throwIf(!glfwRestoreWindow);
+		*(cast(void**)&glfwSetCharCallback) = GetProcAddr(handle, "glfwSetCharCallback"); throwIf(!glfwSetCharCallback);
+		*(cast(void**)&glfwSetCharModsCallback) = GetProcAddr(handle, "glfwSetCharModsCallback"); throwIf(!glfwSetCharModsCallback);
+		*(cast(void**)&glfwSetClipboardString) = GetProcAddr(handle, "glfwSetClipboardString"); throwIf(!glfwSetClipboardString);
+		*(cast(void**)&glfwSetCursor) = GetProcAddr(handle, "glfwSetCursor"); throwIf(!glfwSetCursor);
+		*(cast(void**)&glfwSetCursorEnterCallback) = GetProcAddr(handle, "glfwSetCursorEnterCallback"); throwIf(!glfwSetCursorEnterCallback);
+		*(cast(void**)&glfwSetCursorPos) = GetProcAddr(handle, "glfwSetCursorPos"); throwIf(!glfwSetCursorPos);
+		*(cast(void**)&glfwSetCursorPosCallback) = GetProcAddr(handle, "glfwSetCursorPosCallback"); throwIf(!glfwSetCursorPosCallback);
+		*(cast(void**)&glfwSetDropCallback) = GetProcAddr(handle, "glfwSetDropCallback"); throwIf(!glfwSetDropCallback);
+		*(cast(void**)&glfwSetErrorCallback) = GetProcAddr(handle, "glfwSetErrorCallback"); throwIf(!glfwSetErrorCallback);
+		*(cast(void**)&glfwSetFramebufferSizeCallback) = GetProcAddr(handle, "glfwSetFramebufferSizeCallback"); throwIf(!glfwSetFramebufferSizeCallback);
+		*(cast(void**)&glfwSetGamma) = GetProcAddr(handle, "glfwSetGamma"); throwIf(!glfwSetGamma);
+		*(cast(void**)&glfwSetGammaRamp) = GetProcAddr(handle, "glfwSetGammaRamp"); throwIf(!glfwSetGammaRamp);
+		*(cast(void**)&glfwSetInputMode) = GetProcAddr(handle, "glfwSetInputMode"); throwIf(!glfwSetInputMode);
+		*(cast(void**)&glfwSetJoystickCallback) = GetProcAddr(handle, "glfwSetJoystickCallback"); throwIf(!glfwSetJoystickCallback);
+		*(cast(void**)&glfwSetJoystickUserPointer) = GetProcAddr(handle, "glfwSetJoystickUserPointer"); throwIf(!glfwSetJoystickUserPointer);
+		*(cast(void**)&glfwSetKeyCallback) = GetProcAddr(handle, "glfwSetKeyCallback"); throwIf(!glfwSetKeyCallback);
+		*(cast(void**)&glfwSetMonitorCallback) = GetProcAddr(handle, "glfwSetMonitorCallback"); throwIf(!glfwSetMonitorCallback);
+		*(cast(void**)&glfwSetMonitorUserPointer) = GetProcAddr(handle, "glfwSetMonitorUserPointer"); throwIf(!glfwSetMonitorUserPointer);
+		*(cast(void**)&glfwSetMouseButtonCallback) = GetProcAddr(handle, "glfwSetMouseButtonCallback"); throwIf(!glfwSetMouseButtonCallback);
+		*(cast(void**)&glfwSetScrollCallback) = GetProcAddr(handle, "glfwSetScrollCallback"); throwIf(!glfwSetScrollCallback);
+		*(cast(void**)&glfwSetTime) = GetProcAddr(handle, "glfwSetTime"); throwIf(!glfwSetTime);
+		*(cast(void**)&glfwSetWindowAspectRatio) = GetProcAddr(handle, "glfwSetWindowAspectRatio"); throwIf(!glfwSetWindowAspectRatio);
+		*(cast(void**)&glfwSetWindowAttrib) = GetProcAddr(handle, "glfwSetWindowAttrib"); throwIf(!glfwSetWindowAttrib);
+		*(cast(void**)&glfwSetWindowCloseCallback) = GetProcAddr(handle, "glfwSetWindowCloseCallback"); throwIf(!glfwSetWindowCloseCallback);
+		*(cast(void**)&glfwSetWindowContentScaleCallback) = GetProcAddr(handle, "glfwSetWindowContentScaleCallback"); throwIf(!glfwSetWindowContentScaleCallback);
+		*(cast(void**)&glfwSetWindowFocusCallback) = GetProcAddr(handle, "glfwSetWindowFocusCallback"); throwIf(!glfwSetWindowFocusCallback);
+		*(cast(void**)&glfwSetWindowIcon) = GetProcAddr(handle, "glfwSetWindowIcon"); throwIf(!glfwSetWindowIcon);
+		*(cast(void**)&glfwSetWindowIconifyCallback) = GetProcAddr(handle, "glfwSetWindowIconifyCallback"); throwIf(!glfwSetWindowIconifyCallback);
+		*(cast(void**)&glfwSetWindowMaximizeCallback) = GetProcAddr(handle, "glfwSetWindowMaximizeCallback"); throwIf(!glfwSetWindowMaximizeCallback);
+		*(cast(void**)&glfwSetWindowMonitor) = GetProcAddr(handle, "glfwSetWindowMonitor"); throwIf(!glfwSetWindowMonitor);
+		*(cast(void**)&glfwSetWindowOpacity) = GetProcAddr(handle, "glfwSetWindowOpacity"); throwIf(!glfwSetWindowOpacity);
+		*(cast(void**)&glfwSetWindowPos) = GetProcAddr(handle, "glfwSetWindowPos"); throwIf(!glfwSetWindowPos);
+		*(cast(void**)&glfwSetWindowPosCallback) = GetProcAddr(handle, "glfwSetWindowPosCallback"); throwIf(!glfwSetWindowPosCallback);
+		*(cast(void**)&glfwSetWindowRefreshCallback) = GetProcAddr(handle, "glfwSetWindowRefreshCallback"); throwIf(!glfwSetWindowRefreshCallback);
+		*(cast(void**)&glfwSetWindowShouldClose) = GetProcAddr(handle, "glfwSetWindowShouldClose"); throwIf(!glfwSetWindowShouldClose);
+		*(cast(void**)&glfwSetWindowSize) = GetProcAddr(handle, "glfwSetWindowSize"); throwIf(!glfwSetWindowSize);
+		*(cast(void**)&glfwSetWindowSizeCallback) = GetProcAddr(handle, "glfwSetWindowSizeCallback"); throwIf(!glfwSetWindowSizeCallback);
+		*(cast(void**)&glfwSetWindowSizeLimits) = GetProcAddr(handle, "glfwSetWindowSizeLimits"); throwIf(!glfwSetWindowSizeLimits);
+		*(cast(void**)&glfwSetWindowTitle) = GetProcAddr(handle, "glfwSetWindowTitle"); throwIf(!glfwSetWindowTitle);
+		*(cast(void**)&glfwSetWindowUserPointer) = GetProcAddr(handle, "glfwSetWindowUserPointer"); throwIf(!glfwSetWindowUserPointer);
+		*(cast(void**)&glfwShowWindow) = GetProcAddr(handle, "glfwShowWindow"); throwIf(!glfwShowWindow);
+		*(cast(void**)&glfwSwapBuffers) = GetProcAddr(handle, "glfwSwapBuffers"); throwIf(!glfwSwapBuffers);
+		*(cast(void**)&glfwSwapInterval) = GetProcAddr(handle, "glfwSwapInterval"); throwIf(!glfwSwapInterval);
+		*(cast(void**)&glfwTerminate) = GetProcAddr(handle, "glfwTerminate"); throwIf(!glfwTerminate);
+		*(cast(void**)&glfwUpdateGamepadMappings) = GetProcAddr(handle, "glfwUpdateGamepadMappings"); throwIf(!glfwUpdateGamepadMappings);
+		*(cast(void**)&glfwVulkanSupported) = GetProcAddr(handle, "glfwVulkanSupported"); throwIf(!glfwVulkanSupported);
+		*(cast(void**)&glfwWaitEvents) = GetProcAddr(handle, "glfwWaitEvents"); throwIf(!glfwWaitEvents);
+		*(cast(void**)&glfwWaitEventsTimeout) = GetProcAddr(handle, "glfwWaitEventsTimeout"); throwIf(!glfwWaitEventsTimeout);
+		*(cast(void**)&glfwWindowHint) = GetProcAddr(handle, "glfwWindowHint"); throwIf(!glfwWindowHint);
+		*(cast(void**)&glfwWindowHintString) = GetProcAddr(handle, "glfwWindowHintString"); throwIf(!glfwWindowHintString);
+		*(cast(void**)&glfwWindowShouldClose) = GetProcAddr(handle, "glfwWindowShouldClose"); throwIf(!glfwWindowShouldClose);
+	}
+	void unload() {
+		if(handle) FreeLibrary(handle);
+	}
+}
+__gshared _GLFWLoader GLFWLoader;
+// End of GLFWLoader
 
 // Definitions
 enum GLFW_ACCUM_ALPHA_BITS = 0x0002100A;
@@ -299,6 +446,7 @@ enum GLFW_VRESIZE_CURSOR = 0x00036006;
 enum GLFW_X11_CLASS_NAME = 0x00024001;
 enum GLFW_X11_INSTANCE_NAME = 0x00024002;
 // End Definitions
+
 alias GLFWcharfun = void function(GLFWwindow* window, uint codepoint);
 alias GLFWcharmodsfun = void function(GLFWwindow* window, uint codepoint, int mods);
 alias GLFWcursorenterfun = void function(GLFWwindow* window, int entered);

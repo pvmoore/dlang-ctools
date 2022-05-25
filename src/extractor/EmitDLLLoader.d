@@ -23,13 +23,15 @@ public:
         file.writefln("// %s", className);
         file.writefln("private struct _%s {", className);
         file.writefln("\timport core.sys.windows.windows;");
+        file.writefln("\timport common : throwIf;");
         file.writefln("\tHANDLE handle;");
         file.writefln("\tvoid load() {");
         file.writefln("\t\tthis.handle = LoadLibraryA(\"%s\");", libraryName);
         file.writefln("\t\tif(!handle) throw new Exception(\"Unable to load '%s'\");", libraryName);
         file.writefln("\t\t");
         foreach(n; functionNames) {
-            file.writefln("\t\t*(cast(void**)&%s) = GetProcAddr(handle, \"%s\");", n,n);
+            file.writef("\t\t*(cast(void**)&%s) = GetProcAddr(handle, \"%s\");", n,n);
+            file.writefln(" throwIf(!%s);", n);
         }
 
         file.writefln("\t}");
