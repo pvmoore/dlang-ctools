@@ -36,29 +36,29 @@ public:
         foreach(p; plugins) {
             p.emit(file);
         }
-        foreach(tr; extractor.aliases) {
+        foreach(tr; extractor.getOrderedValues(extractor.aliases)) {
             emit(tr, false);
         }
         file.writeln();
-        foreach(e; extractor.enums) {
+        foreach(e; extractor.getOrderedValues(extractor.enums)) {
             emit(e);
         }
         file.writeln();
-        foreach(sd; extractor.structDefs) {
+        foreach(sd; extractor.getOrderedValues(extractor.structDefs)) {
             emit(sd);
         }
         file.writeln();
-        foreach(v; extractor.vars) {
+        foreach(v; extractor.getOrderedValues(extractor.vars)) {
             emit(v);
         }
         file.writeln();
-        file.writefln("extern(Windows) { __gshared {");
-        foreach(fd; extractor.funcDecls) {
+        file.writefln("extern(Windows) { __gshared {\n");
+        foreach(fd; extractor.getOrderedValues(extractor.funcDecls)) {
             emit(fd, false);
         }
         file.writefln("}}");
         file.writeln();
-        foreach(fd; extractor.funcDefs) {
+        foreach(fd; extractor.getOrderedValues(extractor.funcDefs)) {
             emit(fd);
         }
         epilog();
@@ -67,6 +67,15 @@ public:
 private:
     bool flag(Flag f) {
         return (flags&f) != 0;
+    }
+    string tab(Node n) {
+        if(n.nid==Nid.STRUCTDEF || n.nid==Nid.UNION) {
+            return tab(n.parent) ~ "\t";
+        }
+        if(n.nid==Nid.ROOT) {
+            return "";
+        }
+        return tab(n.parent);
     }
     void prolog() {
         file.writefln("module %s;\n",moduleName);
@@ -215,21 +224,27 @@ private:
         }
     }
     void emit(StructDef sd) {
-        this.log("StructDef %s", sd.name);
         file.writefln("struct %s {", sd.name);
+
+        string t = tab(sd);
         foreach(st; sd.statements()) {
-            file.write("\t");
+            file.write(t);
             emit(st);
         }
-        file.writeln("}");
+        file.writefln("%s}", tab(sd.parent));
     }
     void emit(Union u) {
-        file.writefln("union %s {", u.name);
+        if(u.hasName()) {
+            file.writefln("union %s {", u.name);
+        } else {
+            file.writeln("union {");
+        }
+        string t = tab(u);
         foreach(v; u.vars()) {
-            file.write("\t");
+            file.write(t);
             emit(v);
         }
-        file.write("}");
+        file.writefln("%s}", tab(u.parent));
     }
     void emit(FuncDef fd) {
         todo("Emit FuncDef not implemented");
@@ -250,7 +265,7 @@ private:
         if(isType) {
             file.write(")");
         } else {
-            file.writefln(") %s;", fd.name);
+            file.writefln(")\n\t%s;\n", fd.name);
         }
     }
     void emit(Var v) {
@@ -260,8 +275,9 @@ private:
             file.write(" = ");
             emit(v.initialiser());
         }
-        file.writeln(";");
-        this.log("end");
+        if(!v.type().isA!Union && !v.type().isA!StructDef) {
+            file.writeln(";");
+        }
     }
     void emit(Identifier id) {
         file.write(id.name);

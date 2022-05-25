@@ -14,13 +14,16 @@ public:
     StructDef[string] structDefs;
     Enum[string] enums;
     Var[string] vars;
-    //Typedef[string] typedefs;
     TypeRef[string] aliases;
 
-    FuncDecl[] funcDeclsInOrder() {
+    T[] getOrderedValues(T)(T[string] map) {
         import std : sort,array;
-        alias cmp = (a,b)=>a.name<b.name;
-        return funcDecls.values().sort!cmp().array;
+        static if(__traits(compiles, map[""].name)) {
+            alias cmp = (a,b)=>a.name<b.name;
+        } else {
+            alias cmp = (a,b)=>a.getName()<b.getName();
+        }
+        return map.values().sort!cmp().array;
     }
 
     this(EConfig config) {

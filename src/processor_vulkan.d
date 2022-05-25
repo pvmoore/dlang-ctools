@@ -55,7 +55,8 @@ private:
         emitter.add(new Comment(COMMENTS));
         emitter.add(new EmitDLLLoader("VulkanLoader", "vulkan-1.dll")
                         .loadFunctions("vkGetInstanceProcAddr"));
-        emitter.add(new LoadInstanceFunctions(extractor.funcDecls.values()));
+
+        emitter.add(new LoadInstanceFunctions(extractor.getOrderedValues(extractor.funcDecls)));
         emitter.emitTo("_emit_vulkan.d");
     }
 }
@@ -87,6 +88,7 @@ private:
         file.writefln("// End Load Instance Functions\n");
     }
     void load(File file, FuncDecl fd) {
-        file.writefln("\t*(cast(void**)&%s) = vkGetInstanceProcAddr(instance, \"%s\");", fd.name, fd.name);
+        file.writef("\t*(cast(void**)&%s) = vkGetInstanceProcAddr(instance, \"%s\");", fd.name, fd.name);
+        file.writefln("throwIf(!%s);", fd.name);
     }
 }

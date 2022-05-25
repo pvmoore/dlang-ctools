@@ -26,7 +26,7 @@ public:
         file.writefln("\tHANDLE handle;");
         file.writefln("\tvoid load() {");
         file.writefln("\t\tthis.handle = LoadLibraryA(\"%s\");", libraryName);
-        file.writefln("\t\tif(!handle) throw new Exception(\"Unable to load DLL\");");
+        file.writefln("\t\tif(!handle) throw new Exception(\"Unable to load '%s'\");", libraryName);
         file.writefln("\t\t");
         foreach(n; functionNames) {
             file.writefln("\t\t*(cast(void**)&%s) = GetProcAddr(handle, \"%s\");", n,n);
