@@ -81,6 +81,9 @@ private:
             case "module":
             case "version":
             case "out":
+            case "ref":
+            case "in":
+            case "align":
                 return name ~ "_";
             default: return name;
         }

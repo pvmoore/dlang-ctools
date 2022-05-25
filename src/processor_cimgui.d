@@ -37,7 +37,8 @@ private:
     void extract() {
         this.config = new EConfig();
 
-        config.requiredFunctionRegexes ~= regex(r"^ImGui.*");
+        config.requiredFunctionRegexes ~= regex(r"^(ImGui|ig).*$");
+        config.requiredTypeRegexes ~= regex(r"^ImGui.*$");
 
         config.excludeRegexes ~= regex(r"^FILE$");
 
@@ -67,7 +68,7 @@ private:
 
         import std : map, array;
         auto loader = new EmitDLLLoader("CImguiLoader", "cimgui.dll")
-            .loadFunctions(extractor.funcDecls.values()
+            .loadFunctions(extractor.funcDeclsInOrder()
                                               .map!(it=>it.name)
                                               .array);
 

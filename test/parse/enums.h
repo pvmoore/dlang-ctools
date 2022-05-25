@@ -11,6 +11,7 @@ typedef enum E2 {
 typedef enum E1 UMS_THREAD_INFO_CLASS , * PUMS_THREAD_INFO_CLASS ;
 typedef enum E2 UMS_SCHEDULER_REASON ;
 
+typedef enum { A, B } E;
 
 /*
 EXPECT:
@@ -37,5 +38,10 @@ Parent
       enum E1
   Typedef 'UMS_SCHEDULER_REASON'
     enum E2
+
+  Typedef 'E'
+    enum E
+      Identifier 'A'
+      Identifier 'B'
 
 */

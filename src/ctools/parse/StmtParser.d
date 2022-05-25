@@ -252,6 +252,13 @@ private:
         t.add(tan.type);
         typeParser.addTypedef(t);
 
+        if(auto e = tan.type.as!Enum) {
+            if(!e.name) e.name = tan.name;
+        }
+        if(auto sd = tan.type.as!StructDef) {
+            if(!sd.name) sd.name = tan.name;
+        }
+
         // , extra
         while(nav.isKind(TK.COMMA)) {
             nav.skip(TK.COMMA);

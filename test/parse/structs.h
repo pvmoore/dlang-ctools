@@ -16,6 +16,8 @@ struct A {
     float d[3], e[4];
 };
 
+typedef struct { int z; } S;
+
 /*
 EXPECT:
 
@@ -45,4 +47,8 @@ Parent
             []
                 float
                 Number (4)
+    Typedef 'S'
+        struct S
+            Var z
+                int
 */

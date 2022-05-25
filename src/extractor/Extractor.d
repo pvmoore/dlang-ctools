@@ -17,6 +17,12 @@ public:
     //Typedef[string] typedefs;
     TypeRef[string] aliases;
 
+    FuncDecl[] funcDeclsInOrder() {
+        import std : sort,array;
+        alias cmp = (a,b)=>a.name<b.name;
+        return funcDecls.values().sort!cmp().array;
+    }
+
     this(EConfig config) {
         this.config = config;
     }
@@ -73,7 +79,7 @@ private:
             case DEREF: break;
             case ENUM:
                 auto en = n.as!Enum;
-                if(config.isRequiredEnum(en.name)) {
+                if(config.isRequiredType(en.name)) {
                     include(en);
                 }
                 break;
@@ -104,7 +110,7 @@ private:
             case STRUCTDEF: {
                 auto sd = n.as!StructDef;
                 if(sd.name !is null) {
-                    if(config.isRequiredStruct(sd.name)) {
+                    if(config.isRequiredType(sd.name)) {
                         include(sd);
                     }
                 }

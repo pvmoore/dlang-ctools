@@ -7,8 +7,7 @@ final class EConfig {
 private:
 public:
     Regex!char[] requiredFunctionRegexes;
-    Regex!char[] requiredStructRegexes;
-    Regex!char[] requiredEnumRegexes;
+    Regex!char[] requiredTypeRegexes;
 
     Regex!char[] excludeRegexes;
 
@@ -22,11 +21,8 @@ public:
     bool isRequiredFunction(string name) {
         return checkMatch(requiredFunctionRegexes, name);
     }
-    bool isRequiredStruct(string name) {
-        return checkMatch(requiredStructRegexes, name);
-    }
-    bool isRequiredEnum(string name) {
-        return checkMatch(requiredEnumRegexes, name);
+    bool isRequiredType(string name) {
+        return checkMatch(requiredTypeRegexes, name);
     }
     bool isExcluded(string name) {
         if(!name) return true;

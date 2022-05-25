@@ -30,7 +30,7 @@ private:
         this.config = new EConfig();
 
         config.requiredFunctionRegexes ~= regex(r"^vk.*");
-        config.requiredEnumRegexes ~= regex(r"^Vk.*");
+        config.requiredTypeRegexes ~= regex(r"^Vk.*");
 
         this.extractor = new Extractor(config);
         extractor.process(parent);
