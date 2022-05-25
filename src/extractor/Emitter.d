@@ -21,10 +21,10 @@ public:
         UNQUALIFIED_ENUM    = 1<<1,
     }
 
-    this(Extractor extractor, Flag flags = DEFAULT_FLAGS) {
+    this(Extractor extractor, string moduleName, Flag flags = DEFAULT_FLAGS) {
         this.extractor = extractor;
         this.flags = flags;
-        this.moduleName = "emit";
+        this.moduleName = moduleName;
     }
     auto add(Plugin plugin) {
         plugins ~= plugin;

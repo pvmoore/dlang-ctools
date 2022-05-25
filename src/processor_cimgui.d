@@ -65,7 +65,7 @@ private:
 
         auto flags = Emitter.Flag.UNQUALIFIED_ENUM;
 
-        this.emitter = new Emitter(extractor, flags);
+        this.emitter = new Emitter(extractor, "cimgui_api", flags);
 
         import std : map, array;
         auto loader = new EmitDLLLoader("CImguiLoader", "cimgui.dll")
@@ -77,6 +77,6 @@ private:
         emitter.add(new Includes(INCLUDES));
         emitter.add(loader);
 
-        emitter.emitTo("_emit_cimgui.d");
+        emitter.emitTo("generated/cimgui_api.d");
     }
 }

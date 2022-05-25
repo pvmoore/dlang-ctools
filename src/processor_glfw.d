@@ -59,11 +59,15 @@ private:
             parseState.definitions,
             [regex(r"^GLFW_.*")]
         );
+        enum string[] INCLUDES = [
+            "vulkan_api"
+        ];
 
-        this.emitter = new Emitter(extractor);
+        this.emitter = new Emitter(extractor, "glfw_api");
 
+        emitter.add(new Includes(INCLUDES));
         emitter.add(de);
 
-        emitter.emitTo("_emit_glfw.d");
+        emitter.emitTo("generated/glfw_api.d");
     }
 }

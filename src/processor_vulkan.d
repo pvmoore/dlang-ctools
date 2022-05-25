@@ -51,13 +51,13 @@ private:
 
         auto flags = Emitter.Flag.UNQUALIFIED_ENUM | Emitter.Flag.QUALIFIED_ENUM;
 
-        this.emitter = new Emitter(extractor, flags);
+        this.emitter = new Emitter(extractor, "vulkan_api", flags);
         emitter.add(new Comment(COMMENTS));
         emitter.add(new EmitDLLLoader("VulkanLoader", "vulkan-1.dll")
                         .loadFunctions("vkGetInstanceProcAddr"));
 
         emitter.add(new LoadInstanceFunctions(extractor.getOrderedValues(extractor.funcDecls)));
-        emitter.emitTo("_emit_vulkan.d");
+        emitter.emitTo("generated/vulkan_api.d");
     }
 }
 
