@@ -45,12 +45,12 @@ void main(string[] args) {
     }
 
     // Extract Vulkan
-    if(true) {
+    if(false) {
         auto vulkanProcessor = new VulkanProcessor();
         vulkanProcessor.process();
     }
     // Extract GLFW
-    if(true) {
+    if(false) {
         auto glfwProcessor = new GLFWProcessor();
         glfwProcessor.process();
     }

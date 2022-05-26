@@ -63,7 +63,8 @@ private:
             "core.stdc.stdio"
         ];
 
-        auto flags = Emitter.Flag.UNQUALIFIED_ENUM;
+        auto flags = Emitter.Flag.UNQUALIFIED_ENUM |
+                     Emitter.Flag.UFCS_STRUCT_METHODS;
 
         this.emitter = new Emitter(extractor, "cimgui_api", flags);
 

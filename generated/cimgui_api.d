@@ -4620,13 +4620,13 @@ bool function(ImVec2 a, ImVec2 b, ImVec2 c, ImVec2 p)
 int function(int v)
 	igImUpperPowerOfTwo;
 
-void function(ImTextureID user_texture_id, ImVec2 size, ImVec2 uv0, ImVec2 uv1, ImVec4 tint_col, ImVec4 border_col)
+void function(ImVec2 size, ImVec2 uv0, ImVec2 uv1, ImVec4 tint_col, ImVec4 border_col)
 	igImage;
 
-bool function(ImTextureID user_texture_id, ImVec2 size, ImVec2 uv0, ImVec2 uv1, int frame_padding, ImVec4 bg_col, ImVec4 tint_col)
+bool function(ImVec2 size, ImVec2 uv0, ImVec2 uv1, int frame_padding, ImVec4 bg_col, ImVec4 tint_col)
 	igImageButton;
 
-bool function(ImGuiID id, ImTextureID texture_id, ImVec2 size, ImVec2 uv0, ImVec2 uv1, ImVec2 padding, ImVec4 bg_col, ImVec4 tint_col)
+bool function(ImGuiID id, ImVec2 size, ImVec2 uv0, ImVec2 uv1, ImVec2 padding, ImVec4 bg_col, ImVec4 tint_col)
 	igImageButtonEx;
 
 void function(float indent_w)
@@ -5739,5 +5739,376 @@ void function(byte* prefix, int v)
 void function(byte* prefix, uint v)
 	igValue_Uint;
 
-}}
+}} // extern(Windows), __gshared
+
+// UFCS camel case struct methods
+pragma(inline,true) {
+
+void destroy(ImGuiContextHook* self) {
+	ImGuiContextHook_destroy(self);
+}
+void destroy(ImGuiContext* self) {
+	ImGuiContext_destroy(self);
+}
+void addInputCharacter(ImGuiIO* self, uint c) {
+	ImGuiIO_AddInputCharacter(self, c);
+}
+void addInputCharacterUTF16(ImGuiIO* self, ImWchar16 c) {
+	ImGuiIO_AddInputCharacterUTF16(self, c);
+}
+void addInputCharactersUTF8(ImGuiIO* self, byte* str) {
+	ImGuiIO_AddInputCharactersUTF8(self, str);
+}
+void clearInputCharacters(ImGuiIO* self) {
+	ImGuiIO_ClearInputCharacters(self);
+}
+void destroy(ImGuiIO* self) {
+	ImGuiIO_destroy(self);
+}
+void clearSelection(ImGuiInputTextCallbackData* self) {
+	ImGuiInputTextCallbackData_ClearSelection(self);
+}
+void deleteChars(ImGuiInputTextCallbackData* self, int pos, int bytes_count) {
+	ImGuiInputTextCallbackData_DeleteChars(self, pos, bytes_count);
+}
+bool hasSelection(ImGuiInputTextCallbackData* self) {
+	return ImGuiInputTextCallbackData_HasSelection(self);
+}
+void insertChars(ImGuiInputTextCallbackData* self, int pos, byte* text, byte* text_end) {
+	ImGuiInputTextCallbackData_InsertChars(self, pos, text, text_end);
+}
+void selectAll(ImGuiInputTextCallbackData* self) {
+	ImGuiInputTextCallbackData_SelectAll(self);
+}
+void destroy(ImGuiInputTextCallbackData* self) {
+	ImGuiInputTextCallbackData_destroy(self);
+}
+void clearFreeMemory(ImGuiInputTextState* self) {
+	ImGuiInputTextState_ClearFreeMemory(self);
+}
+void clearSelection(ImGuiInputTextState* self) {
+	ImGuiInputTextState_ClearSelection(self);
+}
+void clearText(ImGuiInputTextState* self) {
+	ImGuiInputTextState_ClearText(self);
+}
+void cursorAnimReset(ImGuiInputTextState* self) {
+	ImGuiInputTextState_CursorAnimReset(self);
+}
+void cursorClamp(ImGuiInputTextState* self) {
+	ImGuiInputTextState_CursorClamp(self);
+}
+int getRedoAvailCount(ImGuiInputTextState* self) {
+	return ImGuiInputTextState_GetRedoAvailCount(self);
+}
+int getUndoAvailCount(ImGuiInputTextState* self) {
+	return ImGuiInputTextState_GetUndoAvailCount(self);
+}
+bool hasSelection(ImGuiInputTextState* self) {
+	return ImGuiInputTextState_HasSelection(self);
+}
+void onKeyPressed(ImGuiInputTextState* self, int key) {
+	ImGuiInputTextState_OnKeyPressed(self, key);
+}
+void selectAll(ImGuiInputTextState* self) {
+	ImGuiInputTextState_SelectAll(self);
+}
+void destroy(ImGuiInputTextState* self) {
+	ImGuiInputTextState_destroy(self);
+}
+void backup(ImGuiLastItemDataBackup* self) {
+	ImGuiLastItemDataBackup_Backup(self);
+}
+void restore(ImGuiLastItemDataBackup* self) {
+	ImGuiLastItemDataBackup_Restore(self);
+}
+void destroy(ImGuiLastItemDataBackup* self) {
+	ImGuiLastItemDataBackup_destroy(self);
+}
+void begin(ImGuiListClipper* self, int items_count, float items_height) {
+	ImGuiListClipper_Begin(self, items_count, items_height);
+}
+void end(ImGuiListClipper* self) {
+	ImGuiListClipper_End(self);
+}
+bool step(ImGuiListClipper* self) {
+	return ImGuiListClipper_Step(self);
+}
+void destroy(ImGuiListClipper* self) {
+	ImGuiListClipper_destroy(self);
+}
+float calcExtraSpace(ImGuiMenuColumns* self, float avail_w) {
+	return ImGuiMenuColumns_CalcExtraSpace(self, avail_w);
+}
+float declColumns(ImGuiMenuColumns* self, float w0, float w1, float w2) {
+	return ImGuiMenuColumns_DeclColumns(self, w0, w1, w2);
+}
+void update(ImGuiMenuColumns* self, int count, float spacing, bool clear) {
+	ImGuiMenuColumns_Update(self, count, spacing, clear);
+}
+void destroy(ImGuiMenuColumns* self) {
+	ImGuiMenuColumns_destroy(self);
+}
+void destroy(ImGuiMetricsConfig* self) {
+	ImGuiMetricsConfig_destroy(self);
+}
+void clear(ImGuiNavMoveResult* self) {
+	ImGuiNavMoveResult_Clear(self);
+}
+void destroy(ImGuiNavMoveResult* self) {
+	ImGuiNavMoveResult_destroy(self);
+}
+void clearFlags(ImGuiNextItemData* self) {
+	ImGuiNextItemData_ClearFlags(self);
+}
+void destroy(ImGuiNextItemData* self) {
+	ImGuiNextItemData_destroy(self);
+}
+void clearFlags(ImGuiNextWindowData* self) {
+	ImGuiNextWindowData_ClearFlags(self);
+}
+void destroy(ImGuiNextWindowData* self) {
+	ImGuiNextWindowData_destroy(self);
+}
+void destroy(ImGuiOldColumnData* self) {
+	ImGuiOldColumnData_destroy(self);
+}
+void destroy(ImGuiOldColumns* self) {
+	ImGuiOldColumns_destroy(self);
+}
+void destroy(ImGuiOnceUponAFrame* self) {
+	ImGuiOnceUponAFrame_destroy(self);
+}
+void clear(ImGuiPayload* self) {
+	ImGuiPayload_Clear(self);
+}
+bool isDataType(ImGuiPayload* self, byte* type) {
+	return ImGuiPayload_IsDataType(self, type);
+}
+bool isDelivery(ImGuiPayload* self) {
+	return ImGuiPayload_IsDelivery(self);
+}
+bool isPreview(ImGuiPayload* self) {
+	return ImGuiPayload_IsPreview(self);
+}
+void destroy(ImGuiPayload* self) {
+	ImGuiPayload_destroy(self);
+}
+void destroy(ImGuiPopupData* self) {
+	ImGuiPopupData_destroy(self);
+}
+void destroy(ImGuiPtrOrIndex* self) {
+	ImGuiPtrOrIndex_destroy(self);
+}
+void destroy(ImGuiSettingsHandler* self) {
+	ImGuiSettingsHandler_destroy(self);
+}
+void compareWithCurrentState(ImGuiStackSizes* self) {
+	ImGuiStackSizes_CompareWithCurrentState(self);
+}
+void setToCurrentState(ImGuiStackSizes* self) {
+	ImGuiStackSizes_SetToCurrentState(self);
+}
+void destroy(ImGuiStackSizes* self) {
+	ImGuiStackSizes_destroy(self);
+}
+void destroy(ImGuiStoragePair* self) {
+	ImGuiStoragePair_destroy(self);
+}
+void buildSortByKey(ImGuiStorage* self) {
+	ImGuiStorage_BuildSortByKey(self);
+}
+void clear(ImGuiStorage* self) {
+	ImGuiStorage_Clear(self);
+}
+bool getBool(ImGuiStorage* self, ImGuiID key, bool default_val) {
+	return ImGuiStorage_GetBool(self, key, default_val);
+}
+bool* getBoolRef(ImGuiStorage* self, ImGuiID key, bool default_val) {
+	return ImGuiStorage_GetBoolRef(self, key, default_val);
+}
+float getFloat(ImGuiStorage* self, ImGuiID key, float default_val) {
+	return ImGuiStorage_GetFloat(self, key, default_val);
+}
+float* getFloatRef(ImGuiStorage* self, ImGuiID key, float default_val) {
+	return ImGuiStorage_GetFloatRef(self, key, default_val);
+}
+int getInt(ImGuiStorage* self, ImGuiID key, int default_val) {
+	return ImGuiStorage_GetInt(self, key, default_val);
+}
+int* getIntRef(ImGuiStorage* self, ImGuiID key, int default_val) {
+	return ImGuiStorage_GetIntRef(self, key, default_val);
+}
+void* getVoidPtr(ImGuiStorage* self, ImGuiID key) {
+	return ImGuiStorage_GetVoidPtr(self, key);
+}
+void** getVoidPtrRef(ImGuiStorage* self, ImGuiID key, void* default_val) {
+	return ImGuiStorage_GetVoidPtrRef(self, key, default_val);
+}
+void setAllInt(ImGuiStorage* self, int val) {
+	ImGuiStorage_SetAllInt(self, val);
+}
+void setBool(ImGuiStorage* self, ImGuiID key, bool val) {
+	ImGuiStorage_SetBool(self, key, val);
+}
+void setFloat(ImGuiStorage* self, ImGuiID key, float val) {
+	ImGuiStorage_SetFloat(self, key, val);
+}
+void setInt(ImGuiStorage* self, ImGuiID key, int val) {
+	ImGuiStorage_SetInt(self, key, val);
+}
+void setVoidPtr(ImGuiStorage* self, ImGuiID key, void* val) {
+	ImGuiStorage_SetVoidPtr(self, key, val);
+}
+void destroy(ImGuiStyleMod* self) {
+	ImGuiStyleMod_destroy(self);
+}
+void scaleAllSizes(ImGuiStyle* self, float scale_factor) {
+	ImGuiStyle_ScaleAllSizes(self, scale_factor);
+}
+void destroy(ImGuiStyle* self) {
+	ImGuiStyle_destroy(self);
+}
+byte* getTabName(ImGuiTabBar* self, ImGuiTabItem* tab) {
+	return ImGuiTabBar_GetTabName(self, tab);
+}
+int getTabOrder(ImGuiTabBar* self, ImGuiTabItem* tab) {
+	return ImGuiTabBar_GetTabOrder(self, tab);
+}
+void destroy(ImGuiTabBar* self) {
+	ImGuiTabBar_destroy(self);
+}
+void destroy(ImGuiTabItem* self) {
+	ImGuiTabItem_destroy(self);
+}
+void destroy(ImGuiTableColumnSettings* self) {
+	ImGuiTableColumnSettings_destroy(self);
+}
+void destroy(ImGuiTableColumnSortSpecs* self) {
+	ImGuiTableColumnSortSpecs_destroy(self);
+}
+void destroy(ImGuiTableColumn* self) {
+	ImGuiTableColumn_destroy(self);
+}
+ImGuiTableColumnSettings* getColumnSettings(ImGuiTableSettings* self) {
+	return ImGuiTableSettings_GetColumnSettings(self);
+}
+void destroy(ImGuiTableSettings* self) {
+	ImGuiTableSettings_destroy(self);
+}
+void destroy(ImGuiTableSortSpecs* self) {
+	ImGuiTableSortSpecs_destroy(self);
+}
+void destroy(ImGuiTable* self) {
+	ImGuiTable_destroy(self);
+}
+void append(ImGuiTextBuffer* self, byte* str, byte* str_end) {
+	ImGuiTextBuffer_append(self, str, str_end);
+}
+void appendf(ImGuiTextBuffer* buffer, byte* fmt, ...) {
+	ImGuiTextBuffer_appendf(buffer, fmt);
+}
+void appendfv(ImGuiTextBuffer* self, byte* fmt, va_list args) {
+	ImGuiTextBuffer_appendfv(self, fmt, args);
+}
+byte* begin(ImGuiTextBuffer* self) {
+	return ImGuiTextBuffer_begin(self);
+}
+byte* c_str(ImGuiTextBuffer* self) {
+	return ImGuiTextBuffer_c_str(self);
+}
+void clear(ImGuiTextBuffer* self) {
+	ImGuiTextBuffer_clear(self);
+}
+void destroy(ImGuiTextBuffer* self) {
+	ImGuiTextBuffer_destroy(self);
+}
+bool empty(ImGuiTextBuffer* self) {
+	return ImGuiTextBuffer_empty(self);
+}
+byte* end(ImGuiTextBuffer* self) {
+	return ImGuiTextBuffer_end(self);
+}
+void reserve(ImGuiTextBuffer* self, int capacity) {
+	ImGuiTextBuffer_reserve(self, capacity);
+}
+int size(ImGuiTextBuffer* self) {
+	return ImGuiTextBuffer_size(self);
+}
+void build(ImGuiTextFilter* self) {
+	ImGuiTextFilter_Build(self);
+}
+void clear(ImGuiTextFilter* self) {
+	ImGuiTextFilter_Clear(self);
+}
+bool draw(ImGuiTextFilter* self, byte* label, float width) {
+	return ImGuiTextFilter_Draw(self, label, width);
+}
+bool isActive(ImGuiTextFilter* self) {
+	return ImGuiTextFilter_IsActive(self);
+}
+bool passFilter(ImGuiTextFilter* self, byte* text, byte* text_end) {
+	return ImGuiTextFilter_PassFilter(self, text, text_end);
+}
+void destroy(ImGuiTextFilter* self) {
+	ImGuiTextFilter_destroy(self);
+}
+void destroy(ImGuiTextRange* self) {
+	ImGuiTextRange_destroy(self);
+}
+bool empty(ImGuiTextRange* self) {
+	return ImGuiTextRange_empty(self);
+}
+void split(ImGuiTextRange* self, byte separator, ImVector_ImGuiTextRange* out_) {
+	ImGuiTextRange_split(self, separator, out_);
+}
+void updateWorkRect(ImGuiViewportP* self) {
+	ImGuiViewportP_UpdateWorkRect(self);
+}
+void destroy(ImGuiViewportP* self) {
+	ImGuiViewportP_destroy(self);
+}
+void destroy(ImGuiViewport* self) {
+	ImGuiViewport_destroy(self);
+}
+byte* getName(ImGuiWindowSettings* self) {
+	return ImGuiWindowSettings_GetName(self);
+}
+void destroy(ImGuiWindowSettings* self) {
+	ImGuiWindowSettings_destroy(self);
+}
+float calcFontSize(ImGuiWindow* self) {
+	return ImGuiWindow_CalcFontSize(self);
+}
+ImGuiID getIDFromRectangle(ImGuiWindow* self, ImRect r_abs) {
+	return ImGuiWindow_GetIDFromRectangle(self, r_abs);
+}
+ImGuiID getIDNoKeepAlive_Int(ImGuiWindow* self, int n) {
+	return ImGuiWindow_GetIDNoKeepAlive_Int(self, n);
+}
+ImGuiID getIDNoKeepAlive_Ptr(ImGuiWindow* self, void* ptr) {
+	return ImGuiWindow_GetIDNoKeepAlive_Ptr(self, ptr);
+}
+ImGuiID getIDNoKeepAlive_Str(ImGuiWindow* self, byte* str, byte* str_end) {
+	return ImGuiWindow_GetIDNoKeepAlive_Str(self, str, str_end);
+}
+ImGuiID getID_Int(ImGuiWindow* self, int n) {
+	return ImGuiWindow_GetID_Int(self, n);
+}
+ImGuiID getID_Ptr(ImGuiWindow* self, void* ptr) {
+	return ImGuiWindow_GetID_Ptr(self, ptr);
+}
+ImGuiID getID_Str(ImGuiWindow* self, byte* str, byte* str_end) {
+	return ImGuiWindow_GetID_Str(self, str, str_end);
+}
+float menuBarHeight(ImGuiWindow* self) {
+	return ImGuiWindow_MenuBarHeight(self);
+}
+float titleBarHeight(ImGuiWindow* self) {
+	return ImGuiWindow_TitleBarHeight(self);
+}
+void destroy(ImGuiWindow* self) {
+	ImGuiWindow_destroy(self);
+}
+} // pragma
 

@@ -5,6 +5,9 @@
 - PreProcessor
 - Parser
 - Include file extractor (emit as D imports)
+    - Vulkan
+    - GLFW
+    - CImgui
 
 #### Requirements
 - Dlang https://dlang.org/

@@ -30,7 +30,7 @@ public:
         auto typeAndName = typeParser.parse(parent);
 
         // ignore void parameters (void)
-        if(typeAndName.type.isVoid() && !typeAndName.type.isPtr()) return false;
+        if(typeAndName.type.isVoidValue()) return false;
 
         auto var = new Var();
         var.name = typeAndName.name;

@@ -23,6 +23,9 @@ public:
     Type returnType() {
         return first().as!Type;
     }
+    Type firstParameterType() {
+        return children[1].as!Var.type();
+    }
     Type[] parameterTypes() {
         return children[1..numParameters+1]
                 .map!(it=>it.as!Var.type()).array;

@@ -8,7 +8,6 @@ public:
     bool isConst;
     bool isVolatile;
 
-    final bool isVoid() { return kind == TKind.VOID; }
     final bool isFuncPtr() { return kind == TKind.FUNC && isPtr(); }
 
     bool isPtr() { return false; }
@@ -18,6 +17,10 @@ public:
     this(TKind kind) {
         this.kind = kind;
     }
+}
+
+bool isVoidValue(Type t) {
+    return t.kind == TKind.VOID && !t.isA!PtrType;
 }
 
 string fullString(Type t) {

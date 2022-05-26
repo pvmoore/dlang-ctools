@@ -6,13 +6,16 @@ import extractor;
 final class Emitter {
 private:
     enum DEFAULT_FLAGS = Flag.QUALIFIED_ENUM;
+    enum Stage { PLUGINS, ALIASES, ENUMS, STRUCT_DEFS, VARS, FUNC_DECLS, FUNC_DEFS }
     File file;
     Extractor extractor;
     string moduleName;
     Plugin[] plugins;
     Flag flags;
+    Stage stage;
     string[] pvtImports;
     string[] pubImports;
+    FuncDecl[] addUFCS;
 public:
     interface Plugin {
         void emit(File);
@@ -21,6 +24,7 @@ public:
         NONE                = 0,
         QUALIFIED_ENUM      = 1<<0,
         UNQUALIFIED_ENUM    = 1<<1,
+        UFCS_STRUCT_METHODS = 1<<2,
     }
 
     this(Extractor extractor, string moduleName, Flag flags = DEFAULT_FLAGS) {
@@ -43,31 +47,39 @@ public:
     void emitTo(string filename) {
         this.file = File(filename, "wb");
         prolog();
+        stage = Stage.PLUGINS;
         foreach(p; plugins) {
             p.emit(file);
         }
+        stage = Stage.ALIASES;
         foreach(tr; extractor.getOrderedValues(extractor.aliases)) {
             emit(tr, false);
         }
         file.writeln();
+        stage = Stage.ENUMS;
         foreach(e; extractor.getOrderedValues(extractor.enums)) {
             emit(e);
         }
         file.writeln();
+        stage = Stage.STRUCT_DEFS;
         foreach(sd; extractor.getOrderedValues(extractor.structDefs)) {
             emit(sd);
         }
         file.writeln();
+        stage = Stage.VARS;
         foreach(v; extractor.getOrderedValues(extractor.vars)) {
             emit(v);
         }
         file.writeln();
+        stage = Stage.FUNC_DECLS;
         file.writefln("extern(Windows) { __gshared {\n");
         foreach(fd; extractor.getOrderedValues(extractor.funcDecls)) {
             emit(fd, false);
         }
-        file.writefln("}}");
+        file.writefln("}} // extern(Windows), __gshared");
         file.writeln();
+        addUFCSStructMethods();
+        stage = Stage.FUNC_DEFS;
         foreach(fd; extractor.getOrderedValues(extractor.funcDefs)) {
             emit(fd);
         }
@@ -92,7 +104,7 @@ private:
         file.writeln();
         if(pvtImports.length>0) {
             file.writefln("private:");
-            file.writeln(); 
+            file.writeln();
             foreach(i; pvtImports) {
                 file.writefln("import %s;", i);
             }
@@ -123,6 +135,45 @@ private:
             default: return name;
         }
         assert(false);
+    }
+    void addUFCSStructMethods() {
+        import std.string : indexOf, toLower;
+        if(addUFCS.length==0) return;
+
+        file.writeln("// UFCS camel case struct methods");
+        file.writeln("pragma(inline,true) {\n");
+
+        foreach(fd; addUFCS) {
+            auto us = fd.name.indexOf('_');
+            string sub = toLower(fd.name[us+1]).as!char ~ fd.name[us+2..$];
+
+            emit(fd.returnType());
+            file.writef(" %s(", sub);
+
+            foreach(i, v; fd.parameterVars()) {
+                emit(v.type());
+                file.writef(" %s", dname(v.name));
+                if(i < fd.numParameters-1) file.write(", ");
+            }
+            if(fd.hasElipsis) {
+                if(fd.numParameters>0) file.write(", ");
+                file.write("...");
+            }
+
+            file.writefln(") {");
+            if(!isVoidValue(fd.returnType())) {
+                file.write("\treturn ");
+            } else {
+                file.write("\t");
+            }
+            file.writef("%s(", fd.name);
+            foreach(i, v; fd.parameterVars()) {
+                file.writef("%s", dname(v.name));
+                if(i < fd.numParameters-1) file.write(", ");
+            }
+            file.writeln(");\n}");
+        }
+        file.writeln("} // pragma\n");
     }
     void emit(Node n) {
         final switch(n.nid) with(Nid) {
@@ -276,9 +327,9 @@ private:
         todo("Emit FuncDef not implemented");
     }
     void emit(FuncDecl fd, bool isType) {
+
         emit(fd.returnType());
         file.write(" function(");
-
         foreach(i, v; fd.parameterVars()) {
             emit(v.type());
             file.writef(" %s", dname(v.name));
@@ -288,10 +339,32 @@ private:
             if(fd.numParameters>0) file.write(", ");
             file.write("...");
         }
+
         if(isType) {
             file.write(")");
         } else {
             file.writefln(")\n\t%s;\n", fd.name);
+        }
+        if(stage == Stage.FUNC_DECLS) {
+            // Add a psuedo method for anything that looks like it should
+            // be a struct method.
+            // eg.
+            // bool function(ImGuiTextFilter* self) ImGuiTextFilter_IsActive;
+            //
+            // pragma(inline,true) bool isActive(ImGuiTextFilter* self) {
+            //    return ImGuiTextFilter_IsActive(self);
+            // }
+            //
+            if(flag(Flag.UFCS_STRUCT_METHODS) &&
+                fd.numParameters > 0 &&
+                fd.firstParameterType().isA!PtrType)
+            {
+                if(auto base = getStructDef(fd.firstParameterType())) {
+                    if(fd.name.startsWith(base.name ~ "_")) {
+                        addUFCS ~= fd;
+                    }
+                }
+            }
         }
     }
     void emit(Var v) {
