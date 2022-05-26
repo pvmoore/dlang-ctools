@@ -69,7 +69,9 @@ private:
                                               .map!(it=>it.name)
                                               .array);
 
-        this.emitter = new Emitter(extractor, "glfw_api");
+        auto flags = Emitter.Flag.QUALIFIED_ENUM;
+
+        this.emitter = new Emitter(extractor, "glfw_api", flags);
 
         emitter.privateImports(INCLUDES);
 

@@ -50,7 +50,8 @@ private:
             "  ** Exit program"
         ];
 
-        auto flags = Emitter.Flag.UNQUALIFIED_ENUM | Emitter.Flag.QUALIFIED_ENUM;
+        auto flags = Emitter.Flag.UNQUALIFIED_ENUM |
+                     Emitter.Flag.QUALIFIED_ENUM;
 
         this.emitter = new Emitter(extractor, "vulkan_api", flags);
         emitter.add(new Comment(COMMENTS));

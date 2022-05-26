@@ -10092,7 +10092,7 @@ VkResult function(VkDevice device, VkMemoryGetWin32HandleInfoKHR* pGetWin32Handl
 VkResult function(VkDevice device, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagsNV handleType, HANDLE* pHandle)
 	vkGetMemoryWin32HandleNV;
 
-VkResult function(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE handle, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties)
+VkResult function(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties)
 	vkGetMemoryWin32HandlePropertiesKHR;
 
 VkResult function(VkDevice device, VkSwapchainKHR swapchain, uint32_t* pPresentationTimingCount, VkPastPresentationTimingGOOGLE* pPresentationTimings)
@@ -10452,5 +10452,5 @@ VkResult function(VkDevice device, VkSemaphoreWaitInfo* pWaitInfo, uint64_t time
 VkResult function(VkDevice device, VkSemaphoreWaitInfo* pWaitInfo, uint64_t timeout)
 	vkWaitSemaphoresKHR;
 
-}}
+}} // extern(Windows), __gshared
 

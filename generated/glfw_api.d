@@ -863,5 +863,5 @@ void function(int hint, byte* value)
 int function(GLFWwindow* window)
 	glfwWindowShouldClose;
 
-}}
+}} // extern(Windows), __gshared
 
