@@ -131,6 +131,7 @@ private:
             case "ref":
             case "in":
             case "align":
+            case "function":
                 return name ~ "_";
             default: return name;
         }
