@@ -8,14 +8,15 @@ private:
     Extractor extractor;
     Emitter emitter;
     enum glfwVersion = "3.3.7";
+    enum glfwPath = "C:/work/glfw-3.3.7.bin.WIN64/";
+    enum dllName = "glfw3.3.7.dll";
 public:
     void process() {
         prepare();
 
         parseState.dumpIncludeTokens = false;
 
-        string base = "C:/work/glfw-%s.bin.WIN64/".format(glfwVersion);
-        string glfwH = base ~ "include/GLFW/glfw3.h";
+        string glfwH = glfwPath ~ "include/GLFW/glfw3.h";
 
         parse(Filepath(glfwH));
         extract();
@@ -64,7 +65,7 @@ private:
             "vulkan_api"
         ];
         import std : map, array;
-        auto loader = new EmitDLLLoader("GLFWLoader", "glfw3.dll")
+        auto loader = new EmitDLLLoader("GLFWLoader", dllName)
             .loadFunctions(extractor.getOrderedValues(extractor.funcDecls)
                                               .map!(it=>it.name)
                                               .array);

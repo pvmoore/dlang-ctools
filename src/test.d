@@ -50,12 +50,12 @@ void main(string[] args) {
         vulkanProcessor.process();
     }
     // Extract GLFW
-    if(false) {
+    if(true) {
         auto glfwProcessor = new GLFWProcessor();
         glfwProcessor.process();
     }
     // Extract CImgui
-    if(true) {
+    if(false) {
         auto cimguiProcessor = new CImguiProcessor();
         cimguiProcessor.process();
     }

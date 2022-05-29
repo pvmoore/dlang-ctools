@@ -21,8 +21,8 @@ private struct _GLFWLoader {
 	import common : throwIf;
 	HANDLE handle;
 	void load() {
-		this.handle = LoadLibraryA("glfw3.dll");
-		if(!handle) throw new Exception("Unable to load 'glfw3.dll'");
+		this.handle = LoadLibraryA("glfw3.3.7.dll");
+		if(!handle) throw new Exception("Unable to load 'glfw3.3.7.dll'");
 		
 		*(cast(void**)&glfwCreateCursor) = GetProcAddr(handle, "glfwCreateCursor"); throwIf(!glfwCreateCursor);
 		*(cast(void**)&glfwCreateStandardCursor) = GetProcAddr(handle, "glfwCreateStandardCursor"); throwIf(!glfwCreateStandardCursor);
