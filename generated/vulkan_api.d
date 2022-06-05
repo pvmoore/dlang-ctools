@@ -1,12 +1,17 @@
 module vulkan_api;
 
+private:
+
+import core.sys.windows.windows;
+
 public:
 
-// Vulkan 1.3.204.2 Include files converted to D (This is a generated file)
+// Vulkan 1.3.211.0 Include files converted to D (This is a generated file)
 // 
 // Usage:
 //   ** Start program
 //   VulkanLoader.load();
+//   vkLoadGlobalCommandFunctions();
 //   ** Create your VkInstance here
 //   vkLoadInstanceFunctions(instance);
 //   ** 
@@ -22,7 +27,7 @@ private struct _VulkanLoader {
 		this.handle = LoadLibraryA("vulkan-1.dll");
 		if(!handle) throw new Exception("Unable to load 'vulkan-1.dll'");
 		
-		*(cast(void**)&vkGetInstanceProcAddr) = GetProcAddr(handle, "vkGetInstanceProcAddr"); throwIf(!vkGetInstanceProcAddr);
+		*(cast(void**)&vkGetInstanceProcAddr) = GetProcAddress(handle, "vkGetInstanceProcAddr"); throwIf(!vkGetInstanceProcAddr);
 	}
 	void unload() {
 		if(handle) FreeLibrary(handle);
@@ -31,527 +36,35 @@ private struct _VulkanLoader {
 __gshared _VulkanLoader VulkanLoader;
 // End of VulkanLoader
 
+// Load Global Command Functions
+void vkLoadGlobalCommandFunctions() {
+	import std.string : toStringz;
+	import common : throwIf;
+	*(cast(void**)&vkCreateInstance) = vkGetInstanceProcAddr(null, toStringz("vkCreateInstance")); throwIf(!vkCreateInstance);
+	*(cast(void**)&vkEnumerateInstanceExtensionProperties) = vkGetInstanceProcAddr(null, toStringz("vkEnumerateInstanceExtensionProperties")); throwIf(!vkEnumerateInstanceExtensionProperties);
+	*(cast(void**)&vkEnumerateInstanceLayerProperties) = vkGetInstanceProcAddr(null, toStringz("vkEnumerateInstanceLayerProperties")); throwIf(!vkEnumerateInstanceLayerProperties);
+	*(cast(void**)&vkEnumerateInstanceVersion) = vkGetInstanceProcAddr(null, toStringz("vkEnumerateInstanceVersion")); throwIf(!vkEnumerateInstanceVersion);
+}
 // Load Instance Functions
 void vkLoadInstanceFunctions(VkInstance instance) {
+	import std.string : toStringz;
 	import common : throwIf;
-	*(cast(void**)&vkAcquireDrmDisplayEXT) = vkGetInstanceProcAddr(instance, "vkAcquireDrmDisplayEXT"); throwIf(!vkAcquireDrmDisplayEXT);
-	*(cast(void**)&vkAcquireFullScreenExclusiveModeEXT) = vkGetInstanceProcAddr(instance, "vkAcquireFullScreenExclusiveModeEXT"); throwIf(!vkAcquireFullScreenExclusiveModeEXT);
-	*(cast(void**)&vkAcquireNextImage2KHR) = vkGetInstanceProcAddr(instance, "vkAcquireNextImage2KHR"); throwIf(!vkAcquireNextImage2KHR);
-	*(cast(void**)&vkAcquireNextImageKHR) = vkGetInstanceProcAddr(instance, "vkAcquireNextImageKHR"); throwIf(!vkAcquireNextImageKHR);
-	*(cast(void**)&vkAcquirePerformanceConfigurationINTEL) = vkGetInstanceProcAddr(instance, "vkAcquirePerformanceConfigurationINTEL"); throwIf(!vkAcquirePerformanceConfigurationINTEL);
-	*(cast(void**)&vkAcquireProfilingLockKHR) = vkGetInstanceProcAddr(instance, "vkAcquireProfilingLockKHR"); throwIf(!vkAcquireProfilingLockKHR);
-	*(cast(void**)&vkAcquireWinrtDisplayNV) = vkGetInstanceProcAddr(instance, "vkAcquireWinrtDisplayNV"); throwIf(!vkAcquireWinrtDisplayNV);
-	*(cast(void**)&vkAllocateCommandBuffers) = vkGetInstanceProcAddr(instance, "vkAllocateCommandBuffers"); throwIf(!vkAllocateCommandBuffers);
-	*(cast(void**)&vkAllocateDescriptorSets) = vkGetInstanceProcAddr(instance, "vkAllocateDescriptorSets"); throwIf(!vkAllocateDescriptorSets);
-	*(cast(void**)&vkAllocateMemory) = vkGetInstanceProcAddr(instance, "vkAllocateMemory"); throwIf(!vkAllocateMemory);
-	*(cast(void**)&vkBeginCommandBuffer) = vkGetInstanceProcAddr(instance, "vkBeginCommandBuffer"); throwIf(!vkBeginCommandBuffer);
-	*(cast(void**)&vkBindAccelerationStructureMemoryNV) = vkGetInstanceProcAddr(instance, "vkBindAccelerationStructureMemoryNV"); throwIf(!vkBindAccelerationStructureMemoryNV);
-	*(cast(void**)&vkBindBufferMemory) = vkGetInstanceProcAddr(instance, "vkBindBufferMemory"); throwIf(!vkBindBufferMemory);
-	*(cast(void**)&vkBindBufferMemory2) = vkGetInstanceProcAddr(instance, "vkBindBufferMemory2"); throwIf(!vkBindBufferMemory2);
-	*(cast(void**)&vkBindBufferMemory2KHR) = vkGetInstanceProcAddr(instance, "vkBindBufferMemory2KHR"); throwIf(!vkBindBufferMemory2KHR);
-	*(cast(void**)&vkBindImageMemory) = vkGetInstanceProcAddr(instance, "vkBindImageMemory"); throwIf(!vkBindImageMemory);
-	*(cast(void**)&vkBindImageMemory2) = vkGetInstanceProcAddr(instance, "vkBindImageMemory2"); throwIf(!vkBindImageMemory2);
-	*(cast(void**)&vkBindImageMemory2KHR) = vkGetInstanceProcAddr(instance, "vkBindImageMemory2KHR"); throwIf(!vkBindImageMemory2KHR);
-	*(cast(void**)&vkBuildAccelerationStructuresKHR) = vkGetInstanceProcAddr(instance, "vkBuildAccelerationStructuresKHR"); throwIf(!vkBuildAccelerationStructuresKHR);
-	*(cast(void**)&vkCmdBeginConditionalRenderingEXT) = vkGetInstanceProcAddr(instance, "vkCmdBeginConditionalRenderingEXT"); throwIf(!vkCmdBeginConditionalRenderingEXT);
-	*(cast(void**)&vkCmdBeginDebugUtilsLabelEXT) = vkGetInstanceProcAddr(instance, "vkCmdBeginDebugUtilsLabelEXT"); throwIf(!vkCmdBeginDebugUtilsLabelEXT);
-	*(cast(void**)&vkCmdBeginQuery) = vkGetInstanceProcAddr(instance, "vkCmdBeginQuery"); throwIf(!vkCmdBeginQuery);
-	*(cast(void**)&vkCmdBeginQueryIndexedEXT) = vkGetInstanceProcAddr(instance, "vkCmdBeginQueryIndexedEXT"); throwIf(!vkCmdBeginQueryIndexedEXT);
-	*(cast(void**)&vkCmdBeginRenderPass) = vkGetInstanceProcAddr(instance, "vkCmdBeginRenderPass"); throwIf(!vkCmdBeginRenderPass);
-	*(cast(void**)&vkCmdBeginRenderPass2) = vkGetInstanceProcAddr(instance, "vkCmdBeginRenderPass2"); throwIf(!vkCmdBeginRenderPass2);
-	*(cast(void**)&vkCmdBeginRenderPass2KHR) = vkGetInstanceProcAddr(instance, "vkCmdBeginRenderPass2KHR"); throwIf(!vkCmdBeginRenderPass2KHR);
-	*(cast(void**)&vkCmdBeginRendering) = vkGetInstanceProcAddr(instance, "vkCmdBeginRendering"); throwIf(!vkCmdBeginRendering);
-	*(cast(void**)&vkCmdBeginRenderingKHR) = vkGetInstanceProcAddr(instance, "vkCmdBeginRenderingKHR"); throwIf(!vkCmdBeginRenderingKHR);
-	*(cast(void**)&vkCmdBeginTransformFeedbackEXT) = vkGetInstanceProcAddr(instance, "vkCmdBeginTransformFeedbackEXT"); throwIf(!vkCmdBeginTransformFeedbackEXT);
-	*(cast(void**)&vkCmdBindDescriptorSets) = vkGetInstanceProcAddr(instance, "vkCmdBindDescriptorSets"); throwIf(!vkCmdBindDescriptorSets);
-	*(cast(void**)&vkCmdBindIndexBuffer) = vkGetInstanceProcAddr(instance, "vkCmdBindIndexBuffer"); throwIf(!vkCmdBindIndexBuffer);
-	*(cast(void**)&vkCmdBindInvocationMaskHUAWEI) = vkGetInstanceProcAddr(instance, "vkCmdBindInvocationMaskHUAWEI"); throwIf(!vkCmdBindInvocationMaskHUAWEI);
-	*(cast(void**)&vkCmdBindPipeline) = vkGetInstanceProcAddr(instance, "vkCmdBindPipeline"); throwIf(!vkCmdBindPipeline);
-	*(cast(void**)&vkCmdBindPipelineShaderGroupNV) = vkGetInstanceProcAddr(instance, "vkCmdBindPipelineShaderGroupNV"); throwIf(!vkCmdBindPipelineShaderGroupNV);
-	*(cast(void**)&vkCmdBindShadingRateImageNV) = vkGetInstanceProcAddr(instance, "vkCmdBindShadingRateImageNV"); throwIf(!vkCmdBindShadingRateImageNV);
-	*(cast(void**)&vkCmdBindTransformFeedbackBuffersEXT) = vkGetInstanceProcAddr(instance, "vkCmdBindTransformFeedbackBuffersEXT"); throwIf(!vkCmdBindTransformFeedbackBuffersEXT);
-	*(cast(void**)&vkCmdBindVertexBuffers) = vkGetInstanceProcAddr(instance, "vkCmdBindVertexBuffers"); throwIf(!vkCmdBindVertexBuffers);
-	*(cast(void**)&vkCmdBindVertexBuffers2) = vkGetInstanceProcAddr(instance, "vkCmdBindVertexBuffers2"); throwIf(!vkCmdBindVertexBuffers2);
-	*(cast(void**)&vkCmdBindVertexBuffers2EXT) = vkGetInstanceProcAddr(instance, "vkCmdBindVertexBuffers2EXT"); throwIf(!vkCmdBindVertexBuffers2EXT);
-	*(cast(void**)&vkCmdBlitImage) = vkGetInstanceProcAddr(instance, "vkCmdBlitImage"); throwIf(!vkCmdBlitImage);
-	*(cast(void**)&vkCmdBlitImage2) = vkGetInstanceProcAddr(instance, "vkCmdBlitImage2"); throwIf(!vkCmdBlitImage2);
-	*(cast(void**)&vkCmdBlitImage2KHR) = vkGetInstanceProcAddr(instance, "vkCmdBlitImage2KHR"); throwIf(!vkCmdBlitImage2KHR);
-	*(cast(void**)&vkCmdBuildAccelerationStructureNV) = vkGetInstanceProcAddr(instance, "vkCmdBuildAccelerationStructureNV"); throwIf(!vkCmdBuildAccelerationStructureNV);
-	*(cast(void**)&vkCmdBuildAccelerationStructuresIndirectKHR) = vkGetInstanceProcAddr(instance, "vkCmdBuildAccelerationStructuresIndirectKHR"); throwIf(!vkCmdBuildAccelerationStructuresIndirectKHR);
-	*(cast(void**)&vkCmdBuildAccelerationStructuresKHR) = vkGetInstanceProcAddr(instance, "vkCmdBuildAccelerationStructuresKHR"); throwIf(!vkCmdBuildAccelerationStructuresKHR);
-	*(cast(void**)&vkCmdClearAttachments) = vkGetInstanceProcAddr(instance, "vkCmdClearAttachments"); throwIf(!vkCmdClearAttachments);
-	*(cast(void**)&vkCmdClearColorImage) = vkGetInstanceProcAddr(instance, "vkCmdClearColorImage"); throwIf(!vkCmdClearColorImage);
-	*(cast(void**)&vkCmdClearDepthStencilImage) = vkGetInstanceProcAddr(instance, "vkCmdClearDepthStencilImage"); throwIf(!vkCmdClearDepthStencilImage);
-	*(cast(void**)&vkCmdCopyAccelerationStructureKHR) = vkGetInstanceProcAddr(instance, "vkCmdCopyAccelerationStructureKHR"); throwIf(!vkCmdCopyAccelerationStructureKHR);
-	*(cast(void**)&vkCmdCopyAccelerationStructureNV) = vkGetInstanceProcAddr(instance, "vkCmdCopyAccelerationStructureNV"); throwIf(!vkCmdCopyAccelerationStructureNV);
-	*(cast(void**)&vkCmdCopyAccelerationStructureToMemoryKHR) = vkGetInstanceProcAddr(instance, "vkCmdCopyAccelerationStructureToMemoryKHR"); throwIf(!vkCmdCopyAccelerationStructureToMemoryKHR);
-	*(cast(void**)&vkCmdCopyBuffer) = vkGetInstanceProcAddr(instance, "vkCmdCopyBuffer"); throwIf(!vkCmdCopyBuffer);
-	*(cast(void**)&vkCmdCopyBuffer2) = vkGetInstanceProcAddr(instance, "vkCmdCopyBuffer2"); throwIf(!vkCmdCopyBuffer2);
-	*(cast(void**)&vkCmdCopyBuffer2KHR) = vkGetInstanceProcAddr(instance, "vkCmdCopyBuffer2KHR"); throwIf(!vkCmdCopyBuffer2KHR);
-	*(cast(void**)&vkCmdCopyBufferToImage) = vkGetInstanceProcAddr(instance, "vkCmdCopyBufferToImage"); throwIf(!vkCmdCopyBufferToImage);
-	*(cast(void**)&vkCmdCopyBufferToImage2) = vkGetInstanceProcAddr(instance, "vkCmdCopyBufferToImage2"); throwIf(!vkCmdCopyBufferToImage2);
-	*(cast(void**)&vkCmdCopyBufferToImage2KHR) = vkGetInstanceProcAddr(instance, "vkCmdCopyBufferToImage2KHR"); throwIf(!vkCmdCopyBufferToImage2KHR);
-	*(cast(void**)&vkCmdCopyImage) = vkGetInstanceProcAddr(instance, "vkCmdCopyImage"); throwIf(!vkCmdCopyImage);
-	*(cast(void**)&vkCmdCopyImage2) = vkGetInstanceProcAddr(instance, "vkCmdCopyImage2"); throwIf(!vkCmdCopyImage2);
-	*(cast(void**)&vkCmdCopyImage2KHR) = vkGetInstanceProcAddr(instance, "vkCmdCopyImage2KHR"); throwIf(!vkCmdCopyImage2KHR);
-	*(cast(void**)&vkCmdCopyImageToBuffer) = vkGetInstanceProcAddr(instance, "vkCmdCopyImageToBuffer"); throwIf(!vkCmdCopyImageToBuffer);
-	*(cast(void**)&vkCmdCopyImageToBuffer2) = vkGetInstanceProcAddr(instance, "vkCmdCopyImageToBuffer2"); throwIf(!vkCmdCopyImageToBuffer2);
-	*(cast(void**)&vkCmdCopyImageToBuffer2KHR) = vkGetInstanceProcAddr(instance, "vkCmdCopyImageToBuffer2KHR"); throwIf(!vkCmdCopyImageToBuffer2KHR);
-	*(cast(void**)&vkCmdCopyMemoryToAccelerationStructureKHR) = vkGetInstanceProcAddr(instance, "vkCmdCopyMemoryToAccelerationStructureKHR"); throwIf(!vkCmdCopyMemoryToAccelerationStructureKHR);
-	*(cast(void**)&vkCmdCopyQueryPoolResults) = vkGetInstanceProcAddr(instance, "vkCmdCopyQueryPoolResults"); throwIf(!vkCmdCopyQueryPoolResults);
-	*(cast(void**)&vkCmdCuLaunchKernelNVX) = vkGetInstanceProcAddr(instance, "vkCmdCuLaunchKernelNVX"); throwIf(!vkCmdCuLaunchKernelNVX);
-	*(cast(void**)&vkCmdDebugMarkerBeginEXT) = vkGetInstanceProcAddr(instance, "vkCmdDebugMarkerBeginEXT"); throwIf(!vkCmdDebugMarkerBeginEXT);
-	*(cast(void**)&vkCmdDebugMarkerEndEXT) = vkGetInstanceProcAddr(instance, "vkCmdDebugMarkerEndEXT"); throwIf(!vkCmdDebugMarkerEndEXT);
-	*(cast(void**)&vkCmdDebugMarkerInsertEXT) = vkGetInstanceProcAddr(instance, "vkCmdDebugMarkerInsertEXT"); throwIf(!vkCmdDebugMarkerInsertEXT);
-	*(cast(void**)&vkCmdDispatch) = vkGetInstanceProcAddr(instance, "vkCmdDispatch"); throwIf(!vkCmdDispatch);
-	*(cast(void**)&vkCmdDispatchBase) = vkGetInstanceProcAddr(instance, "vkCmdDispatchBase"); throwIf(!vkCmdDispatchBase);
-	*(cast(void**)&vkCmdDispatchBaseKHR) = vkGetInstanceProcAddr(instance, "vkCmdDispatchBaseKHR"); throwIf(!vkCmdDispatchBaseKHR);
-	*(cast(void**)&vkCmdDispatchIndirect) = vkGetInstanceProcAddr(instance, "vkCmdDispatchIndirect"); throwIf(!vkCmdDispatchIndirect);
-	*(cast(void**)&vkCmdDraw) = vkGetInstanceProcAddr(instance, "vkCmdDraw"); throwIf(!vkCmdDraw);
-	*(cast(void**)&vkCmdDrawIndexed) = vkGetInstanceProcAddr(instance, "vkCmdDrawIndexed"); throwIf(!vkCmdDrawIndexed);
-	*(cast(void**)&vkCmdDrawIndexedIndirect) = vkGetInstanceProcAddr(instance, "vkCmdDrawIndexedIndirect"); throwIf(!vkCmdDrawIndexedIndirect);
-	*(cast(void**)&vkCmdDrawIndexedIndirectCount) = vkGetInstanceProcAddr(instance, "vkCmdDrawIndexedIndirectCount"); throwIf(!vkCmdDrawIndexedIndirectCount);
-	*(cast(void**)&vkCmdDrawIndexedIndirectCountAMD) = vkGetInstanceProcAddr(instance, "vkCmdDrawIndexedIndirectCountAMD"); throwIf(!vkCmdDrawIndexedIndirectCountAMD);
-	*(cast(void**)&vkCmdDrawIndexedIndirectCountKHR) = vkGetInstanceProcAddr(instance, "vkCmdDrawIndexedIndirectCountKHR"); throwIf(!vkCmdDrawIndexedIndirectCountKHR);
-	*(cast(void**)&vkCmdDrawIndirect) = vkGetInstanceProcAddr(instance, "vkCmdDrawIndirect"); throwIf(!vkCmdDrawIndirect);
-	*(cast(void**)&vkCmdDrawIndirectByteCountEXT) = vkGetInstanceProcAddr(instance, "vkCmdDrawIndirectByteCountEXT"); throwIf(!vkCmdDrawIndirectByteCountEXT);
-	*(cast(void**)&vkCmdDrawIndirectCount) = vkGetInstanceProcAddr(instance, "vkCmdDrawIndirectCount"); throwIf(!vkCmdDrawIndirectCount);
-	*(cast(void**)&vkCmdDrawIndirectCountAMD) = vkGetInstanceProcAddr(instance, "vkCmdDrawIndirectCountAMD"); throwIf(!vkCmdDrawIndirectCountAMD);
-	*(cast(void**)&vkCmdDrawIndirectCountKHR) = vkGetInstanceProcAddr(instance, "vkCmdDrawIndirectCountKHR"); throwIf(!vkCmdDrawIndirectCountKHR);
-	*(cast(void**)&vkCmdDrawMeshTasksIndirectCountNV) = vkGetInstanceProcAddr(instance, "vkCmdDrawMeshTasksIndirectCountNV"); throwIf(!vkCmdDrawMeshTasksIndirectCountNV);
-	*(cast(void**)&vkCmdDrawMeshTasksIndirectNV) = vkGetInstanceProcAddr(instance, "vkCmdDrawMeshTasksIndirectNV"); throwIf(!vkCmdDrawMeshTasksIndirectNV);
-	*(cast(void**)&vkCmdDrawMeshTasksNV) = vkGetInstanceProcAddr(instance, "vkCmdDrawMeshTasksNV"); throwIf(!vkCmdDrawMeshTasksNV);
-	*(cast(void**)&vkCmdDrawMultiEXT) = vkGetInstanceProcAddr(instance, "vkCmdDrawMultiEXT"); throwIf(!vkCmdDrawMultiEXT);
-	*(cast(void**)&vkCmdDrawMultiIndexedEXT) = vkGetInstanceProcAddr(instance, "vkCmdDrawMultiIndexedEXT"); throwIf(!vkCmdDrawMultiIndexedEXT);
-	*(cast(void**)&vkCmdEndConditionalRenderingEXT) = vkGetInstanceProcAddr(instance, "vkCmdEndConditionalRenderingEXT"); throwIf(!vkCmdEndConditionalRenderingEXT);
-	*(cast(void**)&vkCmdEndDebugUtilsLabelEXT) = vkGetInstanceProcAddr(instance, "vkCmdEndDebugUtilsLabelEXT"); throwIf(!vkCmdEndDebugUtilsLabelEXT);
-	*(cast(void**)&vkCmdEndQuery) = vkGetInstanceProcAddr(instance, "vkCmdEndQuery"); throwIf(!vkCmdEndQuery);
-	*(cast(void**)&vkCmdEndQueryIndexedEXT) = vkGetInstanceProcAddr(instance, "vkCmdEndQueryIndexedEXT"); throwIf(!vkCmdEndQueryIndexedEXT);
-	*(cast(void**)&vkCmdEndRenderPass) = vkGetInstanceProcAddr(instance, "vkCmdEndRenderPass"); throwIf(!vkCmdEndRenderPass);
-	*(cast(void**)&vkCmdEndRenderPass2) = vkGetInstanceProcAddr(instance, "vkCmdEndRenderPass2"); throwIf(!vkCmdEndRenderPass2);
-	*(cast(void**)&vkCmdEndRenderPass2KHR) = vkGetInstanceProcAddr(instance, "vkCmdEndRenderPass2KHR"); throwIf(!vkCmdEndRenderPass2KHR);
-	*(cast(void**)&vkCmdEndRendering) = vkGetInstanceProcAddr(instance, "vkCmdEndRendering"); throwIf(!vkCmdEndRendering);
-	*(cast(void**)&vkCmdEndRenderingKHR) = vkGetInstanceProcAddr(instance, "vkCmdEndRenderingKHR"); throwIf(!vkCmdEndRenderingKHR);
-	*(cast(void**)&vkCmdEndTransformFeedbackEXT) = vkGetInstanceProcAddr(instance, "vkCmdEndTransformFeedbackEXT"); throwIf(!vkCmdEndTransformFeedbackEXT);
-	*(cast(void**)&vkCmdExecuteCommands) = vkGetInstanceProcAddr(instance, "vkCmdExecuteCommands"); throwIf(!vkCmdExecuteCommands);
-	*(cast(void**)&vkCmdExecuteGeneratedCommandsNV) = vkGetInstanceProcAddr(instance, "vkCmdExecuteGeneratedCommandsNV"); throwIf(!vkCmdExecuteGeneratedCommandsNV);
-	*(cast(void**)&vkCmdFillBuffer) = vkGetInstanceProcAddr(instance, "vkCmdFillBuffer"); throwIf(!vkCmdFillBuffer);
-	*(cast(void**)&vkCmdInsertDebugUtilsLabelEXT) = vkGetInstanceProcAddr(instance, "vkCmdInsertDebugUtilsLabelEXT"); throwIf(!vkCmdInsertDebugUtilsLabelEXT);
-	*(cast(void**)&vkCmdNextSubpass) = vkGetInstanceProcAddr(instance, "vkCmdNextSubpass"); throwIf(!vkCmdNextSubpass);
-	*(cast(void**)&vkCmdNextSubpass2) = vkGetInstanceProcAddr(instance, "vkCmdNextSubpass2"); throwIf(!vkCmdNextSubpass2);
-	*(cast(void**)&vkCmdNextSubpass2KHR) = vkGetInstanceProcAddr(instance, "vkCmdNextSubpass2KHR"); throwIf(!vkCmdNextSubpass2KHR);
-	*(cast(void**)&vkCmdPipelineBarrier) = vkGetInstanceProcAddr(instance, "vkCmdPipelineBarrier"); throwIf(!vkCmdPipelineBarrier);
-	*(cast(void**)&vkCmdPipelineBarrier2) = vkGetInstanceProcAddr(instance, "vkCmdPipelineBarrier2"); throwIf(!vkCmdPipelineBarrier2);
-	*(cast(void**)&vkCmdPipelineBarrier2KHR) = vkGetInstanceProcAddr(instance, "vkCmdPipelineBarrier2KHR"); throwIf(!vkCmdPipelineBarrier2KHR);
-	*(cast(void**)&vkCmdPreprocessGeneratedCommandsNV) = vkGetInstanceProcAddr(instance, "vkCmdPreprocessGeneratedCommandsNV"); throwIf(!vkCmdPreprocessGeneratedCommandsNV);
-	*(cast(void**)&vkCmdPushConstants) = vkGetInstanceProcAddr(instance, "vkCmdPushConstants"); throwIf(!vkCmdPushConstants);
-	*(cast(void**)&vkCmdPushDescriptorSetKHR) = vkGetInstanceProcAddr(instance, "vkCmdPushDescriptorSetKHR"); throwIf(!vkCmdPushDescriptorSetKHR);
-	*(cast(void**)&vkCmdPushDescriptorSetWithTemplateKHR) = vkGetInstanceProcAddr(instance, "vkCmdPushDescriptorSetWithTemplateKHR"); throwIf(!vkCmdPushDescriptorSetWithTemplateKHR);
-	*(cast(void**)&vkCmdResetEvent) = vkGetInstanceProcAddr(instance, "vkCmdResetEvent"); throwIf(!vkCmdResetEvent);
-	*(cast(void**)&vkCmdResetEvent2) = vkGetInstanceProcAddr(instance, "vkCmdResetEvent2"); throwIf(!vkCmdResetEvent2);
-	*(cast(void**)&vkCmdResetEvent2KHR) = vkGetInstanceProcAddr(instance, "vkCmdResetEvent2KHR"); throwIf(!vkCmdResetEvent2KHR);
-	*(cast(void**)&vkCmdResetQueryPool) = vkGetInstanceProcAddr(instance, "vkCmdResetQueryPool"); throwIf(!vkCmdResetQueryPool);
-	*(cast(void**)&vkCmdResolveImage) = vkGetInstanceProcAddr(instance, "vkCmdResolveImage"); throwIf(!vkCmdResolveImage);
-	*(cast(void**)&vkCmdResolveImage2) = vkGetInstanceProcAddr(instance, "vkCmdResolveImage2"); throwIf(!vkCmdResolveImage2);
-	*(cast(void**)&vkCmdResolveImage2KHR) = vkGetInstanceProcAddr(instance, "vkCmdResolveImage2KHR"); throwIf(!vkCmdResolveImage2KHR);
-	*(cast(void**)&vkCmdSetBlendConstants) = vkGetInstanceProcAddr(instance, "vkCmdSetBlendConstants"); throwIf(!vkCmdSetBlendConstants);
-	*(cast(void**)&vkCmdSetCheckpointNV) = vkGetInstanceProcAddr(instance, "vkCmdSetCheckpointNV"); throwIf(!vkCmdSetCheckpointNV);
-	*(cast(void**)&vkCmdSetCoarseSampleOrderNV) = vkGetInstanceProcAddr(instance, "vkCmdSetCoarseSampleOrderNV"); throwIf(!vkCmdSetCoarseSampleOrderNV);
-	*(cast(void**)&vkCmdSetColorWriteEnableEXT) = vkGetInstanceProcAddr(instance, "vkCmdSetColorWriteEnableEXT"); throwIf(!vkCmdSetColorWriteEnableEXT);
-	*(cast(void**)&vkCmdSetCullMode) = vkGetInstanceProcAddr(instance, "vkCmdSetCullMode"); throwIf(!vkCmdSetCullMode);
-	*(cast(void**)&vkCmdSetCullModeEXT) = vkGetInstanceProcAddr(instance, "vkCmdSetCullModeEXT"); throwIf(!vkCmdSetCullModeEXT);
-	*(cast(void**)&vkCmdSetDepthBias) = vkGetInstanceProcAddr(instance, "vkCmdSetDepthBias"); throwIf(!vkCmdSetDepthBias);
-	*(cast(void**)&vkCmdSetDepthBiasEnable) = vkGetInstanceProcAddr(instance, "vkCmdSetDepthBiasEnable"); throwIf(!vkCmdSetDepthBiasEnable);
-	*(cast(void**)&vkCmdSetDepthBiasEnableEXT) = vkGetInstanceProcAddr(instance, "vkCmdSetDepthBiasEnableEXT"); throwIf(!vkCmdSetDepthBiasEnableEXT);
-	*(cast(void**)&vkCmdSetDepthBounds) = vkGetInstanceProcAddr(instance, "vkCmdSetDepthBounds"); throwIf(!vkCmdSetDepthBounds);
-	*(cast(void**)&vkCmdSetDepthBoundsTestEnable) = vkGetInstanceProcAddr(instance, "vkCmdSetDepthBoundsTestEnable"); throwIf(!vkCmdSetDepthBoundsTestEnable);
-	*(cast(void**)&vkCmdSetDepthBoundsTestEnableEXT) = vkGetInstanceProcAddr(instance, "vkCmdSetDepthBoundsTestEnableEXT"); throwIf(!vkCmdSetDepthBoundsTestEnableEXT);
-	*(cast(void**)&vkCmdSetDepthCompareOp) = vkGetInstanceProcAddr(instance, "vkCmdSetDepthCompareOp"); throwIf(!vkCmdSetDepthCompareOp);
-	*(cast(void**)&vkCmdSetDepthCompareOpEXT) = vkGetInstanceProcAddr(instance, "vkCmdSetDepthCompareOpEXT"); throwIf(!vkCmdSetDepthCompareOpEXT);
-	*(cast(void**)&vkCmdSetDepthTestEnable) = vkGetInstanceProcAddr(instance, "vkCmdSetDepthTestEnable"); throwIf(!vkCmdSetDepthTestEnable);
-	*(cast(void**)&vkCmdSetDepthTestEnableEXT) = vkGetInstanceProcAddr(instance, "vkCmdSetDepthTestEnableEXT"); throwIf(!vkCmdSetDepthTestEnableEXT);
-	*(cast(void**)&vkCmdSetDepthWriteEnable) = vkGetInstanceProcAddr(instance, "vkCmdSetDepthWriteEnable"); throwIf(!vkCmdSetDepthWriteEnable);
-	*(cast(void**)&vkCmdSetDepthWriteEnableEXT) = vkGetInstanceProcAddr(instance, "vkCmdSetDepthWriteEnableEXT"); throwIf(!vkCmdSetDepthWriteEnableEXT);
-	*(cast(void**)&vkCmdSetDeviceMask) = vkGetInstanceProcAddr(instance, "vkCmdSetDeviceMask"); throwIf(!vkCmdSetDeviceMask);
-	*(cast(void**)&vkCmdSetDeviceMaskKHR) = vkGetInstanceProcAddr(instance, "vkCmdSetDeviceMaskKHR"); throwIf(!vkCmdSetDeviceMaskKHR);
-	*(cast(void**)&vkCmdSetDiscardRectangleEXT) = vkGetInstanceProcAddr(instance, "vkCmdSetDiscardRectangleEXT"); throwIf(!vkCmdSetDiscardRectangleEXT);
-	*(cast(void**)&vkCmdSetEvent) = vkGetInstanceProcAddr(instance, "vkCmdSetEvent"); throwIf(!vkCmdSetEvent);
-	*(cast(void**)&vkCmdSetEvent2) = vkGetInstanceProcAddr(instance, "vkCmdSetEvent2"); throwIf(!vkCmdSetEvent2);
-	*(cast(void**)&vkCmdSetEvent2KHR) = vkGetInstanceProcAddr(instance, "vkCmdSetEvent2KHR"); throwIf(!vkCmdSetEvent2KHR);
-	*(cast(void**)&vkCmdSetExclusiveScissorNV) = vkGetInstanceProcAddr(instance, "vkCmdSetExclusiveScissorNV"); throwIf(!vkCmdSetExclusiveScissorNV);
-	*(cast(void**)&vkCmdSetFragmentShadingRateEnumNV) = vkGetInstanceProcAddr(instance, "vkCmdSetFragmentShadingRateEnumNV"); throwIf(!vkCmdSetFragmentShadingRateEnumNV);
-	*(cast(void**)&vkCmdSetFragmentShadingRateKHR) = vkGetInstanceProcAddr(instance, "vkCmdSetFragmentShadingRateKHR"); throwIf(!vkCmdSetFragmentShadingRateKHR);
-	*(cast(void**)&vkCmdSetFrontFace) = vkGetInstanceProcAddr(instance, "vkCmdSetFrontFace"); throwIf(!vkCmdSetFrontFace);
-	*(cast(void**)&vkCmdSetFrontFaceEXT) = vkGetInstanceProcAddr(instance, "vkCmdSetFrontFaceEXT"); throwIf(!vkCmdSetFrontFaceEXT);
-	*(cast(void**)&vkCmdSetLineStippleEXT) = vkGetInstanceProcAddr(instance, "vkCmdSetLineStippleEXT"); throwIf(!vkCmdSetLineStippleEXT);
-	*(cast(void**)&vkCmdSetLineWidth) = vkGetInstanceProcAddr(instance, "vkCmdSetLineWidth"); throwIf(!vkCmdSetLineWidth);
-	*(cast(void**)&vkCmdSetLogicOpEXT) = vkGetInstanceProcAddr(instance, "vkCmdSetLogicOpEXT"); throwIf(!vkCmdSetLogicOpEXT);
-	*(cast(void**)&vkCmdSetPatchControlPointsEXT) = vkGetInstanceProcAddr(instance, "vkCmdSetPatchControlPointsEXT"); throwIf(!vkCmdSetPatchControlPointsEXT);
-	*(cast(void**)&vkCmdSetPerformanceMarkerINTEL) = vkGetInstanceProcAddr(instance, "vkCmdSetPerformanceMarkerINTEL"); throwIf(!vkCmdSetPerformanceMarkerINTEL);
-	*(cast(void**)&vkCmdSetPerformanceOverrideINTEL) = vkGetInstanceProcAddr(instance, "vkCmdSetPerformanceOverrideINTEL"); throwIf(!vkCmdSetPerformanceOverrideINTEL);
-	*(cast(void**)&vkCmdSetPerformanceStreamMarkerINTEL) = vkGetInstanceProcAddr(instance, "vkCmdSetPerformanceStreamMarkerINTEL"); throwIf(!vkCmdSetPerformanceStreamMarkerINTEL);
-	*(cast(void**)&vkCmdSetPrimitiveRestartEnable) = vkGetInstanceProcAddr(instance, "vkCmdSetPrimitiveRestartEnable"); throwIf(!vkCmdSetPrimitiveRestartEnable);
-	*(cast(void**)&vkCmdSetPrimitiveRestartEnableEXT) = vkGetInstanceProcAddr(instance, "vkCmdSetPrimitiveRestartEnableEXT"); throwIf(!vkCmdSetPrimitiveRestartEnableEXT);
-	*(cast(void**)&vkCmdSetPrimitiveTopology) = vkGetInstanceProcAddr(instance, "vkCmdSetPrimitiveTopology"); throwIf(!vkCmdSetPrimitiveTopology);
-	*(cast(void**)&vkCmdSetPrimitiveTopologyEXT) = vkGetInstanceProcAddr(instance, "vkCmdSetPrimitiveTopologyEXT"); throwIf(!vkCmdSetPrimitiveTopologyEXT);
-	*(cast(void**)&vkCmdSetRasterizerDiscardEnable) = vkGetInstanceProcAddr(instance, "vkCmdSetRasterizerDiscardEnable"); throwIf(!vkCmdSetRasterizerDiscardEnable);
-	*(cast(void**)&vkCmdSetRasterizerDiscardEnableEXT) = vkGetInstanceProcAddr(instance, "vkCmdSetRasterizerDiscardEnableEXT"); throwIf(!vkCmdSetRasterizerDiscardEnableEXT);
-	*(cast(void**)&vkCmdSetRayTracingPipelineStackSizeKHR) = vkGetInstanceProcAddr(instance, "vkCmdSetRayTracingPipelineStackSizeKHR"); throwIf(!vkCmdSetRayTracingPipelineStackSizeKHR);
-	*(cast(void**)&vkCmdSetSampleLocationsEXT) = vkGetInstanceProcAddr(instance, "vkCmdSetSampleLocationsEXT"); throwIf(!vkCmdSetSampleLocationsEXT);
-	*(cast(void**)&vkCmdSetScissor) = vkGetInstanceProcAddr(instance, "vkCmdSetScissor"); throwIf(!vkCmdSetScissor);
-	*(cast(void**)&vkCmdSetScissorWithCount) = vkGetInstanceProcAddr(instance, "vkCmdSetScissorWithCount"); throwIf(!vkCmdSetScissorWithCount);
-	*(cast(void**)&vkCmdSetScissorWithCountEXT) = vkGetInstanceProcAddr(instance, "vkCmdSetScissorWithCountEXT"); throwIf(!vkCmdSetScissorWithCountEXT);
-	*(cast(void**)&vkCmdSetStencilCompareMask) = vkGetInstanceProcAddr(instance, "vkCmdSetStencilCompareMask"); throwIf(!vkCmdSetStencilCompareMask);
-	*(cast(void**)&vkCmdSetStencilOp) = vkGetInstanceProcAddr(instance, "vkCmdSetStencilOp"); throwIf(!vkCmdSetStencilOp);
-	*(cast(void**)&vkCmdSetStencilOpEXT) = vkGetInstanceProcAddr(instance, "vkCmdSetStencilOpEXT"); throwIf(!vkCmdSetStencilOpEXT);
-	*(cast(void**)&vkCmdSetStencilReference) = vkGetInstanceProcAddr(instance, "vkCmdSetStencilReference"); throwIf(!vkCmdSetStencilReference);
-	*(cast(void**)&vkCmdSetStencilTestEnable) = vkGetInstanceProcAddr(instance, "vkCmdSetStencilTestEnable"); throwIf(!vkCmdSetStencilTestEnable);
-	*(cast(void**)&vkCmdSetStencilTestEnableEXT) = vkGetInstanceProcAddr(instance, "vkCmdSetStencilTestEnableEXT"); throwIf(!vkCmdSetStencilTestEnableEXT);
-	*(cast(void**)&vkCmdSetStencilWriteMask) = vkGetInstanceProcAddr(instance, "vkCmdSetStencilWriteMask"); throwIf(!vkCmdSetStencilWriteMask);
-	*(cast(void**)&vkCmdSetVertexInputEXT) = vkGetInstanceProcAddr(instance, "vkCmdSetVertexInputEXT"); throwIf(!vkCmdSetVertexInputEXT);
-	*(cast(void**)&vkCmdSetViewport) = vkGetInstanceProcAddr(instance, "vkCmdSetViewport"); throwIf(!vkCmdSetViewport);
-	*(cast(void**)&vkCmdSetViewportShadingRatePaletteNV) = vkGetInstanceProcAddr(instance, "vkCmdSetViewportShadingRatePaletteNV"); throwIf(!vkCmdSetViewportShadingRatePaletteNV);
-	*(cast(void**)&vkCmdSetViewportWScalingNV) = vkGetInstanceProcAddr(instance, "vkCmdSetViewportWScalingNV"); throwIf(!vkCmdSetViewportWScalingNV);
-	*(cast(void**)&vkCmdSetViewportWithCount) = vkGetInstanceProcAddr(instance, "vkCmdSetViewportWithCount"); throwIf(!vkCmdSetViewportWithCount);
-	*(cast(void**)&vkCmdSetViewportWithCountEXT) = vkGetInstanceProcAddr(instance, "vkCmdSetViewportWithCountEXT"); throwIf(!vkCmdSetViewportWithCountEXT);
-	*(cast(void**)&vkCmdSubpassShadingHUAWEI) = vkGetInstanceProcAddr(instance, "vkCmdSubpassShadingHUAWEI"); throwIf(!vkCmdSubpassShadingHUAWEI);
-	*(cast(void**)&vkCmdTraceRaysIndirectKHR) = vkGetInstanceProcAddr(instance, "vkCmdTraceRaysIndirectKHR"); throwIf(!vkCmdTraceRaysIndirectKHR);
-	*(cast(void**)&vkCmdTraceRaysKHR) = vkGetInstanceProcAddr(instance, "vkCmdTraceRaysKHR"); throwIf(!vkCmdTraceRaysKHR);
-	*(cast(void**)&vkCmdTraceRaysNV) = vkGetInstanceProcAddr(instance, "vkCmdTraceRaysNV"); throwIf(!vkCmdTraceRaysNV);
-	*(cast(void**)&vkCmdUpdateBuffer) = vkGetInstanceProcAddr(instance, "vkCmdUpdateBuffer"); throwIf(!vkCmdUpdateBuffer);
-	*(cast(void**)&vkCmdWaitEvents) = vkGetInstanceProcAddr(instance, "vkCmdWaitEvents"); throwIf(!vkCmdWaitEvents);
-	*(cast(void**)&vkCmdWaitEvents2) = vkGetInstanceProcAddr(instance, "vkCmdWaitEvents2"); throwIf(!vkCmdWaitEvents2);
-	*(cast(void**)&vkCmdWaitEvents2KHR) = vkGetInstanceProcAddr(instance, "vkCmdWaitEvents2KHR"); throwIf(!vkCmdWaitEvents2KHR);
-	*(cast(void**)&vkCmdWriteAccelerationStructuresPropertiesKHR) = vkGetInstanceProcAddr(instance, "vkCmdWriteAccelerationStructuresPropertiesKHR"); throwIf(!vkCmdWriteAccelerationStructuresPropertiesKHR);
-	*(cast(void**)&vkCmdWriteAccelerationStructuresPropertiesNV) = vkGetInstanceProcAddr(instance, "vkCmdWriteAccelerationStructuresPropertiesNV"); throwIf(!vkCmdWriteAccelerationStructuresPropertiesNV);
-	*(cast(void**)&vkCmdWriteBufferMarker2AMD) = vkGetInstanceProcAddr(instance, "vkCmdWriteBufferMarker2AMD"); throwIf(!vkCmdWriteBufferMarker2AMD);
-	*(cast(void**)&vkCmdWriteBufferMarkerAMD) = vkGetInstanceProcAddr(instance, "vkCmdWriteBufferMarkerAMD"); throwIf(!vkCmdWriteBufferMarkerAMD);
-	*(cast(void**)&vkCmdWriteTimestamp) = vkGetInstanceProcAddr(instance, "vkCmdWriteTimestamp"); throwIf(!vkCmdWriteTimestamp);
-	*(cast(void**)&vkCmdWriteTimestamp2) = vkGetInstanceProcAddr(instance, "vkCmdWriteTimestamp2"); throwIf(!vkCmdWriteTimestamp2);
-	*(cast(void**)&vkCmdWriteTimestamp2KHR) = vkGetInstanceProcAddr(instance, "vkCmdWriteTimestamp2KHR"); throwIf(!vkCmdWriteTimestamp2KHR);
-	*(cast(void**)&vkCompileDeferredNV) = vkGetInstanceProcAddr(instance, "vkCompileDeferredNV"); throwIf(!vkCompileDeferredNV);
-	*(cast(void**)&vkCopyAccelerationStructureKHR) = vkGetInstanceProcAddr(instance, "vkCopyAccelerationStructureKHR"); throwIf(!vkCopyAccelerationStructureKHR);
-	*(cast(void**)&vkCopyAccelerationStructureToMemoryKHR) = vkGetInstanceProcAddr(instance, "vkCopyAccelerationStructureToMemoryKHR"); throwIf(!vkCopyAccelerationStructureToMemoryKHR);
-	*(cast(void**)&vkCopyMemoryToAccelerationStructureKHR) = vkGetInstanceProcAddr(instance, "vkCopyMemoryToAccelerationStructureKHR"); throwIf(!vkCopyMemoryToAccelerationStructureKHR);
-	*(cast(void**)&vkCreateAccelerationStructureKHR) = vkGetInstanceProcAddr(instance, "vkCreateAccelerationStructureKHR"); throwIf(!vkCreateAccelerationStructureKHR);
-	*(cast(void**)&vkCreateAccelerationStructureNV) = vkGetInstanceProcAddr(instance, "vkCreateAccelerationStructureNV"); throwIf(!vkCreateAccelerationStructureNV);
-	*(cast(void**)&vkCreateBuffer) = vkGetInstanceProcAddr(instance, "vkCreateBuffer"); throwIf(!vkCreateBuffer);
-	*(cast(void**)&vkCreateBufferView) = vkGetInstanceProcAddr(instance, "vkCreateBufferView"); throwIf(!vkCreateBufferView);
-	*(cast(void**)&vkCreateCommandPool) = vkGetInstanceProcAddr(instance, "vkCreateCommandPool"); throwIf(!vkCreateCommandPool);
-	*(cast(void**)&vkCreateComputePipelines) = vkGetInstanceProcAddr(instance, "vkCreateComputePipelines"); throwIf(!vkCreateComputePipelines);
-	*(cast(void**)&vkCreateCuFunctionNVX) = vkGetInstanceProcAddr(instance, "vkCreateCuFunctionNVX"); throwIf(!vkCreateCuFunctionNVX);
-	*(cast(void**)&vkCreateCuModuleNVX) = vkGetInstanceProcAddr(instance, "vkCreateCuModuleNVX"); throwIf(!vkCreateCuModuleNVX);
-	*(cast(void**)&vkCreateDebugReportCallbackEXT) = vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT"); throwIf(!vkCreateDebugReportCallbackEXT);
-	*(cast(void**)&vkCreateDebugUtilsMessengerEXT) = vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT"); throwIf(!vkCreateDebugUtilsMessengerEXT);
-	*(cast(void**)&vkCreateDeferredOperationKHR) = vkGetInstanceProcAddr(instance, "vkCreateDeferredOperationKHR"); throwIf(!vkCreateDeferredOperationKHR);
-	*(cast(void**)&vkCreateDescriptorPool) = vkGetInstanceProcAddr(instance, "vkCreateDescriptorPool"); throwIf(!vkCreateDescriptorPool);
-	*(cast(void**)&vkCreateDescriptorSetLayout) = vkGetInstanceProcAddr(instance, "vkCreateDescriptorSetLayout"); throwIf(!vkCreateDescriptorSetLayout);
-	*(cast(void**)&vkCreateDescriptorUpdateTemplate) = vkGetInstanceProcAddr(instance, "vkCreateDescriptorUpdateTemplate"); throwIf(!vkCreateDescriptorUpdateTemplate);
-	*(cast(void**)&vkCreateDescriptorUpdateTemplateKHR) = vkGetInstanceProcAddr(instance, "vkCreateDescriptorUpdateTemplateKHR"); throwIf(!vkCreateDescriptorUpdateTemplateKHR);
-	*(cast(void**)&vkCreateDevice) = vkGetInstanceProcAddr(instance, "vkCreateDevice"); throwIf(!vkCreateDevice);
-	*(cast(void**)&vkCreateDisplayModeKHR) = vkGetInstanceProcAddr(instance, "vkCreateDisplayModeKHR"); throwIf(!vkCreateDisplayModeKHR);
-	*(cast(void**)&vkCreateDisplayPlaneSurfaceKHR) = vkGetInstanceProcAddr(instance, "vkCreateDisplayPlaneSurfaceKHR"); throwIf(!vkCreateDisplayPlaneSurfaceKHR);
-	*(cast(void**)&vkCreateEvent) = vkGetInstanceProcAddr(instance, "vkCreateEvent"); throwIf(!vkCreateEvent);
-	*(cast(void**)&vkCreateFence) = vkGetInstanceProcAddr(instance, "vkCreateFence"); throwIf(!vkCreateFence);
-	*(cast(void**)&vkCreateFramebuffer) = vkGetInstanceProcAddr(instance, "vkCreateFramebuffer"); throwIf(!vkCreateFramebuffer);
-	*(cast(void**)&vkCreateGraphicsPipelines) = vkGetInstanceProcAddr(instance, "vkCreateGraphicsPipelines"); throwIf(!vkCreateGraphicsPipelines);
-	*(cast(void**)&vkCreateHeadlessSurfaceEXT) = vkGetInstanceProcAddr(instance, "vkCreateHeadlessSurfaceEXT"); throwIf(!vkCreateHeadlessSurfaceEXT);
-	*(cast(void**)&vkCreateImage) = vkGetInstanceProcAddr(instance, "vkCreateImage"); throwIf(!vkCreateImage);
-	*(cast(void**)&vkCreateImageView) = vkGetInstanceProcAddr(instance, "vkCreateImageView"); throwIf(!vkCreateImageView);
-	*(cast(void**)&vkCreateIndirectCommandsLayoutNV) = vkGetInstanceProcAddr(instance, "vkCreateIndirectCommandsLayoutNV"); throwIf(!vkCreateIndirectCommandsLayoutNV);
-	*(cast(void**)&vkCreateInstance) = vkGetInstanceProcAddr(instance, "vkCreateInstance"); throwIf(!vkCreateInstance);
-	*(cast(void**)&vkCreatePipelineCache) = vkGetInstanceProcAddr(instance, "vkCreatePipelineCache"); throwIf(!vkCreatePipelineCache);
-	*(cast(void**)&vkCreatePipelineLayout) = vkGetInstanceProcAddr(instance, "vkCreatePipelineLayout"); throwIf(!vkCreatePipelineLayout);
-	*(cast(void**)&vkCreatePrivateDataSlot) = vkGetInstanceProcAddr(instance, "vkCreatePrivateDataSlot"); throwIf(!vkCreatePrivateDataSlot);
-	*(cast(void**)&vkCreatePrivateDataSlotEXT) = vkGetInstanceProcAddr(instance, "vkCreatePrivateDataSlotEXT"); throwIf(!vkCreatePrivateDataSlotEXT);
-	*(cast(void**)&vkCreateQueryPool) = vkGetInstanceProcAddr(instance, "vkCreateQueryPool"); throwIf(!vkCreateQueryPool);
-	*(cast(void**)&vkCreateRayTracingPipelinesKHR) = vkGetInstanceProcAddr(instance, "vkCreateRayTracingPipelinesKHR"); throwIf(!vkCreateRayTracingPipelinesKHR);
-	*(cast(void**)&vkCreateRayTracingPipelinesNV) = vkGetInstanceProcAddr(instance, "vkCreateRayTracingPipelinesNV"); throwIf(!vkCreateRayTracingPipelinesNV);
-	*(cast(void**)&vkCreateRenderPass) = vkGetInstanceProcAddr(instance, "vkCreateRenderPass"); throwIf(!vkCreateRenderPass);
-	*(cast(void**)&vkCreateRenderPass2) = vkGetInstanceProcAddr(instance, "vkCreateRenderPass2"); throwIf(!vkCreateRenderPass2);
-	*(cast(void**)&vkCreateRenderPass2KHR) = vkGetInstanceProcAddr(instance, "vkCreateRenderPass2KHR"); throwIf(!vkCreateRenderPass2KHR);
-	*(cast(void**)&vkCreateSampler) = vkGetInstanceProcAddr(instance, "vkCreateSampler"); throwIf(!vkCreateSampler);
-	*(cast(void**)&vkCreateSamplerYcbcrConversion) = vkGetInstanceProcAddr(instance, "vkCreateSamplerYcbcrConversion"); throwIf(!vkCreateSamplerYcbcrConversion);
-	*(cast(void**)&vkCreateSamplerYcbcrConversionKHR) = vkGetInstanceProcAddr(instance, "vkCreateSamplerYcbcrConversionKHR"); throwIf(!vkCreateSamplerYcbcrConversionKHR);
-	*(cast(void**)&vkCreateSemaphore) = vkGetInstanceProcAddr(instance, "vkCreateSemaphore"); throwIf(!vkCreateSemaphore);
-	*(cast(void**)&vkCreateShaderModule) = vkGetInstanceProcAddr(instance, "vkCreateShaderModule"); throwIf(!vkCreateShaderModule);
-	*(cast(void**)&vkCreateSharedSwapchainsKHR) = vkGetInstanceProcAddr(instance, "vkCreateSharedSwapchainsKHR"); throwIf(!vkCreateSharedSwapchainsKHR);
-	*(cast(void**)&vkCreateSwapchainKHR) = vkGetInstanceProcAddr(instance, "vkCreateSwapchainKHR"); throwIf(!vkCreateSwapchainKHR);
-	*(cast(void**)&vkCreateValidationCacheEXT) = vkGetInstanceProcAddr(instance, "vkCreateValidationCacheEXT"); throwIf(!vkCreateValidationCacheEXT);
-	*(cast(void**)&vkCreateWin32SurfaceKHR) = vkGetInstanceProcAddr(instance, "vkCreateWin32SurfaceKHR"); throwIf(!vkCreateWin32SurfaceKHR);
-	*(cast(void**)&vkDebugMarkerSetObjectNameEXT) = vkGetInstanceProcAddr(instance, "vkDebugMarkerSetObjectNameEXT"); throwIf(!vkDebugMarkerSetObjectNameEXT);
-	*(cast(void**)&vkDebugMarkerSetObjectTagEXT) = vkGetInstanceProcAddr(instance, "vkDebugMarkerSetObjectTagEXT"); throwIf(!vkDebugMarkerSetObjectTagEXT);
-	*(cast(void**)&vkDebugReportMessageEXT) = vkGetInstanceProcAddr(instance, "vkDebugReportMessageEXT"); throwIf(!vkDebugReportMessageEXT);
-	*(cast(void**)&vkDeferredOperationJoinKHR) = vkGetInstanceProcAddr(instance, "vkDeferredOperationJoinKHR"); throwIf(!vkDeferredOperationJoinKHR);
-	*(cast(void**)&vkDestroyAccelerationStructureKHR) = vkGetInstanceProcAddr(instance, "vkDestroyAccelerationStructureKHR"); throwIf(!vkDestroyAccelerationStructureKHR);
-	*(cast(void**)&vkDestroyAccelerationStructureNV) = vkGetInstanceProcAddr(instance, "vkDestroyAccelerationStructureNV"); throwIf(!vkDestroyAccelerationStructureNV);
-	*(cast(void**)&vkDestroyBuffer) = vkGetInstanceProcAddr(instance, "vkDestroyBuffer"); throwIf(!vkDestroyBuffer);
-	*(cast(void**)&vkDestroyBufferView) = vkGetInstanceProcAddr(instance, "vkDestroyBufferView"); throwIf(!vkDestroyBufferView);
-	*(cast(void**)&vkDestroyCommandPool) = vkGetInstanceProcAddr(instance, "vkDestroyCommandPool"); throwIf(!vkDestroyCommandPool);
-	*(cast(void**)&vkDestroyCuFunctionNVX) = vkGetInstanceProcAddr(instance, "vkDestroyCuFunctionNVX"); throwIf(!vkDestroyCuFunctionNVX);
-	*(cast(void**)&vkDestroyCuModuleNVX) = vkGetInstanceProcAddr(instance, "vkDestroyCuModuleNVX"); throwIf(!vkDestroyCuModuleNVX);
-	*(cast(void**)&vkDestroyDebugReportCallbackEXT) = vkGetInstanceProcAddr(instance, "vkDestroyDebugReportCallbackEXT"); throwIf(!vkDestroyDebugReportCallbackEXT);
-	*(cast(void**)&vkDestroyDebugUtilsMessengerEXT) = vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT"); throwIf(!vkDestroyDebugUtilsMessengerEXT);
-	*(cast(void**)&vkDestroyDeferredOperationKHR) = vkGetInstanceProcAddr(instance, "vkDestroyDeferredOperationKHR"); throwIf(!vkDestroyDeferredOperationKHR);
-	*(cast(void**)&vkDestroyDescriptorPool) = vkGetInstanceProcAddr(instance, "vkDestroyDescriptorPool"); throwIf(!vkDestroyDescriptorPool);
-	*(cast(void**)&vkDestroyDescriptorSetLayout) = vkGetInstanceProcAddr(instance, "vkDestroyDescriptorSetLayout"); throwIf(!vkDestroyDescriptorSetLayout);
-	*(cast(void**)&vkDestroyDescriptorUpdateTemplate) = vkGetInstanceProcAddr(instance, "vkDestroyDescriptorUpdateTemplate"); throwIf(!vkDestroyDescriptorUpdateTemplate);
-	*(cast(void**)&vkDestroyDescriptorUpdateTemplateKHR) = vkGetInstanceProcAddr(instance, "vkDestroyDescriptorUpdateTemplateKHR"); throwIf(!vkDestroyDescriptorUpdateTemplateKHR);
-	*(cast(void**)&vkDestroyDevice) = vkGetInstanceProcAddr(instance, "vkDestroyDevice"); throwIf(!vkDestroyDevice);
-	*(cast(void**)&vkDestroyEvent) = vkGetInstanceProcAddr(instance, "vkDestroyEvent"); throwIf(!vkDestroyEvent);
-	*(cast(void**)&vkDestroyFence) = vkGetInstanceProcAddr(instance, "vkDestroyFence"); throwIf(!vkDestroyFence);
-	*(cast(void**)&vkDestroyFramebuffer) = vkGetInstanceProcAddr(instance, "vkDestroyFramebuffer"); throwIf(!vkDestroyFramebuffer);
-	*(cast(void**)&vkDestroyImage) = vkGetInstanceProcAddr(instance, "vkDestroyImage"); throwIf(!vkDestroyImage);
-	*(cast(void**)&vkDestroyImageView) = vkGetInstanceProcAddr(instance, "vkDestroyImageView"); throwIf(!vkDestroyImageView);
-	*(cast(void**)&vkDestroyIndirectCommandsLayoutNV) = vkGetInstanceProcAddr(instance, "vkDestroyIndirectCommandsLayoutNV"); throwIf(!vkDestroyIndirectCommandsLayoutNV);
-	*(cast(void**)&vkDestroyInstance) = vkGetInstanceProcAddr(instance, "vkDestroyInstance"); throwIf(!vkDestroyInstance);
-	*(cast(void**)&vkDestroyPipeline) = vkGetInstanceProcAddr(instance, "vkDestroyPipeline"); throwIf(!vkDestroyPipeline);
-	*(cast(void**)&vkDestroyPipelineCache) = vkGetInstanceProcAddr(instance, "vkDestroyPipelineCache"); throwIf(!vkDestroyPipelineCache);
-	*(cast(void**)&vkDestroyPipelineLayout) = vkGetInstanceProcAddr(instance, "vkDestroyPipelineLayout"); throwIf(!vkDestroyPipelineLayout);
-	*(cast(void**)&vkDestroyPrivateDataSlot) = vkGetInstanceProcAddr(instance, "vkDestroyPrivateDataSlot"); throwIf(!vkDestroyPrivateDataSlot);
-	*(cast(void**)&vkDestroyPrivateDataSlotEXT) = vkGetInstanceProcAddr(instance, "vkDestroyPrivateDataSlotEXT"); throwIf(!vkDestroyPrivateDataSlotEXT);
-	*(cast(void**)&vkDestroyQueryPool) = vkGetInstanceProcAddr(instance, "vkDestroyQueryPool"); throwIf(!vkDestroyQueryPool);
-	*(cast(void**)&vkDestroyRenderPass) = vkGetInstanceProcAddr(instance, "vkDestroyRenderPass"); throwIf(!vkDestroyRenderPass);
-	*(cast(void**)&vkDestroySampler) = vkGetInstanceProcAddr(instance, "vkDestroySampler"); throwIf(!vkDestroySampler);
-	*(cast(void**)&vkDestroySamplerYcbcrConversion) = vkGetInstanceProcAddr(instance, "vkDestroySamplerYcbcrConversion"); throwIf(!vkDestroySamplerYcbcrConversion);
-	*(cast(void**)&vkDestroySamplerYcbcrConversionKHR) = vkGetInstanceProcAddr(instance, "vkDestroySamplerYcbcrConversionKHR"); throwIf(!vkDestroySamplerYcbcrConversionKHR);
-	*(cast(void**)&vkDestroySemaphore) = vkGetInstanceProcAddr(instance, "vkDestroySemaphore"); throwIf(!vkDestroySemaphore);
-	*(cast(void**)&vkDestroyShaderModule) = vkGetInstanceProcAddr(instance, "vkDestroyShaderModule"); throwIf(!vkDestroyShaderModule);
-	*(cast(void**)&vkDestroySurfaceKHR) = vkGetInstanceProcAddr(instance, "vkDestroySurfaceKHR"); throwIf(!vkDestroySurfaceKHR);
-	*(cast(void**)&vkDestroySwapchainKHR) = vkGetInstanceProcAddr(instance, "vkDestroySwapchainKHR"); throwIf(!vkDestroySwapchainKHR);
-	*(cast(void**)&vkDestroyValidationCacheEXT) = vkGetInstanceProcAddr(instance, "vkDestroyValidationCacheEXT"); throwIf(!vkDestroyValidationCacheEXT);
-	*(cast(void**)&vkDeviceWaitIdle) = vkGetInstanceProcAddr(instance, "vkDeviceWaitIdle"); throwIf(!vkDeviceWaitIdle);
-	*(cast(void**)&vkDisplayPowerControlEXT) = vkGetInstanceProcAddr(instance, "vkDisplayPowerControlEXT"); throwIf(!vkDisplayPowerControlEXT);
-	*(cast(void**)&vkEndCommandBuffer) = vkGetInstanceProcAddr(instance, "vkEndCommandBuffer"); throwIf(!vkEndCommandBuffer);
-	*(cast(void**)&vkEnumerateDeviceExtensionProperties) = vkGetInstanceProcAddr(instance, "vkEnumerateDeviceExtensionProperties"); throwIf(!vkEnumerateDeviceExtensionProperties);
-	*(cast(void**)&vkEnumerateDeviceLayerProperties) = vkGetInstanceProcAddr(instance, "vkEnumerateDeviceLayerProperties"); throwIf(!vkEnumerateDeviceLayerProperties);
-	*(cast(void**)&vkEnumerateInstanceExtensionProperties) = vkGetInstanceProcAddr(instance, "vkEnumerateInstanceExtensionProperties"); throwIf(!vkEnumerateInstanceExtensionProperties);
-	*(cast(void**)&vkEnumerateInstanceLayerProperties) = vkGetInstanceProcAddr(instance, "vkEnumerateInstanceLayerProperties"); throwIf(!vkEnumerateInstanceLayerProperties);
-	*(cast(void**)&vkEnumerateInstanceVersion) = vkGetInstanceProcAddr(instance, "vkEnumerateInstanceVersion"); throwIf(!vkEnumerateInstanceVersion);
-	*(cast(void**)&vkEnumeratePhysicalDeviceGroups) = vkGetInstanceProcAddr(instance, "vkEnumeratePhysicalDeviceGroups"); throwIf(!vkEnumeratePhysicalDeviceGroups);
-	*(cast(void**)&vkEnumeratePhysicalDeviceGroupsKHR) = vkGetInstanceProcAddr(instance, "vkEnumeratePhysicalDeviceGroupsKHR"); throwIf(!vkEnumeratePhysicalDeviceGroupsKHR);
-	*(cast(void**)&vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR) = vkGetInstanceProcAddr(instance, "vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR"); throwIf(!vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR);
-	*(cast(void**)&vkEnumeratePhysicalDevices) = vkGetInstanceProcAddr(instance, "vkEnumeratePhysicalDevices"); throwIf(!vkEnumeratePhysicalDevices);
-	*(cast(void**)&vkFlushMappedMemoryRanges) = vkGetInstanceProcAddr(instance, "vkFlushMappedMemoryRanges"); throwIf(!vkFlushMappedMemoryRanges);
-	*(cast(void**)&vkFreeCommandBuffers) = vkGetInstanceProcAddr(instance, "vkFreeCommandBuffers"); throwIf(!vkFreeCommandBuffers);
-	*(cast(void**)&vkFreeDescriptorSets) = vkGetInstanceProcAddr(instance, "vkFreeDescriptorSets"); throwIf(!vkFreeDescriptorSets);
-	*(cast(void**)&vkFreeMemory) = vkGetInstanceProcAddr(instance, "vkFreeMemory"); throwIf(!vkFreeMemory);
-	*(cast(void**)&vkGetAccelerationStructureBuildSizesKHR) = vkGetInstanceProcAddr(instance, "vkGetAccelerationStructureBuildSizesKHR"); throwIf(!vkGetAccelerationStructureBuildSizesKHR);
-	*(cast(void**)&vkGetAccelerationStructureDeviceAddressKHR) = vkGetInstanceProcAddr(instance, "vkGetAccelerationStructureDeviceAddressKHR"); throwIf(!vkGetAccelerationStructureDeviceAddressKHR);
-	*(cast(void**)&vkGetAccelerationStructureHandleNV) = vkGetInstanceProcAddr(instance, "vkGetAccelerationStructureHandleNV"); throwIf(!vkGetAccelerationStructureHandleNV);
-	*(cast(void**)&vkGetAccelerationStructureMemoryRequirementsNV) = vkGetInstanceProcAddr(instance, "vkGetAccelerationStructureMemoryRequirementsNV"); throwIf(!vkGetAccelerationStructureMemoryRequirementsNV);
-	*(cast(void**)&vkGetBufferDeviceAddress) = vkGetInstanceProcAddr(instance, "vkGetBufferDeviceAddress"); throwIf(!vkGetBufferDeviceAddress);
-	*(cast(void**)&vkGetBufferDeviceAddressEXT) = vkGetInstanceProcAddr(instance, "vkGetBufferDeviceAddressEXT"); throwIf(!vkGetBufferDeviceAddressEXT);
-	*(cast(void**)&vkGetBufferDeviceAddressKHR) = vkGetInstanceProcAddr(instance, "vkGetBufferDeviceAddressKHR"); throwIf(!vkGetBufferDeviceAddressKHR);
-	*(cast(void**)&vkGetBufferMemoryRequirements) = vkGetInstanceProcAddr(instance, "vkGetBufferMemoryRequirements"); throwIf(!vkGetBufferMemoryRequirements);
-	*(cast(void**)&vkGetBufferMemoryRequirements2) = vkGetInstanceProcAddr(instance, "vkGetBufferMemoryRequirements2"); throwIf(!vkGetBufferMemoryRequirements2);
-	*(cast(void**)&vkGetBufferMemoryRequirements2KHR) = vkGetInstanceProcAddr(instance, "vkGetBufferMemoryRequirements2KHR"); throwIf(!vkGetBufferMemoryRequirements2KHR);
-	*(cast(void**)&vkGetBufferOpaqueCaptureAddress) = vkGetInstanceProcAddr(instance, "vkGetBufferOpaqueCaptureAddress"); throwIf(!vkGetBufferOpaqueCaptureAddress);
-	*(cast(void**)&vkGetBufferOpaqueCaptureAddressKHR) = vkGetInstanceProcAddr(instance, "vkGetBufferOpaqueCaptureAddressKHR"); throwIf(!vkGetBufferOpaqueCaptureAddressKHR);
-	*(cast(void**)&vkGetCalibratedTimestampsEXT) = vkGetInstanceProcAddr(instance, "vkGetCalibratedTimestampsEXT"); throwIf(!vkGetCalibratedTimestampsEXT);
-	*(cast(void**)&vkGetDeferredOperationMaxConcurrencyKHR) = vkGetInstanceProcAddr(instance, "vkGetDeferredOperationMaxConcurrencyKHR"); throwIf(!vkGetDeferredOperationMaxConcurrencyKHR);
-	*(cast(void**)&vkGetDeferredOperationResultKHR) = vkGetInstanceProcAddr(instance, "vkGetDeferredOperationResultKHR"); throwIf(!vkGetDeferredOperationResultKHR);
-	*(cast(void**)&vkGetDescriptorSetLayoutSupport) = vkGetInstanceProcAddr(instance, "vkGetDescriptorSetLayoutSupport"); throwIf(!vkGetDescriptorSetLayoutSupport);
-	*(cast(void**)&vkGetDescriptorSetLayoutSupportKHR) = vkGetInstanceProcAddr(instance, "vkGetDescriptorSetLayoutSupportKHR"); throwIf(!vkGetDescriptorSetLayoutSupportKHR);
-	*(cast(void**)&vkGetDeviceAccelerationStructureCompatibilityKHR) = vkGetInstanceProcAddr(instance, "vkGetDeviceAccelerationStructureCompatibilityKHR"); throwIf(!vkGetDeviceAccelerationStructureCompatibilityKHR);
-	*(cast(void**)&vkGetDeviceBufferMemoryRequirements) = vkGetInstanceProcAddr(instance, "vkGetDeviceBufferMemoryRequirements"); throwIf(!vkGetDeviceBufferMemoryRequirements);
-	*(cast(void**)&vkGetDeviceBufferMemoryRequirementsKHR) = vkGetInstanceProcAddr(instance, "vkGetDeviceBufferMemoryRequirementsKHR"); throwIf(!vkGetDeviceBufferMemoryRequirementsKHR);
-	*(cast(void**)&vkGetDeviceGroupPeerMemoryFeatures) = vkGetInstanceProcAddr(instance, "vkGetDeviceGroupPeerMemoryFeatures"); throwIf(!vkGetDeviceGroupPeerMemoryFeatures);
-	*(cast(void**)&vkGetDeviceGroupPeerMemoryFeaturesKHR) = vkGetInstanceProcAddr(instance, "vkGetDeviceGroupPeerMemoryFeaturesKHR"); throwIf(!vkGetDeviceGroupPeerMemoryFeaturesKHR);
-	*(cast(void**)&vkGetDeviceGroupPresentCapabilitiesKHR) = vkGetInstanceProcAddr(instance, "vkGetDeviceGroupPresentCapabilitiesKHR"); throwIf(!vkGetDeviceGroupPresentCapabilitiesKHR);
-	*(cast(void**)&vkGetDeviceGroupSurfacePresentModes2EXT) = vkGetInstanceProcAddr(instance, "vkGetDeviceGroupSurfacePresentModes2EXT"); throwIf(!vkGetDeviceGroupSurfacePresentModes2EXT);
-	*(cast(void**)&vkGetDeviceGroupSurfacePresentModesKHR) = vkGetInstanceProcAddr(instance, "vkGetDeviceGroupSurfacePresentModesKHR"); throwIf(!vkGetDeviceGroupSurfacePresentModesKHR);
-	*(cast(void**)&vkGetDeviceImageMemoryRequirements) = vkGetInstanceProcAddr(instance, "vkGetDeviceImageMemoryRequirements"); throwIf(!vkGetDeviceImageMemoryRequirements);
-	*(cast(void**)&vkGetDeviceImageMemoryRequirementsKHR) = vkGetInstanceProcAddr(instance, "vkGetDeviceImageMemoryRequirementsKHR"); throwIf(!vkGetDeviceImageMemoryRequirementsKHR);
-	*(cast(void**)&vkGetDeviceImageSparseMemoryRequirements) = vkGetInstanceProcAddr(instance, "vkGetDeviceImageSparseMemoryRequirements"); throwIf(!vkGetDeviceImageSparseMemoryRequirements);
-	*(cast(void**)&vkGetDeviceImageSparseMemoryRequirementsKHR) = vkGetInstanceProcAddr(instance, "vkGetDeviceImageSparseMemoryRequirementsKHR"); throwIf(!vkGetDeviceImageSparseMemoryRequirementsKHR);
-	*(cast(void**)&vkGetDeviceMemoryCommitment) = vkGetInstanceProcAddr(instance, "vkGetDeviceMemoryCommitment"); throwIf(!vkGetDeviceMemoryCommitment);
-	*(cast(void**)&vkGetDeviceMemoryOpaqueCaptureAddress) = vkGetInstanceProcAddr(instance, "vkGetDeviceMemoryOpaqueCaptureAddress"); throwIf(!vkGetDeviceMemoryOpaqueCaptureAddress);
-	*(cast(void**)&vkGetDeviceMemoryOpaqueCaptureAddressKHR) = vkGetInstanceProcAddr(instance, "vkGetDeviceMemoryOpaqueCaptureAddressKHR"); throwIf(!vkGetDeviceMemoryOpaqueCaptureAddressKHR);
-	*(cast(void**)&vkGetDeviceProcAddr) = vkGetInstanceProcAddr(instance, "vkGetDeviceProcAddr"); throwIf(!vkGetDeviceProcAddr);
-	*(cast(void**)&vkGetDeviceQueue) = vkGetInstanceProcAddr(instance, "vkGetDeviceQueue"); throwIf(!vkGetDeviceQueue);
-	*(cast(void**)&vkGetDeviceQueue2) = vkGetInstanceProcAddr(instance, "vkGetDeviceQueue2"); throwIf(!vkGetDeviceQueue2);
-	*(cast(void**)&vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI) = vkGetInstanceProcAddr(instance, "vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI"); throwIf(!vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI);
-	*(cast(void**)&vkGetDisplayModeProperties2KHR) = vkGetInstanceProcAddr(instance, "vkGetDisplayModeProperties2KHR"); throwIf(!vkGetDisplayModeProperties2KHR);
-	*(cast(void**)&vkGetDisplayModePropertiesKHR) = vkGetInstanceProcAddr(instance, "vkGetDisplayModePropertiesKHR"); throwIf(!vkGetDisplayModePropertiesKHR);
-	*(cast(void**)&vkGetDisplayPlaneCapabilities2KHR) = vkGetInstanceProcAddr(instance, "vkGetDisplayPlaneCapabilities2KHR"); throwIf(!vkGetDisplayPlaneCapabilities2KHR);
-	*(cast(void**)&vkGetDisplayPlaneCapabilitiesKHR) = vkGetInstanceProcAddr(instance, "vkGetDisplayPlaneCapabilitiesKHR"); throwIf(!vkGetDisplayPlaneCapabilitiesKHR);
-	*(cast(void**)&vkGetDisplayPlaneSupportedDisplaysKHR) = vkGetInstanceProcAddr(instance, "vkGetDisplayPlaneSupportedDisplaysKHR"); throwIf(!vkGetDisplayPlaneSupportedDisplaysKHR);
-	*(cast(void**)&vkGetDrmDisplayEXT) = vkGetInstanceProcAddr(instance, "vkGetDrmDisplayEXT"); throwIf(!vkGetDrmDisplayEXT);
-	*(cast(void**)&vkGetEventStatus) = vkGetInstanceProcAddr(instance, "vkGetEventStatus"); throwIf(!vkGetEventStatus);
-	*(cast(void**)&vkGetFenceFdKHR) = vkGetInstanceProcAddr(instance, "vkGetFenceFdKHR"); throwIf(!vkGetFenceFdKHR);
-	*(cast(void**)&vkGetFenceStatus) = vkGetInstanceProcAddr(instance, "vkGetFenceStatus"); throwIf(!vkGetFenceStatus);
-	*(cast(void**)&vkGetFenceWin32HandleKHR) = vkGetInstanceProcAddr(instance, "vkGetFenceWin32HandleKHR"); throwIf(!vkGetFenceWin32HandleKHR);
-	*(cast(void**)&vkGetGeneratedCommandsMemoryRequirementsNV) = vkGetInstanceProcAddr(instance, "vkGetGeneratedCommandsMemoryRequirementsNV"); throwIf(!vkGetGeneratedCommandsMemoryRequirementsNV);
-	*(cast(void**)&vkGetImageDrmFormatModifierPropertiesEXT) = vkGetInstanceProcAddr(instance, "vkGetImageDrmFormatModifierPropertiesEXT"); throwIf(!vkGetImageDrmFormatModifierPropertiesEXT);
-	*(cast(void**)&vkGetImageMemoryRequirements) = vkGetInstanceProcAddr(instance, "vkGetImageMemoryRequirements"); throwIf(!vkGetImageMemoryRequirements);
-	*(cast(void**)&vkGetImageMemoryRequirements2) = vkGetInstanceProcAddr(instance, "vkGetImageMemoryRequirements2"); throwIf(!vkGetImageMemoryRequirements2);
-	*(cast(void**)&vkGetImageMemoryRequirements2KHR) = vkGetInstanceProcAddr(instance, "vkGetImageMemoryRequirements2KHR"); throwIf(!vkGetImageMemoryRequirements2KHR);
-	*(cast(void**)&vkGetImageSparseMemoryRequirements) = vkGetInstanceProcAddr(instance, "vkGetImageSparseMemoryRequirements"); throwIf(!vkGetImageSparseMemoryRequirements);
-	*(cast(void**)&vkGetImageSparseMemoryRequirements2) = vkGetInstanceProcAddr(instance, "vkGetImageSparseMemoryRequirements2"); throwIf(!vkGetImageSparseMemoryRequirements2);
-	*(cast(void**)&vkGetImageSparseMemoryRequirements2KHR) = vkGetInstanceProcAddr(instance, "vkGetImageSparseMemoryRequirements2KHR"); throwIf(!vkGetImageSparseMemoryRequirements2KHR);
-	*(cast(void**)&vkGetImageSubresourceLayout) = vkGetInstanceProcAddr(instance, "vkGetImageSubresourceLayout"); throwIf(!vkGetImageSubresourceLayout);
-	*(cast(void**)&vkGetImageViewAddressNVX) = vkGetInstanceProcAddr(instance, "vkGetImageViewAddressNVX"); throwIf(!vkGetImageViewAddressNVX);
-	*(cast(void**)&vkGetImageViewHandleNVX) = vkGetInstanceProcAddr(instance, "vkGetImageViewHandleNVX"); throwIf(!vkGetImageViewHandleNVX);
-	*(cast(void**)&vkGetMemoryFdKHR) = vkGetInstanceProcAddr(instance, "vkGetMemoryFdKHR"); throwIf(!vkGetMemoryFdKHR);
-	*(cast(void**)&vkGetMemoryFdPropertiesKHR) = vkGetInstanceProcAddr(instance, "vkGetMemoryFdPropertiesKHR"); throwIf(!vkGetMemoryFdPropertiesKHR);
-	*(cast(void**)&vkGetMemoryHostPointerPropertiesEXT) = vkGetInstanceProcAddr(instance, "vkGetMemoryHostPointerPropertiesEXT"); throwIf(!vkGetMemoryHostPointerPropertiesEXT);
-	*(cast(void**)&vkGetMemoryRemoteAddressNV) = vkGetInstanceProcAddr(instance, "vkGetMemoryRemoteAddressNV"); throwIf(!vkGetMemoryRemoteAddressNV);
-	*(cast(void**)&vkGetMemoryWin32HandleKHR) = vkGetInstanceProcAddr(instance, "vkGetMemoryWin32HandleKHR"); throwIf(!vkGetMemoryWin32HandleKHR);
-	*(cast(void**)&vkGetMemoryWin32HandleNV) = vkGetInstanceProcAddr(instance, "vkGetMemoryWin32HandleNV"); throwIf(!vkGetMemoryWin32HandleNV);
-	*(cast(void**)&vkGetMemoryWin32HandlePropertiesKHR) = vkGetInstanceProcAddr(instance, "vkGetMemoryWin32HandlePropertiesKHR"); throwIf(!vkGetMemoryWin32HandlePropertiesKHR);
-	*(cast(void**)&vkGetPastPresentationTimingGOOGLE) = vkGetInstanceProcAddr(instance, "vkGetPastPresentationTimingGOOGLE"); throwIf(!vkGetPastPresentationTimingGOOGLE);
-	*(cast(void**)&vkGetPerformanceParameterINTEL) = vkGetInstanceProcAddr(instance, "vkGetPerformanceParameterINTEL"); throwIf(!vkGetPerformanceParameterINTEL);
-	*(cast(void**)&vkGetPhysicalDeviceCalibrateableTimeDomainsEXT) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceCalibrateableTimeDomainsEXT"); throwIf(!vkGetPhysicalDeviceCalibrateableTimeDomainsEXT);
-	*(cast(void**)&vkGetPhysicalDeviceCooperativeMatrixPropertiesNV) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceCooperativeMatrixPropertiesNV"); throwIf(!vkGetPhysicalDeviceCooperativeMatrixPropertiesNV);
-	*(cast(void**)&vkGetPhysicalDeviceDisplayPlaneProperties2KHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceDisplayPlaneProperties2KHR"); throwIf(!vkGetPhysicalDeviceDisplayPlaneProperties2KHR);
-	*(cast(void**)&vkGetPhysicalDeviceDisplayPlanePropertiesKHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceDisplayPlanePropertiesKHR"); throwIf(!vkGetPhysicalDeviceDisplayPlanePropertiesKHR);
-	*(cast(void**)&vkGetPhysicalDeviceDisplayProperties2KHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceDisplayProperties2KHR"); throwIf(!vkGetPhysicalDeviceDisplayProperties2KHR);
-	*(cast(void**)&vkGetPhysicalDeviceDisplayPropertiesKHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceDisplayPropertiesKHR"); throwIf(!vkGetPhysicalDeviceDisplayPropertiesKHR);
-	*(cast(void**)&vkGetPhysicalDeviceExternalBufferProperties) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceExternalBufferProperties"); throwIf(!vkGetPhysicalDeviceExternalBufferProperties);
-	*(cast(void**)&vkGetPhysicalDeviceExternalBufferPropertiesKHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceExternalBufferPropertiesKHR"); throwIf(!vkGetPhysicalDeviceExternalBufferPropertiesKHR);
-	*(cast(void**)&vkGetPhysicalDeviceExternalFenceProperties) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceExternalFenceProperties"); throwIf(!vkGetPhysicalDeviceExternalFenceProperties);
-	*(cast(void**)&vkGetPhysicalDeviceExternalFencePropertiesKHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceExternalFencePropertiesKHR"); throwIf(!vkGetPhysicalDeviceExternalFencePropertiesKHR);
-	*(cast(void**)&vkGetPhysicalDeviceExternalImageFormatPropertiesNV) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceExternalImageFormatPropertiesNV"); throwIf(!vkGetPhysicalDeviceExternalImageFormatPropertiesNV);
-	*(cast(void**)&vkGetPhysicalDeviceExternalSemaphoreProperties) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceExternalSemaphoreProperties"); throwIf(!vkGetPhysicalDeviceExternalSemaphoreProperties);
-	*(cast(void**)&vkGetPhysicalDeviceExternalSemaphorePropertiesKHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceExternalSemaphorePropertiesKHR"); throwIf(!vkGetPhysicalDeviceExternalSemaphorePropertiesKHR);
-	*(cast(void**)&vkGetPhysicalDeviceFeatures) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceFeatures"); throwIf(!vkGetPhysicalDeviceFeatures);
-	*(cast(void**)&vkGetPhysicalDeviceFeatures2) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceFeatures2"); throwIf(!vkGetPhysicalDeviceFeatures2);
-	*(cast(void**)&vkGetPhysicalDeviceFeatures2KHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceFeatures2KHR"); throwIf(!vkGetPhysicalDeviceFeatures2KHR);
-	*(cast(void**)&vkGetPhysicalDeviceFormatProperties) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceFormatProperties"); throwIf(!vkGetPhysicalDeviceFormatProperties);
-	*(cast(void**)&vkGetPhysicalDeviceFormatProperties2) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceFormatProperties2"); throwIf(!vkGetPhysicalDeviceFormatProperties2);
-	*(cast(void**)&vkGetPhysicalDeviceFormatProperties2KHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceFormatProperties2KHR"); throwIf(!vkGetPhysicalDeviceFormatProperties2KHR);
-	*(cast(void**)&vkGetPhysicalDeviceFragmentShadingRatesKHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceFragmentShadingRatesKHR"); throwIf(!vkGetPhysicalDeviceFragmentShadingRatesKHR);
-	*(cast(void**)&vkGetPhysicalDeviceImageFormatProperties) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceImageFormatProperties"); throwIf(!vkGetPhysicalDeviceImageFormatProperties);
-	*(cast(void**)&vkGetPhysicalDeviceImageFormatProperties2) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceImageFormatProperties2"); throwIf(!vkGetPhysicalDeviceImageFormatProperties2);
-	*(cast(void**)&vkGetPhysicalDeviceImageFormatProperties2KHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceImageFormatProperties2KHR"); throwIf(!vkGetPhysicalDeviceImageFormatProperties2KHR);
-	*(cast(void**)&vkGetPhysicalDeviceMemoryProperties) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceMemoryProperties"); throwIf(!vkGetPhysicalDeviceMemoryProperties);
-	*(cast(void**)&vkGetPhysicalDeviceMemoryProperties2) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceMemoryProperties2"); throwIf(!vkGetPhysicalDeviceMemoryProperties2);
-	*(cast(void**)&vkGetPhysicalDeviceMemoryProperties2KHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceMemoryProperties2KHR"); throwIf(!vkGetPhysicalDeviceMemoryProperties2KHR);
-	*(cast(void**)&vkGetPhysicalDeviceMultisamplePropertiesEXT) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceMultisamplePropertiesEXT"); throwIf(!vkGetPhysicalDeviceMultisamplePropertiesEXT);
-	*(cast(void**)&vkGetPhysicalDevicePresentRectanglesKHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDevicePresentRectanglesKHR"); throwIf(!vkGetPhysicalDevicePresentRectanglesKHR);
-	*(cast(void**)&vkGetPhysicalDeviceProperties) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceProperties"); throwIf(!vkGetPhysicalDeviceProperties);
-	*(cast(void**)&vkGetPhysicalDeviceProperties2) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceProperties2"); throwIf(!vkGetPhysicalDeviceProperties2);
-	*(cast(void**)&vkGetPhysicalDeviceProperties2KHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceProperties2KHR"); throwIf(!vkGetPhysicalDeviceProperties2KHR);
-	*(cast(void**)&vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR"); throwIf(!vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR);
-	*(cast(void**)&vkGetPhysicalDeviceQueueFamilyProperties) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceQueueFamilyProperties"); throwIf(!vkGetPhysicalDeviceQueueFamilyProperties);
-	*(cast(void**)&vkGetPhysicalDeviceQueueFamilyProperties2) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceQueueFamilyProperties2"); throwIf(!vkGetPhysicalDeviceQueueFamilyProperties2);
-	*(cast(void**)&vkGetPhysicalDeviceQueueFamilyProperties2KHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceQueueFamilyProperties2KHR"); throwIf(!vkGetPhysicalDeviceQueueFamilyProperties2KHR);
-	*(cast(void**)&vkGetPhysicalDeviceSparseImageFormatProperties) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceSparseImageFormatProperties"); throwIf(!vkGetPhysicalDeviceSparseImageFormatProperties);
-	*(cast(void**)&vkGetPhysicalDeviceSparseImageFormatProperties2) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceSparseImageFormatProperties2"); throwIf(!vkGetPhysicalDeviceSparseImageFormatProperties2);
-	*(cast(void**)&vkGetPhysicalDeviceSparseImageFormatProperties2KHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceSparseImageFormatProperties2KHR"); throwIf(!vkGetPhysicalDeviceSparseImageFormatProperties2KHR);
-	*(cast(void**)&vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV"); throwIf(!vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV);
-	*(cast(void**)&vkGetPhysicalDeviceSurfaceCapabilities2EXT) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceSurfaceCapabilities2EXT"); throwIf(!vkGetPhysicalDeviceSurfaceCapabilities2EXT);
-	*(cast(void**)&vkGetPhysicalDeviceSurfaceCapabilities2KHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceSurfaceCapabilities2KHR"); throwIf(!vkGetPhysicalDeviceSurfaceCapabilities2KHR);
-	*(cast(void**)&vkGetPhysicalDeviceSurfaceCapabilitiesKHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceSurfaceCapabilitiesKHR"); throwIf(!vkGetPhysicalDeviceSurfaceCapabilitiesKHR);
-	*(cast(void**)&vkGetPhysicalDeviceSurfaceFormats2KHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceSurfaceFormats2KHR"); throwIf(!vkGetPhysicalDeviceSurfaceFormats2KHR);
-	*(cast(void**)&vkGetPhysicalDeviceSurfaceFormatsKHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceSurfaceFormatsKHR"); throwIf(!vkGetPhysicalDeviceSurfaceFormatsKHR);
-	*(cast(void**)&vkGetPhysicalDeviceSurfacePresentModes2EXT) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceSurfacePresentModes2EXT"); throwIf(!vkGetPhysicalDeviceSurfacePresentModes2EXT);
-	*(cast(void**)&vkGetPhysicalDeviceSurfacePresentModesKHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceSurfacePresentModesKHR"); throwIf(!vkGetPhysicalDeviceSurfacePresentModesKHR);
-	*(cast(void**)&vkGetPhysicalDeviceSurfaceSupportKHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceSurfaceSupportKHR"); throwIf(!vkGetPhysicalDeviceSurfaceSupportKHR);
-	*(cast(void**)&vkGetPhysicalDeviceToolProperties) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceToolProperties"); throwIf(!vkGetPhysicalDeviceToolProperties);
-	*(cast(void**)&vkGetPhysicalDeviceToolPropertiesEXT) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceToolPropertiesEXT"); throwIf(!vkGetPhysicalDeviceToolPropertiesEXT);
-	*(cast(void**)&vkGetPhysicalDeviceWin32PresentationSupportKHR) = vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceWin32PresentationSupportKHR"); throwIf(!vkGetPhysicalDeviceWin32PresentationSupportKHR);
-	*(cast(void**)&vkGetPipelineCacheData) = vkGetInstanceProcAddr(instance, "vkGetPipelineCacheData"); throwIf(!vkGetPipelineCacheData);
-	*(cast(void**)&vkGetPipelineExecutableInternalRepresentationsKHR) = vkGetInstanceProcAddr(instance, "vkGetPipelineExecutableInternalRepresentationsKHR"); throwIf(!vkGetPipelineExecutableInternalRepresentationsKHR);
-	*(cast(void**)&vkGetPipelineExecutablePropertiesKHR) = vkGetInstanceProcAddr(instance, "vkGetPipelineExecutablePropertiesKHR"); throwIf(!vkGetPipelineExecutablePropertiesKHR);
-	*(cast(void**)&vkGetPipelineExecutableStatisticsKHR) = vkGetInstanceProcAddr(instance, "vkGetPipelineExecutableStatisticsKHR"); throwIf(!vkGetPipelineExecutableStatisticsKHR);
-	*(cast(void**)&vkGetPrivateData) = vkGetInstanceProcAddr(instance, "vkGetPrivateData"); throwIf(!vkGetPrivateData);
-	*(cast(void**)&vkGetPrivateDataEXT) = vkGetInstanceProcAddr(instance, "vkGetPrivateDataEXT"); throwIf(!vkGetPrivateDataEXT);
-	*(cast(void**)&vkGetQueryPoolResults) = vkGetInstanceProcAddr(instance, "vkGetQueryPoolResults"); throwIf(!vkGetQueryPoolResults);
-	*(cast(void**)&vkGetQueueCheckpointData2NV) = vkGetInstanceProcAddr(instance, "vkGetQueueCheckpointData2NV"); throwIf(!vkGetQueueCheckpointData2NV);
-	*(cast(void**)&vkGetQueueCheckpointDataNV) = vkGetInstanceProcAddr(instance, "vkGetQueueCheckpointDataNV"); throwIf(!vkGetQueueCheckpointDataNV);
-	*(cast(void**)&vkGetRayTracingCaptureReplayShaderGroupHandlesKHR) = vkGetInstanceProcAddr(instance, "vkGetRayTracingCaptureReplayShaderGroupHandlesKHR"); throwIf(!vkGetRayTracingCaptureReplayShaderGroupHandlesKHR);
-	*(cast(void**)&vkGetRayTracingShaderGroupHandlesKHR) = vkGetInstanceProcAddr(instance, "vkGetRayTracingShaderGroupHandlesKHR"); throwIf(!vkGetRayTracingShaderGroupHandlesKHR);
-	*(cast(void**)&vkGetRayTracingShaderGroupHandlesNV) = vkGetInstanceProcAddr(instance, "vkGetRayTracingShaderGroupHandlesNV"); throwIf(!vkGetRayTracingShaderGroupHandlesNV);
-	*(cast(void**)&vkGetRayTracingShaderGroupStackSizeKHR) = vkGetInstanceProcAddr(instance, "vkGetRayTracingShaderGroupStackSizeKHR"); throwIf(!vkGetRayTracingShaderGroupStackSizeKHR);
-	*(cast(void**)&vkGetRefreshCycleDurationGOOGLE) = vkGetInstanceProcAddr(instance, "vkGetRefreshCycleDurationGOOGLE"); throwIf(!vkGetRefreshCycleDurationGOOGLE);
-	*(cast(void**)&vkGetRenderAreaGranularity) = vkGetInstanceProcAddr(instance, "vkGetRenderAreaGranularity"); throwIf(!vkGetRenderAreaGranularity);
-	*(cast(void**)&vkGetSemaphoreCounterValue) = vkGetInstanceProcAddr(instance, "vkGetSemaphoreCounterValue"); throwIf(!vkGetSemaphoreCounterValue);
-	*(cast(void**)&vkGetSemaphoreCounterValueKHR) = vkGetInstanceProcAddr(instance, "vkGetSemaphoreCounterValueKHR"); throwIf(!vkGetSemaphoreCounterValueKHR);
-	*(cast(void**)&vkGetSemaphoreFdKHR) = vkGetInstanceProcAddr(instance, "vkGetSemaphoreFdKHR"); throwIf(!vkGetSemaphoreFdKHR);
-	*(cast(void**)&vkGetSemaphoreWin32HandleKHR) = vkGetInstanceProcAddr(instance, "vkGetSemaphoreWin32HandleKHR"); throwIf(!vkGetSemaphoreWin32HandleKHR);
-	*(cast(void**)&vkGetShaderInfoAMD) = vkGetInstanceProcAddr(instance, "vkGetShaderInfoAMD"); throwIf(!vkGetShaderInfoAMD);
-	*(cast(void**)&vkGetSwapchainCounterEXT) = vkGetInstanceProcAddr(instance, "vkGetSwapchainCounterEXT"); throwIf(!vkGetSwapchainCounterEXT);
-	*(cast(void**)&vkGetSwapchainImagesKHR) = vkGetInstanceProcAddr(instance, "vkGetSwapchainImagesKHR"); throwIf(!vkGetSwapchainImagesKHR);
-	*(cast(void**)&vkGetSwapchainStatusKHR) = vkGetInstanceProcAddr(instance, "vkGetSwapchainStatusKHR"); throwIf(!vkGetSwapchainStatusKHR);
-	*(cast(void**)&vkGetValidationCacheDataEXT) = vkGetInstanceProcAddr(instance, "vkGetValidationCacheDataEXT"); throwIf(!vkGetValidationCacheDataEXT);
-	*(cast(void**)&vkGetWinrtDisplayNV) = vkGetInstanceProcAddr(instance, "vkGetWinrtDisplayNV"); throwIf(!vkGetWinrtDisplayNV);
-	*(cast(void**)&vkImportFenceFdKHR) = vkGetInstanceProcAddr(instance, "vkImportFenceFdKHR"); throwIf(!vkImportFenceFdKHR);
-	*(cast(void**)&vkImportFenceWin32HandleKHR) = vkGetInstanceProcAddr(instance, "vkImportFenceWin32HandleKHR"); throwIf(!vkImportFenceWin32HandleKHR);
-	*(cast(void**)&vkImportSemaphoreFdKHR) = vkGetInstanceProcAddr(instance, "vkImportSemaphoreFdKHR"); throwIf(!vkImportSemaphoreFdKHR);
-	*(cast(void**)&vkImportSemaphoreWin32HandleKHR) = vkGetInstanceProcAddr(instance, "vkImportSemaphoreWin32HandleKHR"); throwIf(!vkImportSemaphoreWin32HandleKHR);
-	*(cast(void**)&vkInitializePerformanceApiINTEL) = vkGetInstanceProcAddr(instance, "vkInitializePerformanceApiINTEL"); throwIf(!vkInitializePerformanceApiINTEL);
-	*(cast(void**)&vkInvalidateMappedMemoryRanges) = vkGetInstanceProcAddr(instance, "vkInvalidateMappedMemoryRanges"); throwIf(!vkInvalidateMappedMemoryRanges);
-	*(cast(void**)&vkMapMemory) = vkGetInstanceProcAddr(instance, "vkMapMemory"); throwIf(!vkMapMemory);
-	*(cast(void**)&vkMergePipelineCaches) = vkGetInstanceProcAddr(instance, "vkMergePipelineCaches"); throwIf(!vkMergePipelineCaches);
-	*(cast(void**)&vkMergeValidationCachesEXT) = vkGetInstanceProcAddr(instance, "vkMergeValidationCachesEXT"); throwIf(!vkMergeValidationCachesEXT);
-	*(cast(void**)&vkQueueBeginDebugUtilsLabelEXT) = vkGetInstanceProcAddr(instance, "vkQueueBeginDebugUtilsLabelEXT"); throwIf(!vkQueueBeginDebugUtilsLabelEXT);
-	*(cast(void**)&vkQueueBindSparse) = vkGetInstanceProcAddr(instance, "vkQueueBindSparse"); throwIf(!vkQueueBindSparse);
-	*(cast(void**)&vkQueueEndDebugUtilsLabelEXT) = vkGetInstanceProcAddr(instance, "vkQueueEndDebugUtilsLabelEXT"); throwIf(!vkQueueEndDebugUtilsLabelEXT);
-	*(cast(void**)&vkQueueInsertDebugUtilsLabelEXT) = vkGetInstanceProcAddr(instance, "vkQueueInsertDebugUtilsLabelEXT"); throwIf(!vkQueueInsertDebugUtilsLabelEXT);
-	*(cast(void**)&vkQueuePresentKHR) = vkGetInstanceProcAddr(instance, "vkQueuePresentKHR"); throwIf(!vkQueuePresentKHR);
-	*(cast(void**)&vkQueueSetPerformanceConfigurationINTEL) = vkGetInstanceProcAddr(instance, "vkQueueSetPerformanceConfigurationINTEL"); throwIf(!vkQueueSetPerformanceConfigurationINTEL);
-	*(cast(void**)&vkQueueSubmit) = vkGetInstanceProcAddr(instance, "vkQueueSubmit"); throwIf(!vkQueueSubmit);
-	*(cast(void**)&vkQueueSubmit2) = vkGetInstanceProcAddr(instance, "vkQueueSubmit2"); throwIf(!vkQueueSubmit2);
-	*(cast(void**)&vkQueueSubmit2KHR) = vkGetInstanceProcAddr(instance, "vkQueueSubmit2KHR"); throwIf(!vkQueueSubmit2KHR);
-	*(cast(void**)&vkQueueWaitIdle) = vkGetInstanceProcAddr(instance, "vkQueueWaitIdle"); throwIf(!vkQueueWaitIdle);
-	*(cast(void**)&vkRegisterDeviceEventEXT) = vkGetInstanceProcAddr(instance, "vkRegisterDeviceEventEXT"); throwIf(!vkRegisterDeviceEventEXT);
-	*(cast(void**)&vkRegisterDisplayEventEXT) = vkGetInstanceProcAddr(instance, "vkRegisterDisplayEventEXT"); throwIf(!vkRegisterDisplayEventEXT);
-	*(cast(void**)&vkReleaseDisplayEXT) = vkGetInstanceProcAddr(instance, "vkReleaseDisplayEXT"); throwIf(!vkReleaseDisplayEXT);
-	*(cast(void**)&vkReleaseFullScreenExclusiveModeEXT) = vkGetInstanceProcAddr(instance, "vkReleaseFullScreenExclusiveModeEXT"); throwIf(!vkReleaseFullScreenExclusiveModeEXT);
-	*(cast(void**)&vkReleasePerformanceConfigurationINTEL) = vkGetInstanceProcAddr(instance, "vkReleasePerformanceConfigurationINTEL"); throwIf(!vkReleasePerformanceConfigurationINTEL);
-	*(cast(void**)&vkReleaseProfilingLockKHR) = vkGetInstanceProcAddr(instance, "vkReleaseProfilingLockKHR"); throwIf(!vkReleaseProfilingLockKHR);
-	*(cast(void**)&vkResetCommandBuffer) = vkGetInstanceProcAddr(instance, "vkResetCommandBuffer"); throwIf(!vkResetCommandBuffer);
-	*(cast(void**)&vkResetCommandPool) = vkGetInstanceProcAddr(instance, "vkResetCommandPool"); throwIf(!vkResetCommandPool);
-	*(cast(void**)&vkResetDescriptorPool) = vkGetInstanceProcAddr(instance, "vkResetDescriptorPool"); throwIf(!vkResetDescriptorPool);
-	*(cast(void**)&vkResetEvent) = vkGetInstanceProcAddr(instance, "vkResetEvent"); throwIf(!vkResetEvent);
-	*(cast(void**)&vkResetFences) = vkGetInstanceProcAddr(instance, "vkResetFences"); throwIf(!vkResetFences);
-	*(cast(void**)&vkResetQueryPool) = vkGetInstanceProcAddr(instance, "vkResetQueryPool"); throwIf(!vkResetQueryPool);
-	*(cast(void**)&vkResetQueryPoolEXT) = vkGetInstanceProcAddr(instance, "vkResetQueryPoolEXT"); throwIf(!vkResetQueryPoolEXT);
-	*(cast(void**)&vkSetDebugUtilsObjectNameEXT) = vkGetInstanceProcAddr(instance, "vkSetDebugUtilsObjectNameEXT"); throwIf(!vkSetDebugUtilsObjectNameEXT);
-	*(cast(void**)&vkSetDebugUtilsObjectTagEXT) = vkGetInstanceProcAddr(instance, "vkSetDebugUtilsObjectTagEXT"); throwIf(!vkSetDebugUtilsObjectTagEXT);
-	*(cast(void**)&vkSetDeviceMemoryPriorityEXT) = vkGetInstanceProcAddr(instance, "vkSetDeviceMemoryPriorityEXT"); throwIf(!vkSetDeviceMemoryPriorityEXT);
-	*(cast(void**)&vkSetEvent) = vkGetInstanceProcAddr(instance, "vkSetEvent"); throwIf(!vkSetEvent);
-	*(cast(void**)&vkSetHdrMetadataEXT) = vkGetInstanceProcAddr(instance, "vkSetHdrMetadataEXT"); throwIf(!vkSetHdrMetadataEXT);
-	*(cast(void**)&vkSetLocalDimmingAMD) = vkGetInstanceProcAddr(instance, "vkSetLocalDimmingAMD"); throwIf(!vkSetLocalDimmingAMD);
-	*(cast(void**)&vkSetPrivateData) = vkGetInstanceProcAddr(instance, "vkSetPrivateData"); throwIf(!vkSetPrivateData);
-	*(cast(void**)&vkSetPrivateDataEXT) = vkGetInstanceProcAddr(instance, "vkSetPrivateDataEXT"); throwIf(!vkSetPrivateDataEXT);
-	*(cast(void**)&vkSignalSemaphore) = vkGetInstanceProcAddr(instance, "vkSignalSemaphore"); throwIf(!vkSignalSemaphore);
-	*(cast(void**)&vkSignalSemaphoreKHR) = vkGetInstanceProcAddr(instance, "vkSignalSemaphoreKHR"); throwIf(!vkSignalSemaphoreKHR);
-	*(cast(void**)&vkSubmitDebugUtilsMessageEXT) = vkGetInstanceProcAddr(instance, "vkSubmitDebugUtilsMessageEXT"); throwIf(!vkSubmitDebugUtilsMessageEXT);
-	*(cast(void**)&vkTrimCommandPool) = vkGetInstanceProcAddr(instance, "vkTrimCommandPool"); throwIf(!vkTrimCommandPool);
-	*(cast(void**)&vkTrimCommandPoolKHR) = vkGetInstanceProcAddr(instance, "vkTrimCommandPoolKHR"); throwIf(!vkTrimCommandPoolKHR);
-	*(cast(void**)&vkUninitializePerformanceApiINTEL) = vkGetInstanceProcAddr(instance, "vkUninitializePerformanceApiINTEL"); throwIf(!vkUninitializePerformanceApiINTEL);
-	*(cast(void**)&vkUnmapMemory) = vkGetInstanceProcAddr(instance, "vkUnmapMemory"); throwIf(!vkUnmapMemory);
-	*(cast(void**)&vkUpdateDescriptorSetWithTemplate) = vkGetInstanceProcAddr(instance, "vkUpdateDescriptorSetWithTemplate"); throwIf(!vkUpdateDescriptorSetWithTemplate);
-	*(cast(void**)&vkUpdateDescriptorSetWithTemplateKHR) = vkGetInstanceProcAddr(instance, "vkUpdateDescriptorSetWithTemplateKHR"); throwIf(!vkUpdateDescriptorSetWithTemplateKHR);
-	*(cast(void**)&vkUpdateDescriptorSets) = vkGetInstanceProcAddr(instance, "vkUpdateDescriptorSets"); throwIf(!vkUpdateDescriptorSets);
-	*(cast(void**)&vkWaitForFences) = vkGetInstanceProcAddr(instance, "vkWaitForFences"); throwIf(!vkWaitForFences);
-	*(cast(void**)&vkWaitForPresentKHR) = vkGetInstanceProcAddr(instance, "vkWaitForPresentKHR"); throwIf(!vkWaitForPresentKHR);
-	*(cast(void**)&vkWaitSemaphores) = vkGetInstanceProcAddr(instance, "vkWaitSemaphores"); throwIf(!vkWaitSemaphores);
-	*(cast(void**)&vkWaitSemaphoresKHR) = vkGetInstanceProcAddr(instance, "vkWaitSemaphoresKHR"); throwIf(!vkWaitSemaphoresKHR);
-	*(cast(void**)&vkWriteAccelerationStructuresPropertiesKHR) = vkGetInstanceProcAddr(instance, "vkWriteAccelerationStructuresPropertiesKHR"); throwIf(!vkWriteAccelerationStructuresPropertiesKHR);
-}
-// End Load Instance Functions
-
+	*(cast(void**)&vkAcquireDrmDisplayEXT) = vkGetInstanceProcAddr(instance, toStringz("vkAcquireDrmDisplayEXT"));	*(cast(void**)&vkAcquireFullScreenExclusiveModeEXT) = vkGetInstanceProcAddr(instance, toStringz("vkAcquireFullScreenExclusiveModeEXT"));	*(cast(void**)&vkAcquireNextImage2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkAcquireNextImage2KHR"));	*(cast(void**)&vkAcquireNextImageKHR) = vkGetInstanceProcAddr(instance, toStringz("vkAcquireNextImageKHR"));	*(cast(void**)&vkAcquirePerformanceConfigurationINTEL) = vkGetInstanceProcAddr(instance, toStringz("vkAcquirePerformanceConfigurationINTEL"));	*(cast(void**)&vkAcquireProfilingLockKHR) = vkGetInstanceProcAddr(instance, toStringz("vkAcquireProfilingLockKHR"));	*(cast(void**)&vkAcquireWinrtDisplayNV) = vkGetInstanceProcAddr(instance, toStringz("vkAcquireWinrtDisplayNV"));	*(cast(void**)&vkAllocateCommandBuffers) = vkGetInstanceProcAddr(instance, toStringz("vkAllocateCommandBuffers"));	*(cast(void**)&vkAllocateDescriptorSets) = vkGetInstanceProcAddr(instance, toStringz("vkAllocateDescriptorSets"));	*(cast(void**)&vkAllocateMemory) = vkGetInstanceProcAddr(instance, toStringz("vkAllocateMemory"));	*(cast(void**)&vkBeginCommandBuffer) = vkGetInstanceProcAddr(instance, toStringz("vkBeginCommandBuffer"));	*(cast(void**)&vkBindAccelerationStructureMemoryNV) = vkGetInstanceProcAddr(instance, toStringz("vkBindAccelerationStructureMemoryNV"));	*(cast(void**)&vkBindBufferMemory) = vkGetInstanceProcAddr(instance, toStringz("vkBindBufferMemory"));	*(cast(void**)&vkBindBufferMemory2) = vkGetInstanceProcAddr(instance, toStringz("vkBindBufferMemory2"));	*(cast(void**)&vkBindBufferMemory2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkBindBufferMemory2KHR"));	*(cast(void**)&vkBindImageMemory) = vkGetInstanceProcAddr(instance, toStringz("vkBindImageMemory"));	*(cast(void**)&vkBindImageMemory2) = vkGetInstanceProcAddr(instance, toStringz("vkBindImageMemory2"));	*(cast(void**)&vkBindImageMemory2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkBindImageMemory2KHR"));	*(cast(void**)&vkBuildAccelerationStructuresKHR) = vkGetInstanceProcAddr(instance, toStringz("vkBuildAccelerationStructuresKHR"));	*(cast(void**)&vkCmdBeginConditionalRenderingEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBeginConditionalRenderingEXT"));	*(cast(void**)&vkCmdBeginDebugUtilsLabelEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBeginDebugUtilsLabelEXT"));	*(cast(void**)&vkCmdBeginQuery) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBeginQuery"));	*(cast(void**)&vkCmdBeginQueryIndexedEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBeginQueryIndexedEXT"));	*(cast(void**)&vkCmdBeginRenderPass) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBeginRenderPass"));	*(cast(void**)&vkCmdBeginRenderPass2) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBeginRenderPass2"));	*(cast(void**)&vkCmdBeginRenderPass2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBeginRenderPass2KHR"));	*(cast(void**)&vkCmdBeginRendering) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBeginRendering"));	*(cast(void**)&vkCmdBeginRenderingKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBeginRenderingKHR"));	*(cast(void**)&vkCmdBeginTransformFeedbackEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBeginTransformFeedbackEXT"));	*(cast(void**)&vkCmdBindDescriptorSets) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBindDescriptorSets"));	*(cast(void**)&vkCmdBindIndexBuffer) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBindIndexBuffer"));	*(cast(void**)&vkCmdBindInvocationMaskHUAWEI) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBindInvocationMaskHUAWEI"));	*(cast(void**)&vkCmdBindPipeline) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBindPipeline"));	*(cast(void**)&vkCmdBindPipelineShaderGroupNV) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBindPipelineShaderGroupNV"));	*(cast(void**)&vkCmdBindShadingRateImageNV) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBindShadingRateImageNV"));	*(cast(void**)&vkCmdBindTransformFeedbackBuffersEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBindTransformFeedbackBuffersEXT"));	*(cast(void**)&vkCmdBindVertexBuffers) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBindVertexBuffers"));	*(cast(void**)&vkCmdBindVertexBuffers2) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBindVertexBuffers2"));	*(cast(void**)&vkCmdBindVertexBuffers2EXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBindVertexBuffers2EXT"));	*(cast(void**)&vkCmdBlitImage) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBlitImage"));	*(cast(void**)&vkCmdBlitImage2) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBlitImage2"));	*(cast(void**)&vkCmdBlitImage2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBlitImage2KHR"));	*(cast(void**)&vkCmdBuildAccelerationStructureNV) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBuildAccelerationStructureNV"));	*(cast(void**)&vkCmdBuildAccelerationStructuresIndirectKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBuildAccelerationStructuresIndirectKHR"));	*(cast(void**)&vkCmdBuildAccelerationStructuresKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdBuildAccelerationStructuresKHR"));	*(cast(void**)&vkCmdClearAttachments) = vkGetInstanceProcAddr(instance, toStringz("vkCmdClearAttachments"));	*(cast(void**)&vkCmdClearColorImage) = vkGetInstanceProcAddr(instance, toStringz("vkCmdClearColorImage"));	*(cast(void**)&vkCmdClearDepthStencilImage) = vkGetInstanceProcAddr(instance, toStringz("vkCmdClearDepthStencilImage"));	*(cast(void**)&vkCmdCopyAccelerationStructureKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdCopyAccelerationStructureKHR"));	*(cast(void**)&vkCmdCopyAccelerationStructureNV) = vkGetInstanceProcAddr(instance, toStringz("vkCmdCopyAccelerationStructureNV"));	*(cast(void**)&vkCmdCopyAccelerationStructureToMemoryKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdCopyAccelerationStructureToMemoryKHR"));	*(cast(void**)&vkCmdCopyBuffer) = vkGetInstanceProcAddr(instance, toStringz("vkCmdCopyBuffer"));	*(cast(void**)&vkCmdCopyBuffer2) = vkGetInstanceProcAddr(instance, toStringz("vkCmdCopyBuffer2"));	*(cast(void**)&vkCmdCopyBuffer2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdCopyBuffer2KHR"));	*(cast(void**)&vkCmdCopyBufferToImage) = vkGetInstanceProcAddr(instance, toStringz("vkCmdCopyBufferToImage"));	*(cast(void**)&vkCmdCopyBufferToImage2) = vkGetInstanceProcAddr(instance, toStringz("vkCmdCopyBufferToImage2"));	*(cast(void**)&vkCmdCopyBufferToImage2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdCopyBufferToImage2KHR"));	*(cast(void**)&vkCmdCopyImage) = vkGetInstanceProcAddr(instance, toStringz("vkCmdCopyImage"));	*(cast(void**)&vkCmdCopyImage2) = vkGetInstanceProcAddr(instance, toStringz("vkCmdCopyImage2"));	*(cast(void**)&vkCmdCopyImage2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdCopyImage2KHR"));	*(cast(void**)&vkCmdCopyImageToBuffer) = vkGetInstanceProcAddr(instance, toStringz("vkCmdCopyImageToBuffer"));	*(cast(void**)&vkCmdCopyImageToBuffer2) = vkGetInstanceProcAddr(instance, toStringz("vkCmdCopyImageToBuffer2"));	*(cast(void**)&vkCmdCopyImageToBuffer2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdCopyImageToBuffer2KHR"));	*(cast(void**)&vkCmdCopyMemoryToAccelerationStructureKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdCopyMemoryToAccelerationStructureKHR"));	*(cast(void**)&vkCmdCopyQueryPoolResults) = vkGetInstanceProcAddr(instance, toStringz("vkCmdCopyQueryPoolResults"));	*(cast(void**)&vkCmdCuLaunchKernelNVX) = vkGetInstanceProcAddr(instance, toStringz("vkCmdCuLaunchKernelNVX"));	*(cast(void**)&vkCmdDebugMarkerBeginEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDebugMarkerBeginEXT"));	*(cast(void**)&vkCmdDebugMarkerEndEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDebugMarkerEndEXT"));	*(cast(void**)&vkCmdDebugMarkerInsertEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDebugMarkerInsertEXT"));	*(cast(void**)&vkCmdDispatch) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDispatch"));	*(cast(void**)&vkCmdDispatchBase) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDispatchBase"));	*(cast(void**)&vkCmdDispatchBaseKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDispatchBaseKHR"));	*(cast(void**)&vkCmdDispatchIndirect) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDispatchIndirect"));	*(cast(void**)&vkCmdDraw) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDraw"));	*(cast(void**)&vkCmdDrawIndexed) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDrawIndexed"));	*(cast(void**)&vkCmdDrawIndexedIndirect) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDrawIndexedIndirect"));	*(cast(void**)&vkCmdDrawIndexedIndirectCount) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDrawIndexedIndirectCount"));	*(cast(void**)&vkCmdDrawIndexedIndirectCountAMD) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDrawIndexedIndirectCountAMD"));	*(cast(void**)&vkCmdDrawIndexedIndirectCountKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDrawIndexedIndirectCountKHR"));	*(cast(void**)&vkCmdDrawIndirect) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDrawIndirect"));	*(cast(void**)&vkCmdDrawIndirectByteCountEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDrawIndirectByteCountEXT"));	*(cast(void**)&vkCmdDrawIndirectCount) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDrawIndirectCount"));	*(cast(void**)&vkCmdDrawIndirectCountAMD) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDrawIndirectCountAMD"));	*(cast(void**)&vkCmdDrawIndirectCountKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDrawIndirectCountKHR"));	*(cast(void**)&vkCmdDrawMeshTasksIndirectCountNV) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDrawMeshTasksIndirectCountNV"));	*(cast(void**)&vkCmdDrawMeshTasksIndirectNV) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDrawMeshTasksIndirectNV"));	*(cast(void**)&vkCmdDrawMeshTasksNV) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDrawMeshTasksNV"));	*(cast(void**)&vkCmdDrawMultiEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDrawMultiEXT"));	*(cast(void**)&vkCmdDrawMultiIndexedEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdDrawMultiIndexedEXT"));	*(cast(void**)&vkCmdEndConditionalRenderingEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdEndConditionalRenderingEXT"));	*(cast(void**)&vkCmdEndDebugUtilsLabelEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdEndDebugUtilsLabelEXT"));	*(cast(void**)&vkCmdEndQuery) = vkGetInstanceProcAddr(instance, toStringz("vkCmdEndQuery"));	*(cast(void**)&vkCmdEndQueryIndexedEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdEndQueryIndexedEXT"));	*(cast(void**)&vkCmdEndRenderPass) = vkGetInstanceProcAddr(instance, toStringz("vkCmdEndRenderPass"));	*(cast(void**)&vkCmdEndRenderPass2) = vkGetInstanceProcAddr(instance, toStringz("vkCmdEndRenderPass2"));	*(cast(void**)&vkCmdEndRenderPass2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdEndRenderPass2KHR"));	*(cast(void**)&vkCmdEndRendering) = vkGetInstanceProcAddr(instance, toStringz("vkCmdEndRendering"));	*(cast(void**)&vkCmdEndRenderingKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdEndRenderingKHR"));	*(cast(void**)&vkCmdEndTransformFeedbackEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdEndTransformFeedbackEXT"));	*(cast(void**)&vkCmdExecuteCommands) = vkGetInstanceProcAddr(instance, toStringz("vkCmdExecuteCommands"));	*(cast(void**)&vkCmdExecuteGeneratedCommandsNV) = vkGetInstanceProcAddr(instance, toStringz("vkCmdExecuteGeneratedCommandsNV"));	*(cast(void**)&vkCmdFillBuffer) = vkGetInstanceProcAddr(instance, toStringz("vkCmdFillBuffer"));	*(cast(void**)&vkCmdInsertDebugUtilsLabelEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdInsertDebugUtilsLabelEXT"));	*(cast(void**)&vkCmdNextSubpass) = vkGetInstanceProcAddr(instance, toStringz("vkCmdNextSubpass"));	*(cast(void**)&vkCmdNextSubpass2) = vkGetInstanceProcAddr(instance, toStringz("vkCmdNextSubpass2"));	*(cast(void**)&vkCmdNextSubpass2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdNextSubpass2KHR"));	*(cast(void**)&vkCmdPipelineBarrier) = vkGetInstanceProcAddr(instance, toStringz("vkCmdPipelineBarrier"));	*(cast(void**)&vkCmdPipelineBarrier2) = vkGetInstanceProcAddr(instance, toStringz("vkCmdPipelineBarrier2"));	*(cast(void**)&vkCmdPipelineBarrier2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdPipelineBarrier2KHR"));	*(cast(void**)&vkCmdPreprocessGeneratedCommandsNV) = vkGetInstanceProcAddr(instance, toStringz("vkCmdPreprocessGeneratedCommandsNV"));	*(cast(void**)&vkCmdPushConstants) = vkGetInstanceProcAddr(instance, toStringz("vkCmdPushConstants"));	*(cast(void**)&vkCmdPushDescriptorSetKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdPushDescriptorSetKHR"));	*(cast(void**)&vkCmdPushDescriptorSetWithTemplateKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdPushDescriptorSetWithTemplateKHR"));	*(cast(void**)&vkCmdResetEvent) = vkGetInstanceProcAddr(instance, toStringz("vkCmdResetEvent"));	*(cast(void**)&vkCmdResetEvent2) = vkGetInstanceProcAddr(instance, toStringz("vkCmdResetEvent2"));	*(cast(void**)&vkCmdResetEvent2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdResetEvent2KHR"));	*(cast(void**)&vkCmdResetQueryPool) = vkGetInstanceProcAddr(instance, toStringz("vkCmdResetQueryPool"));	*(cast(void**)&vkCmdResolveImage) = vkGetInstanceProcAddr(instance, toStringz("vkCmdResolveImage"));	*(cast(void**)&vkCmdResolveImage2) = vkGetInstanceProcAddr(instance, toStringz("vkCmdResolveImage2"));	*(cast(void**)&vkCmdResolveImage2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdResolveImage2KHR"));	*(cast(void**)&vkCmdSetBlendConstants) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetBlendConstants"));	*(cast(void**)&vkCmdSetCheckpointNV) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetCheckpointNV"));	*(cast(void**)&vkCmdSetCoarseSampleOrderNV) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetCoarseSampleOrderNV"));	*(cast(void**)&vkCmdSetColorWriteEnableEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetColorWriteEnableEXT"));	*(cast(void**)&vkCmdSetCullMode) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetCullMode"));	*(cast(void**)&vkCmdSetCullModeEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetCullModeEXT"));	*(cast(void**)&vkCmdSetDepthBias) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetDepthBias"));	*(cast(void**)&vkCmdSetDepthBiasEnable) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetDepthBiasEnable"));	*(cast(void**)&vkCmdSetDepthBiasEnableEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetDepthBiasEnableEXT"));	*(cast(void**)&vkCmdSetDepthBounds) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetDepthBounds"));	*(cast(void**)&vkCmdSetDepthBoundsTestEnable) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetDepthBoundsTestEnable"));	*(cast(void**)&vkCmdSetDepthBoundsTestEnableEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetDepthBoundsTestEnableEXT"));	*(cast(void**)&vkCmdSetDepthCompareOp) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetDepthCompareOp"));	*(cast(void**)&vkCmdSetDepthCompareOpEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetDepthCompareOpEXT"));	*(cast(void**)&vkCmdSetDepthTestEnable) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetDepthTestEnable"));	*(cast(void**)&vkCmdSetDepthTestEnableEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetDepthTestEnableEXT"));	*(cast(void**)&vkCmdSetDepthWriteEnable) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetDepthWriteEnable"));	*(cast(void**)&vkCmdSetDepthWriteEnableEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetDepthWriteEnableEXT"));	*(cast(void**)&vkCmdSetDeviceMask) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetDeviceMask"));	*(cast(void**)&vkCmdSetDeviceMaskKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetDeviceMaskKHR"));	*(cast(void**)&vkCmdSetDiscardRectangleEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetDiscardRectangleEXT"));	*(cast(void**)&vkCmdSetEvent) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetEvent"));	*(cast(void**)&vkCmdSetEvent2) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetEvent2"));	*(cast(void**)&vkCmdSetEvent2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetEvent2KHR"));	*(cast(void**)&vkCmdSetExclusiveScissorNV) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetExclusiveScissorNV"));	*(cast(void**)&vkCmdSetFragmentShadingRateEnumNV) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetFragmentShadingRateEnumNV"));	*(cast(void**)&vkCmdSetFragmentShadingRateKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetFragmentShadingRateKHR"));	*(cast(void**)&vkCmdSetFrontFace) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetFrontFace"));	*(cast(void**)&vkCmdSetFrontFaceEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetFrontFaceEXT"));	*(cast(void**)&vkCmdSetLineStippleEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetLineStippleEXT"));	*(cast(void**)&vkCmdSetLineWidth) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetLineWidth"));	*(cast(void**)&vkCmdSetLogicOpEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetLogicOpEXT"));	*(cast(void**)&vkCmdSetPatchControlPointsEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetPatchControlPointsEXT"));	*(cast(void**)&vkCmdSetPerformanceMarkerINTEL) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetPerformanceMarkerINTEL"));	*(cast(void**)&vkCmdSetPerformanceOverrideINTEL) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetPerformanceOverrideINTEL"));	*(cast(void**)&vkCmdSetPerformanceStreamMarkerINTEL) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetPerformanceStreamMarkerINTEL"));	*(cast(void**)&vkCmdSetPrimitiveRestartEnable) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetPrimitiveRestartEnable"));	*(cast(void**)&vkCmdSetPrimitiveRestartEnableEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetPrimitiveRestartEnableEXT"));	*(cast(void**)&vkCmdSetPrimitiveTopology) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetPrimitiveTopology"));	*(cast(void**)&vkCmdSetPrimitiveTopologyEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetPrimitiveTopologyEXT"));	*(cast(void**)&vkCmdSetRasterizerDiscardEnable) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetRasterizerDiscardEnable"));	*(cast(void**)&vkCmdSetRasterizerDiscardEnableEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetRasterizerDiscardEnableEXT"));	*(cast(void**)&vkCmdSetRayTracingPipelineStackSizeKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetRayTracingPipelineStackSizeKHR"));	*(cast(void**)&vkCmdSetSampleLocationsEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetSampleLocationsEXT"));	*(cast(void**)&vkCmdSetScissor) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetScissor"));	*(cast(void**)&vkCmdSetScissorWithCount) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetScissorWithCount"));	*(cast(void**)&vkCmdSetScissorWithCountEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetScissorWithCountEXT"));	*(cast(void**)&vkCmdSetStencilCompareMask) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetStencilCompareMask"));	*(cast(void**)&vkCmdSetStencilOp) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetStencilOp"));	*(cast(void**)&vkCmdSetStencilOpEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetStencilOpEXT"));	*(cast(void**)&vkCmdSetStencilReference) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetStencilReference"));	*(cast(void**)&vkCmdSetStencilTestEnable) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetStencilTestEnable"));	*(cast(void**)&vkCmdSetStencilTestEnableEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetStencilTestEnableEXT"));	*(cast(void**)&vkCmdSetStencilWriteMask) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetStencilWriteMask"));	*(cast(void**)&vkCmdSetVertexInputEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetVertexInputEXT"));	*(cast(void**)&vkCmdSetViewport) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetViewport"));	*(cast(void**)&vkCmdSetViewportShadingRatePaletteNV) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetViewportShadingRatePaletteNV"));	*(cast(void**)&vkCmdSetViewportWScalingNV) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetViewportWScalingNV"));	*(cast(void**)&vkCmdSetViewportWithCount) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetViewportWithCount"));	*(cast(void**)&vkCmdSetViewportWithCountEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSetViewportWithCountEXT"));	*(cast(void**)&vkCmdSubpassShadingHUAWEI) = vkGetInstanceProcAddr(instance, toStringz("vkCmdSubpassShadingHUAWEI"));	*(cast(void**)&vkCmdTraceRaysIndirectKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdTraceRaysIndirectKHR"));	*(cast(void**)&vkCmdTraceRaysKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdTraceRaysKHR"));	*(cast(void**)&vkCmdTraceRaysNV) = vkGetInstanceProcAddr(instance, toStringz("vkCmdTraceRaysNV"));	*(cast(void**)&vkCmdUpdateBuffer) = vkGetInstanceProcAddr(instance, toStringz("vkCmdUpdateBuffer"));	*(cast(void**)&vkCmdWaitEvents) = vkGetInstanceProcAddr(instance, toStringz("vkCmdWaitEvents"));	*(cast(void**)&vkCmdWaitEvents2) = vkGetInstanceProcAddr(instance, toStringz("vkCmdWaitEvents2"));	*(cast(void**)&vkCmdWaitEvents2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdWaitEvents2KHR"));	*(cast(void**)&vkCmdWriteAccelerationStructuresPropertiesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdWriteAccelerationStructuresPropertiesKHR"));	*(cast(void**)&vkCmdWriteAccelerationStructuresPropertiesNV) = vkGetInstanceProcAddr(instance, toStringz("vkCmdWriteAccelerationStructuresPropertiesNV"));	*(cast(void**)&vkCmdWriteBufferMarker2AMD) = vkGetInstanceProcAddr(instance, toStringz("vkCmdWriteBufferMarker2AMD"));	*(cast(void**)&vkCmdWriteBufferMarkerAMD) = vkGetInstanceProcAddr(instance, toStringz("vkCmdWriteBufferMarkerAMD"));	*(cast(void**)&vkCmdWriteTimestamp) = vkGetInstanceProcAddr(instance, toStringz("vkCmdWriteTimestamp"));	*(cast(void**)&vkCmdWriteTimestamp2) = vkGetInstanceProcAddr(instance, toStringz("vkCmdWriteTimestamp2"));	*(cast(void**)&vkCmdWriteTimestamp2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkCmdWriteTimestamp2KHR"));	*(cast(void**)&vkCompileDeferredNV) = vkGetInstanceProcAddr(instance, toStringz("vkCompileDeferredNV"));	*(cast(void**)&vkCopyAccelerationStructureKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCopyAccelerationStructureKHR"));	*(cast(void**)&vkCopyAccelerationStructureToMemoryKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCopyAccelerationStructureToMemoryKHR"));	*(cast(void**)&vkCopyMemoryToAccelerationStructureKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCopyMemoryToAccelerationStructureKHR"));	*(cast(void**)&vkCreateAccelerationStructureKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCreateAccelerationStructureKHR"));	*(cast(void**)&vkCreateAccelerationStructureNV) = vkGetInstanceProcAddr(instance, toStringz("vkCreateAccelerationStructureNV"));	*(cast(void**)&vkCreateBuffer) = vkGetInstanceProcAddr(instance, toStringz("vkCreateBuffer"));	*(cast(void**)&vkCreateBufferView) = vkGetInstanceProcAddr(instance, toStringz("vkCreateBufferView"));	*(cast(void**)&vkCreateCommandPool) = vkGetInstanceProcAddr(instance, toStringz("vkCreateCommandPool"));	*(cast(void**)&vkCreateComputePipelines) = vkGetInstanceProcAddr(instance, toStringz("vkCreateComputePipelines"));	*(cast(void**)&vkCreateCuFunctionNVX) = vkGetInstanceProcAddr(instance, toStringz("vkCreateCuFunctionNVX"));	*(cast(void**)&vkCreateCuModuleNVX) = vkGetInstanceProcAddr(instance, toStringz("vkCreateCuModuleNVX"));	*(cast(void**)&vkCreateDebugReportCallbackEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCreateDebugReportCallbackEXT"));	*(cast(void**)&vkCreateDebugUtilsMessengerEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCreateDebugUtilsMessengerEXT"));	*(cast(void**)&vkCreateDeferredOperationKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCreateDeferredOperationKHR"));	*(cast(void**)&vkCreateDescriptorPool) = vkGetInstanceProcAddr(instance, toStringz("vkCreateDescriptorPool"));	*(cast(void**)&vkCreateDescriptorSetLayout) = vkGetInstanceProcAddr(instance, toStringz("vkCreateDescriptorSetLayout"));	*(cast(void**)&vkCreateDescriptorUpdateTemplate) = vkGetInstanceProcAddr(instance, toStringz("vkCreateDescriptorUpdateTemplate"));	*(cast(void**)&vkCreateDescriptorUpdateTemplateKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCreateDescriptorUpdateTemplateKHR"));	*(cast(void**)&vkCreateDevice) = vkGetInstanceProcAddr(instance, toStringz("vkCreateDevice"));	*(cast(void**)&vkCreateDisplayModeKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCreateDisplayModeKHR"));	*(cast(void**)&vkCreateDisplayPlaneSurfaceKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCreateDisplayPlaneSurfaceKHR"));	*(cast(void**)&vkCreateEvent) = vkGetInstanceProcAddr(instance, toStringz("vkCreateEvent"));	*(cast(void**)&vkCreateFence) = vkGetInstanceProcAddr(instance, toStringz("vkCreateFence"));	*(cast(void**)&vkCreateFramebuffer) = vkGetInstanceProcAddr(instance, toStringz("vkCreateFramebuffer"));	*(cast(void**)&vkCreateGraphicsPipelines) = vkGetInstanceProcAddr(instance, toStringz("vkCreateGraphicsPipelines"));	*(cast(void**)&vkCreateHeadlessSurfaceEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCreateHeadlessSurfaceEXT"));	*(cast(void**)&vkCreateImage) = vkGetInstanceProcAddr(instance, toStringz("vkCreateImage"));	*(cast(void**)&vkCreateImageView) = vkGetInstanceProcAddr(instance, toStringz("vkCreateImageView"));	*(cast(void**)&vkCreateIndirectCommandsLayoutNV) = vkGetInstanceProcAddr(instance, toStringz("vkCreateIndirectCommandsLayoutNV"));	*(cast(void**)&vkCreatePipelineCache) = vkGetInstanceProcAddr(instance, toStringz("vkCreatePipelineCache"));	*(cast(void**)&vkCreatePipelineLayout) = vkGetInstanceProcAddr(instance, toStringz("vkCreatePipelineLayout"));	*(cast(void**)&vkCreatePrivateDataSlot) = vkGetInstanceProcAddr(instance, toStringz("vkCreatePrivateDataSlot"));	*(cast(void**)&vkCreatePrivateDataSlotEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCreatePrivateDataSlotEXT"));	*(cast(void**)&vkCreateQueryPool) = vkGetInstanceProcAddr(instance, toStringz("vkCreateQueryPool"));	*(cast(void**)&vkCreateRayTracingPipelinesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCreateRayTracingPipelinesKHR"));	*(cast(void**)&vkCreateRayTracingPipelinesNV) = vkGetInstanceProcAddr(instance, toStringz("vkCreateRayTracingPipelinesNV"));	*(cast(void**)&vkCreateRenderPass) = vkGetInstanceProcAddr(instance, toStringz("vkCreateRenderPass"));	*(cast(void**)&vkCreateRenderPass2) = vkGetInstanceProcAddr(instance, toStringz("vkCreateRenderPass2"));	*(cast(void**)&vkCreateRenderPass2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkCreateRenderPass2KHR"));	*(cast(void**)&vkCreateSampler) = vkGetInstanceProcAddr(instance, toStringz("vkCreateSampler"));	*(cast(void**)&vkCreateSamplerYcbcrConversion) = vkGetInstanceProcAddr(instance, toStringz("vkCreateSamplerYcbcrConversion"));	*(cast(void**)&vkCreateSamplerYcbcrConversionKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCreateSamplerYcbcrConversionKHR"));	*(cast(void**)&vkCreateSemaphore) = vkGetInstanceProcAddr(instance, toStringz("vkCreateSemaphore"));	*(cast(void**)&vkCreateShaderModule) = vkGetInstanceProcAddr(instance, toStringz("vkCreateShaderModule"));	*(cast(void**)&vkCreateSharedSwapchainsKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCreateSharedSwapchainsKHR"));	*(cast(void**)&vkCreateSwapchainKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCreateSwapchainKHR"));	*(cast(void**)&vkCreateValidationCacheEXT) = vkGetInstanceProcAddr(instance, toStringz("vkCreateValidationCacheEXT"));	*(cast(void**)&vkCreateWin32SurfaceKHR) = vkGetInstanceProcAddr(instance, toStringz("vkCreateWin32SurfaceKHR"));	*(cast(void**)&vkDebugMarkerSetObjectNameEXT) = vkGetInstanceProcAddr(instance, toStringz("vkDebugMarkerSetObjectNameEXT"));	*(cast(void**)&vkDebugMarkerSetObjectTagEXT) = vkGetInstanceProcAddr(instance, toStringz("vkDebugMarkerSetObjectTagEXT"));	*(cast(void**)&vkDebugReportMessageEXT) = vkGetInstanceProcAddr(instance, toStringz("vkDebugReportMessageEXT"));	*(cast(void**)&vkDeferredOperationJoinKHR) = vkGetInstanceProcAddr(instance, toStringz("vkDeferredOperationJoinKHR"));	*(cast(void**)&vkDestroyAccelerationStructureKHR) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyAccelerationStructureKHR"));	*(cast(void**)&vkDestroyAccelerationStructureNV) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyAccelerationStructureNV"));	*(cast(void**)&vkDestroyBuffer) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyBuffer"));	*(cast(void**)&vkDestroyBufferView) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyBufferView"));	*(cast(void**)&vkDestroyCommandPool) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyCommandPool"));	*(cast(void**)&vkDestroyCuFunctionNVX) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyCuFunctionNVX"));	*(cast(void**)&vkDestroyCuModuleNVX) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyCuModuleNVX"));	*(cast(void**)&vkDestroyDebugReportCallbackEXT) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyDebugReportCallbackEXT"));	*(cast(void**)&vkDestroyDebugUtilsMessengerEXT) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyDebugUtilsMessengerEXT"));	*(cast(void**)&vkDestroyDeferredOperationKHR) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyDeferredOperationKHR"));	*(cast(void**)&vkDestroyDescriptorPool) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyDescriptorPool"));	*(cast(void**)&vkDestroyDescriptorSetLayout) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyDescriptorSetLayout"));	*(cast(void**)&vkDestroyDescriptorUpdateTemplate) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyDescriptorUpdateTemplate"));	*(cast(void**)&vkDestroyDescriptorUpdateTemplateKHR) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyDescriptorUpdateTemplateKHR"));	*(cast(void**)&vkDestroyDevice) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyDevice"));	*(cast(void**)&vkDestroyEvent) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyEvent"));	*(cast(void**)&vkDestroyFence) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyFence"));	*(cast(void**)&vkDestroyFramebuffer) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyFramebuffer"));	*(cast(void**)&vkDestroyImage) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyImage"));	*(cast(void**)&vkDestroyImageView) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyImageView"));	*(cast(void**)&vkDestroyIndirectCommandsLayoutNV) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyIndirectCommandsLayoutNV"));	*(cast(void**)&vkDestroyInstance) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyInstance"));	*(cast(void**)&vkDestroyPipeline) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyPipeline"));	*(cast(void**)&vkDestroyPipelineCache) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyPipelineCache"));	*(cast(void**)&vkDestroyPipelineLayout) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyPipelineLayout"));	*(cast(void**)&vkDestroyPrivateDataSlot) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyPrivateDataSlot"));	*(cast(void**)&vkDestroyPrivateDataSlotEXT) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyPrivateDataSlotEXT"));	*(cast(void**)&vkDestroyQueryPool) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyQueryPool"));	*(cast(void**)&vkDestroyRenderPass) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyRenderPass"));	*(cast(void**)&vkDestroySampler) = vkGetInstanceProcAddr(instance, toStringz("vkDestroySampler"));	*(cast(void**)&vkDestroySamplerYcbcrConversion) = vkGetInstanceProcAddr(instance, toStringz("vkDestroySamplerYcbcrConversion"));	*(cast(void**)&vkDestroySamplerYcbcrConversionKHR) = vkGetInstanceProcAddr(instance, toStringz("vkDestroySamplerYcbcrConversionKHR"));	*(cast(void**)&vkDestroySemaphore) = vkGetInstanceProcAddr(instance, toStringz("vkDestroySemaphore"));	*(cast(void**)&vkDestroyShaderModule) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyShaderModule"));	*(cast(void**)&vkDestroySurfaceKHR) = vkGetInstanceProcAddr(instance, toStringz("vkDestroySurfaceKHR"));	*(cast(void**)&vkDestroySwapchainKHR) = vkGetInstanceProcAddr(instance, toStringz("vkDestroySwapchainKHR"));	*(cast(void**)&vkDestroyValidationCacheEXT) = vkGetInstanceProcAddr(instance, toStringz("vkDestroyValidationCacheEXT"));	*(cast(void**)&vkDeviceWaitIdle) = vkGetInstanceProcAddr(instance, toStringz("vkDeviceWaitIdle"));	*(cast(void**)&vkDisplayPowerControlEXT) = vkGetInstanceProcAddr(instance, toStringz("vkDisplayPowerControlEXT"));	*(cast(void**)&vkEndCommandBuffer) = vkGetInstanceProcAddr(instance, toStringz("vkEndCommandBuffer"));	*(cast(void**)&vkEnumerateDeviceExtensionProperties) = vkGetInstanceProcAddr(instance, toStringz("vkEnumerateDeviceExtensionProperties"));	*(cast(void**)&vkEnumerateDeviceLayerProperties) = vkGetInstanceProcAddr(instance, toStringz("vkEnumerateDeviceLayerProperties"));	*(cast(void**)&vkEnumeratePhysicalDeviceGroups) = vkGetInstanceProcAddr(instance, toStringz("vkEnumeratePhysicalDeviceGroups"));	*(cast(void**)&vkEnumeratePhysicalDeviceGroupsKHR) = vkGetInstanceProcAddr(instance, toStringz("vkEnumeratePhysicalDeviceGroupsKHR"));	*(cast(void**)&vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR) = vkGetInstanceProcAddr(instance, toStringz("vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR"));	*(cast(void**)&vkEnumeratePhysicalDevices) = vkGetInstanceProcAddr(instance, toStringz("vkEnumeratePhysicalDevices"));	*(cast(void**)&vkFlushMappedMemoryRanges) = vkGetInstanceProcAddr(instance, toStringz("vkFlushMappedMemoryRanges"));	*(cast(void**)&vkFreeCommandBuffers) = vkGetInstanceProcAddr(instance, toStringz("vkFreeCommandBuffers"));	*(cast(void**)&vkFreeDescriptorSets) = vkGetInstanceProcAddr(instance, toStringz("vkFreeDescriptorSets"));	*(cast(void**)&vkFreeMemory) = vkGetInstanceProcAddr(instance, toStringz("vkFreeMemory"));	*(cast(void**)&vkGetAccelerationStructureBuildSizesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetAccelerationStructureBuildSizesKHR"));	*(cast(void**)&vkGetAccelerationStructureDeviceAddressKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetAccelerationStructureDeviceAddressKHR"));	*(cast(void**)&vkGetAccelerationStructureHandleNV) = vkGetInstanceProcAddr(instance, toStringz("vkGetAccelerationStructureHandleNV"));	*(cast(void**)&vkGetAccelerationStructureMemoryRequirementsNV) = vkGetInstanceProcAddr(instance, toStringz("vkGetAccelerationStructureMemoryRequirementsNV"));	*(cast(void**)&vkGetBufferDeviceAddress) = vkGetInstanceProcAddr(instance, toStringz("vkGetBufferDeviceAddress"));	*(cast(void**)&vkGetBufferDeviceAddressEXT) = vkGetInstanceProcAddr(instance, toStringz("vkGetBufferDeviceAddressEXT"));	*(cast(void**)&vkGetBufferDeviceAddressKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetBufferDeviceAddressKHR"));	*(cast(void**)&vkGetBufferMemoryRequirements) = vkGetInstanceProcAddr(instance, toStringz("vkGetBufferMemoryRequirements"));	*(cast(void**)&vkGetBufferMemoryRequirements2) = vkGetInstanceProcAddr(instance, toStringz("vkGetBufferMemoryRequirements2"));	*(cast(void**)&vkGetBufferMemoryRequirements2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetBufferMemoryRequirements2KHR"));	*(cast(void**)&vkGetBufferOpaqueCaptureAddress) = vkGetInstanceProcAddr(instance, toStringz("vkGetBufferOpaqueCaptureAddress"));	*(cast(void**)&vkGetBufferOpaqueCaptureAddressKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetBufferOpaqueCaptureAddressKHR"));	*(cast(void**)&vkGetCalibratedTimestampsEXT) = vkGetInstanceProcAddr(instance, toStringz("vkGetCalibratedTimestampsEXT"));	*(cast(void**)&vkGetDeferredOperationMaxConcurrencyKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetDeferredOperationMaxConcurrencyKHR"));	*(cast(void**)&vkGetDeferredOperationResultKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetDeferredOperationResultKHR"));	*(cast(void**)&vkGetDescriptorSetHostMappingVALVE) = vkGetInstanceProcAddr(instance, toStringz("vkGetDescriptorSetHostMappingVALVE"));	*(cast(void**)&vkGetDescriptorSetLayoutHostMappingInfoVALVE) = vkGetInstanceProcAddr(instance, toStringz("vkGetDescriptorSetLayoutHostMappingInfoVALVE"));	*(cast(void**)&vkGetDescriptorSetLayoutSupport) = vkGetInstanceProcAddr(instance, toStringz("vkGetDescriptorSetLayoutSupport"));	*(cast(void**)&vkGetDescriptorSetLayoutSupportKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetDescriptorSetLayoutSupportKHR"));	*(cast(void**)&vkGetDeviceAccelerationStructureCompatibilityKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetDeviceAccelerationStructureCompatibilityKHR"));	*(cast(void**)&vkGetDeviceBufferMemoryRequirements) = vkGetInstanceProcAddr(instance, toStringz("vkGetDeviceBufferMemoryRequirements"));	*(cast(void**)&vkGetDeviceBufferMemoryRequirementsKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetDeviceBufferMemoryRequirementsKHR"));	*(cast(void**)&vkGetDeviceGroupPeerMemoryFeatures) = vkGetInstanceProcAddr(instance, toStringz("vkGetDeviceGroupPeerMemoryFeatures"));	*(cast(void**)&vkGetDeviceGroupPeerMemoryFeaturesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetDeviceGroupPeerMemoryFeaturesKHR"));	*(cast(void**)&vkGetDeviceGroupPresentCapabilitiesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetDeviceGroupPresentCapabilitiesKHR"));	*(cast(void**)&vkGetDeviceGroupSurfacePresentModes2EXT) = vkGetInstanceProcAddr(instance, toStringz("vkGetDeviceGroupSurfacePresentModes2EXT"));	*(cast(void**)&vkGetDeviceGroupSurfacePresentModesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetDeviceGroupSurfacePresentModesKHR"));	*(cast(void**)&vkGetDeviceImageMemoryRequirements) = vkGetInstanceProcAddr(instance, toStringz("vkGetDeviceImageMemoryRequirements"));	*(cast(void**)&vkGetDeviceImageMemoryRequirementsKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetDeviceImageMemoryRequirementsKHR"));	*(cast(void**)&vkGetDeviceImageSparseMemoryRequirements) = vkGetInstanceProcAddr(instance, toStringz("vkGetDeviceImageSparseMemoryRequirements"));	*(cast(void**)&vkGetDeviceImageSparseMemoryRequirementsKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetDeviceImageSparseMemoryRequirementsKHR"));	*(cast(void**)&vkGetDeviceMemoryCommitment) = vkGetInstanceProcAddr(instance, toStringz("vkGetDeviceMemoryCommitment"));	*(cast(void**)&vkGetDeviceMemoryOpaqueCaptureAddress) = vkGetInstanceProcAddr(instance, toStringz("vkGetDeviceMemoryOpaqueCaptureAddress"));	*(cast(void**)&vkGetDeviceMemoryOpaqueCaptureAddressKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetDeviceMemoryOpaqueCaptureAddressKHR"));	*(cast(void**)&vkGetDeviceProcAddr) = vkGetInstanceProcAddr(instance, toStringz("vkGetDeviceProcAddr"));	*(cast(void**)&vkGetDeviceQueue) = vkGetInstanceProcAddr(instance, toStringz("vkGetDeviceQueue"));	*(cast(void**)&vkGetDeviceQueue2) = vkGetInstanceProcAddr(instance, toStringz("vkGetDeviceQueue2"));	*(cast(void**)&vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI) = vkGetInstanceProcAddr(instance, toStringz("vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI"));	*(cast(void**)&vkGetDisplayModeProperties2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetDisplayModeProperties2KHR"));	*(cast(void**)&vkGetDisplayModePropertiesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetDisplayModePropertiesKHR"));	*(cast(void**)&vkGetDisplayPlaneCapabilities2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetDisplayPlaneCapabilities2KHR"));	*(cast(void**)&vkGetDisplayPlaneCapabilitiesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetDisplayPlaneCapabilitiesKHR"));	*(cast(void**)&vkGetDisplayPlaneSupportedDisplaysKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetDisplayPlaneSupportedDisplaysKHR"));	*(cast(void**)&vkGetDrmDisplayEXT) = vkGetInstanceProcAddr(instance, toStringz("vkGetDrmDisplayEXT"));	*(cast(void**)&vkGetEventStatus) = vkGetInstanceProcAddr(instance, toStringz("vkGetEventStatus"));	*(cast(void**)&vkGetFenceFdKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetFenceFdKHR"));	*(cast(void**)&vkGetFenceStatus) = vkGetInstanceProcAddr(instance, toStringz("vkGetFenceStatus"));	*(cast(void**)&vkGetFenceWin32HandleKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetFenceWin32HandleKHR"));	*(cast(void**)&vkGetGeneratedCommandsMemoryRequirementsNV) = vkGetInstanceProcAddr(instance, toStringz("vkGetGeneratedCommandsMemoryRequirementsNV"));	*(cast(void**)&vkGetImageDrmFormatModifierPropertiesEXT) = vkGetInstanceProcAddr(instance, toStringz("vkGetImageDrmFormatModifierPropertiesEXT"));	*(cast(void**)&vkGetImageMemoryRequirements) = vkGetInstanceProcAddr(instance, toStringz("vkGetImageMemoryRequirements"));	*(cast(void**)&vkGetImageMemoryRequirements2) = vkGetInstanceProcAddr(instance, toStringz("vkGetImageMemoryRequirements2"));	*(cast(void**)&vkGetImageMemoryRequirements2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetImageMemoryRequirements2KHR"));	*(cast(void**)&vkGetImageSparseMemoryRequirements) = vkGetInstanceProcAddr(instance, toStringz("vkGetImageSparseMemoryRequirements"));	*(cast(void**)&vkGetImageSparseMemoryRequirements2) = vkGetInstanceProcAddr(instance, toStringz("vkGetImageSparseMemoryRequirements2"));	*(cast(void**)&vkGetImageSparseMemoryRequirements2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetImageSparseMemoryRequirements2KHR"));	*(cast(void**)&vkGetImageSubresourceLayout) = vkGetInstanceProcAddr(instance, toStringz("vkGetImageSubresourceLayout"));	*(cast(void**)&vkGetImageViewAddressNVX) = vkGetInstanceProcAddr(instance, toStringz("vkGetImageViewAddressNVX"));	*(cast(void**)&vkGetImageViewHandleNVX) = vkGetInstanceProcAddr(instance, toStringz("vkGetImageViewHandleNVX"));	*(cast(void**)&vkGetMemoryFdKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetMemoryFdKHR"));	*(cast(void**)&vkGetMemoryFdPropertiesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetMemoryFdPropertiesKHR"));	*(cast(void**)&vkGetMemoryHostPointerPropertiesEXT) = vkGetInstanceProcAddr(instance, toStringz("vkGetMemoryHostPointerPropertiesEXT"));	*(cast(void**)&vkGetMemoryRemoteAddressNV) = vkGetInstanceProcAddr(instance, toStringz("vkGetMemoryRemoteAddressNV"));	*(cast(void**)&vkGetMemoryWin32HandleKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetMemoryWin32HandleKHR"));	*(cast(void**)&vkGetMemoryWin32HandleNV) = vkGetInstanceProcAddr(instance, toStringz("vkGetMemoryWin32HandleNV"));	*(cast(void**)&vkGetMemoryWin32HandlePropertiesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetMemoryWin32HandlePropertiesKHR"));	*(cast(void**)&vkGetPastPresentationTimingGOOGLE) = vkGetInstanceProcAddr(instance, toStringz("vkGetPastPresentationTimingGOOGLE"));	*(cast(void**)&vkGetPerformanceParameterINTEL) = vkGetInstanceProcAddr(instance, toStringz("vkGetPerformanceParameterINTEL"));	*(cast(void**)&vkGetPhysicalDeviceCalibrateableTimeDomainsEXT) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceCalibrateableTimeDomainsEXT"));	*(cast(void**)&vkGetPhysicalDeviceCooperativeMatrixPropertiesNV) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceCooperativeMatrixPropertiesNV"));	*(cast(void**)&vkGetPhysicalDeviceDisplayPlaneProperties2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceDisplayPlaneProperties2KHR"));	*(cast(void**)&vkGetPhysicalDeviceDisplayPlanePropertiesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceDisplayPlanePropertiesKHR"));	*(cast(void**)&vkGetPhysicalDeviceDisplayProperties2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceDisplayProperties2KHR"));	*(cast(void**)&vkGetPhysicalDeviceDisplayPropertiesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceDisplayPropertiesKHR"));	*(cast(void**)&vkGetPhysicalDeviceExternalBufferProperties) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceExternalBufferProperties"));	*(cast(void**)&vkGetPhysicalDeviceExternalBufferPropertiesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceExternalBufferPropertiesKHR"));	*(cast(void**)&vkGetPhysicalDeviceExternalFenceProperties) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceExternalFenceProperties"));	*(cast(void**)&vkGetPhysicalDeviceExternalFencePropertiesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceExternalFencePropertiesKHR"));	*(cast(void**)&vkGetPhysicalDeviceExternalImageFormatPropertiesNV) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceExternalImageFormatPropertiesNV"));	*(cast(void**)&vkGetPhysicalDeviceExternalSemaphoreProperties) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceExternalSemaphoreProperties"));	*(cast(void**)&vkGetPhysicalDeviceExternalSemaphorePropertiesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceExternalSemaphorePropertiesKHR"));	*(cast(void**)&vkGetPhysicalDeviceFeatures) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceFeatures"));	*(cast(void**)&vkGetPhysicalDeviceFeatures2) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceFeatures2"));	*(cast(void**)&vkGetPhysicalDeviceFeatures2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceFeatures2KHR"));	*(cast(void**)&vkGetPhysicalDeviceFormatProperties) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceFormatProperties"));	*(cast(void**)&vkGetPhysicalDeviceFormatProperties2) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceFormatProperties2"));	*(cast(void**)&vkGetPhysicalDeviceFormatProperties2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceFormatProperties2KHR"));	*(cast(void**)&vkGetPhysicalDeviceFragmentShadingRatesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceFragmentShadingRatesKHR"));	*(cast(void**)&vkGetPhysicalDeviceImageFormatProperties) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceImageFormatProperties"));	*(cast(void**)&vkGetPhysicalDeviceImageFormatProperties2) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceImageFormatProperties2"));	*(cast(void**)&vkGetPhysicalDeviceImageFormatProperties2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceImageFormatProperties2KHR"));	*(cast(void**)&vkGetPhysicalDeviceMemoryProperties) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceMemoryProperties"));	*(cast(void**)&vkGetPhysicalDeviceMemoryProperties2) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceMemoryProperties2"));	*(cast(void**)&vkGetPhysicalDeviceMemoryProperties2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceMemoryProperties2KHR"));	*(cast(void**)&vkGetPhysicalDeviceMultisamplePropertiesEXT) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceMultisamplePropertiesEXT"));	*(cast(void**)&vkGetPhysicalDevicePresentRectanglesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDevicePresentRectanglesKHR"));	*(cast(void**)&vkGetPhysicalDeviceProperties) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceProperties"));	*(cast(void**)&vkGetPhysicalDeviceProperties2) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceProperties2"));	*(cast(void**)&vkGetPhysicalDeviceProperties2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceProperties2KHR"));	*(cast(void**)&vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR"));	*(cast(void**)&vkGetPhysicalDeviceQueueFamilyProperties) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceQueueFamilyProperties"));	*(cast(void**)&vkGetPhysicalDeviceQueueFamilyProperties2) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceQueueFamilyProperties2"));	*(cast(void**)&vkGetPhysicalDeviceQueueFamilyProperties2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceQueueFamilyProperties2KHR"));	*(cast(void**)&vkGetPhysicalDeviceSparseImageFormatProperties) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceSparseImageFormatProperties"));	*(cast(void**)&vkGetPhysicalDeviceSparseImageFormatProperties2) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceSparseImageFormatProperties2"));	*(cast(void**)&vkGetPhysicalDeviceSparseImageFormatProperties2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceSparseImageFormatProperties2KHR"));	*(cast(void**)&vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV"));	*(cast(void**)&vkGetPhysicalDeviceSurfaceCapabilities2EXT) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceSurfaceCapabilities2EXT"));	*(cast(void**)&vkGetPhysicalDeviceSurfaceCapabilities2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceSurfaceCapabilities2KHR"));	*(cast(void**)&vkGetPhysicalDeviceSurfaceCapabilitiesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceSurfaceCapabilitiesKHR"));	*(cast(void**)&vkGetPhysicalDeviceSurfaceFormats2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceSurfaceFormats2KHR"));	*(cast(void**)&vkGetPhysicalDeviceSurfaceFormatsKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceSurfaceFormatsKHR"));	*(cast(void**)&vkGetPhysicalDeviceSurfacePresentModes2EXT) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceSurfacePresentModes2EXT"));	*(cast(void**)&vkGetPhysicalDeviceSurfacePresentModesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceSurfacePresentModesKHR"));	*(cast(void**)&vkGetPhysicalDeviceSurfaceSupportKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceSurfaceSupportKHR"));	*(cast(void**)&vkGetPhysicalDeviceToolProperties) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceToolProperties"));	*(cast(void**)&vkGetPhysicalDeviceToolPropertiesEXT) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceToolPropertiesEXT"));	*(cast(void**)&vkGetPhysicalDeviceWin32PresentationSupportKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPhysicalDeviceWin32PresentationSupportKHR"));	*(cast(void**)&vkGetPipelineCacheData) = vkGetInstanceProcAddr(instance, toStringz("vkGetPipelineCacheData"));	*(cast(void**)&vkGetPipelineExecutableInternalRepresentationsKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPipelineExecutableInternalRepresentationsKHR"));	*(cast(void**)&vkGetPipelineExecutablePropertiesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPipelineExecutablePropertiesKHR"));	*(cast(void**)&vkGetPipelineExecutableStatisticsKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetPipelineExecutableStatisticsKHR"));	*(cast(void**)&vkGetPrivateData) = vkGetInstanceProcAddr(instance, toStringz("vkGetPrivateData"));	*(cast(void**)&vkGetPrivateDataEXT) = vkGetInstanceProcAddr(instance, toStringz("vkGetPrivateDataEXT"));	*(cast(void**)&vkGetQueryPoolResults) = vkGetInstanceProcAddr(instance, toStringz("vkGetQueryPoolResults"));	*(cast(void**)&vkGetQueueCheckpointData2NV) = vkGetInstanceProcAddr(instance, toStringz("vkGetQueueCheckpointData2NV"));	*(cast(void**)&vkGetQueueCheckpointDataNV) = vkGetInstanceProcAddr(instance, toStringz("vkGetQueueCheckpointDataNV"));	*(cast(void**)&vkGetRayTracingCaptureReplayShaderGroupHandlesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetRayTracingCaptureReplayShaderGroupHandlesKHR"));	*(cast(void**)&vkGetRayTracingShaderGroupHandlesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetRayTracingShaderGroupHandlesKHR"));	*(cast(void**)&vkGetRayTracingShaderGroupHandlesNV) = vkGetInstanceProcAddr(instance, toStringz("vkGetRayTracingShaderGroupHandlesNV"));	*(cast(void**)&vkGetRayTracingShaderGroupStackSizeKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetRayTracingShaderGroupStackSizeKHR"));	*(cast(void**)&vkGetRefreshCycleDurationGOOGLE) = vkGetInstanceProcAddr(instance, toStringz("vkGetRefreshCycleDurationGOOGLE"));	*(cast(void**)&vkGetRenderAreaGranularity) = vkGetInstanceProcAddr(instance, toStringz("vkGetRenderAreaGranularity"));	*(cast(void**)&vkGetSemaphoreCounterValue) = vkGetInstanceProcAddr(instance, toStringz("vkGetSemaphoreCounterValue"));	*(cast(void**)&vkGetSemaphoreCounterValueKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetSemaphoreCounterValueKHR"));	*(cast(void**)&vkGetSemaphoreFdKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetSemaphoreFdKHR"));	*(cast(void**)&vkGetSemaphoreWin32HandleKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetSemaphoreWin32HandleKHR"));	*(cast(void**)&vkGetShaderInfoAMD) = vkGetInstanceProcAddr(instance, toStringz("vkGetShaderInfoAMD"));	*(cast(void**)&vkGetSwapchainCounterEXT) = vkGetInstanceProcAddr(instance, toStringz("vkGetSwapchainCounterEXT"));	*(cast(void**)&vkGetSwapchainImagesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetSwapchainImagesKHR"));	*(cast(void**)&vkGetSwapchainStatusKHR) = vkGetInstanceProcAddr(instance, toStringz("vkGetSwapchainStatusKHR"));	*(cast(void**)&vkGetValidationCacheDataEXT) = vkGetInstanceProcAddr(instance, toStringz("vkGetValidationCacheDataEXT"));	*(cast(void**)&vkGetWinrtDisplayNV) = vkGetInstanceProcAddr(instance, toStringz("vkGetWinrtDisplayNV"));	*(cast(void**)&vkImportFenceFdKHR) = vkGetInstanceProcAddr(instance, toStringz("vkImportFenceFdKHR"));	*(cast(void**)&vkImportFenceWin32HandleKHR) = vkGetInstanceProcAddr(instance, toStringz("vkImportFenceWin32HandleKHR"));	*(cast(void**)&vkImportSemaphoreFdKHR) = vkGetInstanceProcAddr(instance, toStringz("vkImportSemaphoreFdKHR"));	*(cast(void**)&vkImportSemaphoreWin32HandleKHR) = vkGetInstanceProcAddr(instance, toStringz("vkImportSemaphoreWin32HandleKHR"));	*(cast(void**)&vkInitializePerformanceApiINTEL) = vkGetInstanceProcAddr(instance, toStringz("vkInitializePerformanceApiINTEL"));	*(cast(void**)&vkInvalidateMappedMemoryRanges) = vkGetInstanceProcAddr(instance, toStringz("vkInvalidateMappedMemoryRanges"));	*(cast(void**)&vkMapMemory) = vkGetInstanceProcAddr(instance, toStringz("vkMapMemory"));	*(cast(void**)&vkMergePipelineCaches) = vkGetInstanceProcAddr(instance, toStringz("vkMergePipelineCaches"));	*(cast(void**)&vkMergeValidationCachesEXT) = vkGetInstanceProcAddr(instance, toStringz("vkMergeValidationCachesEXT"));	*(cast(void**)&vkQueueBeginDebugUtilsLabelEXT) = vkGetInstanceProcAddr(instance, toStringz("vkQueueBeginDebugUtilsLabelEXT"));	*(cast(void**)&vkQueueBindSparse) = vkGetInstanceProcAddr(instance, toStringz("vkQueueBindSparse"));	*(cast(void**)&vkQueueEndDebugUtilsLabelEXT) = vkGetInstanceProcAddr(instance, toStringz("vkQueueEndDebugUtilsLabelEXT"));	*(cast(void**)&vkQueueInsertDebugUtilsLabelEXT) = vkGetInstanceProcAddr(instance, toStringz("vkQueueInsertDebugUtilsLabelEXT"));	*(cast(void**)&vkQueuePresentKHR) = vkGetInstanceProcAddr(instance, toStringz("vkQueuePresentKHR"));	*(cast(void**)&vkQueueSetPerformanceConfigurationINTEL) = vkGetInstanceProcAddr(instance, toStringz("vkQueueSetPerformanceConfigurationINTEL"));	*(cast(void**)&vkQueueSubmit) = vkGetInstanceProcAddr(instance, toStringz("vkQueueSubmit"));	*(cast(void**)&vkQueueSubmit2) = vkGetInstanceProcAddr(instance, toStringz("vkQueueSubmit2"));	*(cast(void**)&vkQueueSubmit2KHR) = vkGetInstanceProcAddr(instance, toStringz("vkQueueSubmit2KHR"));	*(cast(void**)&vkQueueWaitIdle) = vkGetInstanceProcAddr(instance, toStringz("vkQueueWaitIdle"));	*(cast(void**)&vkRegisterDeviceEventEXT) = vkGetInstanceProcAddr(instance, toStringz("vkRegisterDeviceEventEXT"));	*(cast(void**)&vkRegisterDisplayEventEXT) = vkGetInstanceProcAddr(instance, toStringz("vkRegisterDisplayEventEXT"));	*(cast(void**)&vkReleaseDisplayEXT) = vkGetInstanceProcAddr(instance, toStringz("vkReleaseDisplayEXT"));	*(cast(void**)&vkReleaseFullScreenExclusiveModeEXT) = vkGetInstanceProcAddr(instance, toStringz("vkReleaseFullScreenExclusiveModeEXT"));	*(cast(void**)&vkReleasePerformanceConfigurationINTEL) = vkGetInstanceProcAddr(instance, toStringz("vkReleasePerformanceConfigurationINTEL"));	*(cast(void**)&vkReleaseProfilingLockKHR) = vkGetInstanceProcAddr(instance, toStringz("vkReleaseProfilingLockKHR"));	*(cast(void**)&vkResetCommandBuffer) = vkGetInstanceProcAddr(instance, toStringz("vkResetCommandBuffer"));	*(cast(void**)&vkResetCommandPool) = vkGetInstanceProcAddr(instance, toStringz("vkResetCommandPool"));	*(cast(void**)&vkResetDescriptorPool) = vkGetInstanceProcAddr(instance, toStringz("vkResetDescriptorPool"));	*(cast(void**)&vkResetEvent) = vkGetInstanceProcAddr(instance, toStringz("vkResetEvent"));	*(cast(void**)&vkResetFences) = vkGetInstanceProcAddr(instance, toStringz("vkResetFences"));	*(cast(void**)&vkResetQueryPool) = vkGetInstanceProcAddr(instance, toStringz("vkResetQueryPool"));	*(cast(void**)&vkResetQueryPoolEXT) = vkGetInstanceProcAddr(instance, toStringz("vkResetQueryPoolEXT"));	*(cast(void**)&vkSetDebugUtilsObjectNameEXT) = vkGetInstanceProcAddr(instance, toStringz("vkSetDebugUtilsObjectNameEXT"));	*(cast(void**)&vkSetDebugUtilsObjectTagEXT) = vkGetInstanceProcAddr(instance, toStringz("vkSetDebugUtilsObjectTagEXT"));	*(cast(void**)&vkSetDeviceMemoryPriorityEXT) = vkGetInstanceProcAddr(instance, toStringz("vkSetDeviceMemoryPriorityEXT"));	*(cast(void**)&vkSetEvent) = vkGetInstanceProcAddr(instance, toStringz("vkSetEvent"));	*(cast(void**)&vkSetHdrMetadataEXT) = vkGetInstanceProcAddr(instance, toStringz("vkSetHdrMetadataEXT"));	*(cast(void**)&vkSetLocalDimmingAMD) = vkGetInstanceProcAddr(instance, toStringz("vkSetLocalDimmingAMD"));	*(cast(void**)&vkSetPrivateData) = vkGetInstanceProcAddr(instance, toStringz("vkSetPrivateData"));	*(cast(void**)&vkSetPrivateDataEXT) = vkGetInstanceProcAddr(instance, toStringz("vkSetPrivateDataEXT"));	*(cast(void**)&vkSignalSemaphore) = vkGetInstanceProcAddr(instance, toStringz("vkSignalSemaphore"));	*(cast(void**)&vkSignalSemaphoreKHR) = vkGetInstanceProcAddr(instance, toStringz("vkSignalSemaphoreKHR"));	*(cast(void**)&vkSubmitDebugUtilsMessageEXT) = vkGetInstanceProcAddr(instance, toStringz("vkSubmitDebugUtilsMessageEXT"));	*(cast(void**)&vkTrimCommandPool) = vkGetInstanceProcAddr(instance, toStringz("vkTrimCommandPool"));	*(cast(void**)&vkTrimCommandPoolKHR) = vkGetInstanceProcAddr(instance, toStringz("vkTrimCommandPoolKHR"));	*(cast(void**)&vkUninitializePerformanceApiINTEL) = vkGetInstanceProcAddr(instance, toStringz("vkUninitializePerformanceApiINTEL"));	*(cast(void**)&vkUnmapMemory) = vkGetInstanceProcAddr(instance, toStringz("vkUnmapMemory"));	*(cast(void**)&vkUpdateDescriptorSetWithTemplate) = vkGetInstanceProcAddr(instance, toStringz("vkUpdateDescriptorSetWithTemplate"));	*(cast(void**)&vkUpdateDescriptorSetWithTemplateKHR) = vkGetInstanceProcAddr(instance, toStringz("vkUpdateDescriptorSetWithTemplateKHR"));	*(cast(void**)&vkUpdateDescriptorSets) = vkGetInstanceProcAddr(instance, toStringz("vkUpdateDescriptorSets"));	*(cast(void**)&vkWaitForFences) = vkGetInstanceProcAddr(instance, toStringz("vkWaitForFences"));	*(cast(void**)&vkWaitForPresentKHR) = vkGetInstanceProcAddr(instance, toStringz("vkWaitForPresentKHR"));	*(cast(void**)&vkWaitSemaphores) = vkGetInstanceProcAddr(instance, toStringz("vkWaitSemaphores"));	*(cast(void**)&vkWaitSemaphoresKHR) = vkGetInstanceProcAddr(instance, toStringz("vkWaitSemaphoresKHR"));	*(cast(void**)&vkWriteAccelerationStructuresPropertiesKHR) = vkGetInstanceProcAddr(instance, toStringz("vkWriteAccelerationStructuresPropertiesKHR"));}
+// Aliases
 alias BOOL = int;
 alias DWORD = uint;
 alias HANDLE = void*;
-alias HINSTANCE = HINSTANCE__*;
-alias HMONITOR = HMONITOR__*;
-alias HWND = HWND__*;
 alias LPCWSTR = WCHAR*;
 alias LPVOID = void*;
-alias PFN_vkAllocationFunction = void* function(void* pUserData, size_t size, size_t alignment, VkSystemAllocationScope allocationScope);
-alias PFN_vkDebugReportCallbackEXT = VkBool32 function(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, byte* pLayerPrefix, byte* pMessage, void* pUserData);
-alias PFN_vkDebugUtilsMessengerCallbackEXT = VkBool32 function(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData);
-alias PFN_vkDeviceMemoryReportCallbackEXT = void function(VkDeviceMemoryReportCallbackDataEXT* pCallbackData, void* pUserData);
-alias PFN_vkFreeFunction = void function(void* pUserData, void* pMemory);
-alias PFN_vkInternalAllocationNotification = void function(void* pUserData, size_t size, VkInternalAllocationType allocationType, VkSystemAllocationScope allocationScope);
-alias PFN_vkInternalFreeNotification = void function(void* pUserData, size_t size, VkInternalAllocationType allocationType, VkSystemAllocationScope allocationScope);
-alias PFN_vkReallocationFunction = void* function(void* pUserData, void* pOriginal, size_t size, size_t alignment, VkSystemAllocationScope allocationScope);
-alias PFN_vkVoidFunction = void function();
+alias PFN_vkAllocationFunction = extern(Windows) void* function(void* pUserData, size_t size, size_t alignment, VkSystemAllocationScope allocationScope) nothrow;
+alias PFN_vkDebugReportCallbackEXT = extern(Windows) VkBool32 function(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, immutable(char)* pLayerPrefix, immutable(char)* pMessage, void* pUserData) nothrow;
+alias PFN_vkDebugUtilsMessengerCallbackEXT = extern(Windows) VkBool32 function(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) nothrow;
+alias PFN_vkDeviceMemoryReportCallbackEXT = extern(Windows) void function(VkDeviceMemoryReportCallbackDataEXT* pCallbackData, void* pUserData) nothrow;
+alias PFN_vkFreeFunction = extern(Windows) void function(void* pUserData, void* pMemory) nothrow;
+alias PFN_vkInternalAllocationNotification = extern(Windows) void function(void* pUserData, size_t size, VkInternalAllocationType allocationType, VkSystemAllocationScope allocationScope) nothrow;
+alias PFN_vkInternalFreeNotification = extern(Windows) void function(void* pUserData, size_t size, VkInternalAllocationType allocationType, VkSystemAllocationScope allocationScope) nothrow;
+alias PFN_vkReallocationFunction = extern(Windows) void* function(void* pUserData, void* pOriginal, size_t size, size_t alignment, VkSystemAllocationScope allocationScope) nothrow;
+alias PFN_vkVoidFunction = extern(Windows) void function() nothrow;
 struct SECURITY_ATTRIBUTES {
 	DWORD nLength;
 	LPVOID lpSecurityDescriptor;
@@ -641,6 +154,7 @@ alias VkFramebuffer = VkFramebuffer_T*;
 alias VkFramebufferCreateFlags = VkFlags;
 alias VkGeometryFlagsKHR = VkFlags;
 alias VkGeometryInstanceFlagsKHR = VkFlags;
+alias VkGraphicsPipelineLibraryFlagsEXT = VkFlags;
 alias VkHeadlessSurfaceCreateFlagsEXT = VkFlags;
 alias VkImage = VkImage_T*;
 alias VkImageAspectFlags = VkFlags;
@@ -741,6 +255,517 @@ alias uint32_t = uint;
 alias uint64_t = ulong;
 alias uint8_t = ubyte;
 alias wchar_t = ushort;
+alias PFN_vkAcquireDrmDisplayEXT = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, int32_t drmFd, VkDisplayKHR display) nothrow;
+alias PFN_vkAcquireFullScreenExclusiveModeEXT = extern(Windows) VkResult function(VkDevice device, VkSwapchainKHR swapchain) nothrow;
+alias PFN_vkAcquireNextImage2KHR = extern(Windows) VkResult function(VkDevice device, VkAcquireNextImageInfoKHR* pAcquireInfo, uint32_t* pImageIndex) nothrow;
+alias PFN_vkAcquireNextImageKHR = extern(Windows) VkResult function(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex) nothrow;
+alias PFN_vkAcquirePerformanceConfigurationINTEL = extern(Windows) VkResult function(VkDevice device, VkPerformanceConfigurationAcquireInfoINTEL* pAcquireInfo, VkPerformanceConfigurationINTEL* pConfiguration) nothrow;
+alias PFN_vkAcquireProfilingLockKHR = extern(Windows) VkResult function(VkDevice device, VkAcquireProfilingLockInfoKHR* pInfo) nothrow;
+alias PFN_vkAcquireWinrtDisplayNV = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, VkDisplayKHR display) nothrow;
+alias PFN_vkAllocateCommandBuffers = extern(Windows) VkResult function(VkDevice device, VkCommandBufferAllocateInfo* pAllocateInfo, VkCommandBuffer* pCommandBuffers) nothrow;
+alias PFN_vkAllocateDescriptorSets = extern(Windows) VkResult function(VkDevice device, VkDescriptorSetAllocateInfo* pAllocateInfo, VkDescriptorSet* pDescriptorSets) nothrow;
+alias PFN_vkAllocateMemory = extern(Windows) VkResult function(VkDevice device, VkMemoryAllocateInfo* pAllocateInfo, VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory) nothrow;
+alias PFN_vkBeginCommandBuffer = extern(Windows) VkResult function(VkCommandBuffer commandBuffer, VkCommandBufferBeginInfo* pBeginInfo) nothrow;
+alias PFN_vkBindAccelerationStructureMemoryNV = extern(Windows) VkResult function(VkDevice device, uint32_t bindInfoCount, VkBindAccelerationStructureMemoryInfoNV* pBindInfos) nothrow;
+alias PFN_vkBindBufferMemory = extern(Windows) VkResult function(VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset) nothrow;
+alias PFN_vkBindBufferMemory2 = extern(Windows) VkResult function(VkDevice device, uint32_t bindInfoCount, VkBindBufferMemoryInfo* pBindInfos) nothrow;
+alias PFN_vkBindBufferMemory2KHR = extern(Windows) VkResult function(VkDevice device, uint32_t bindInfoCount, VkBindBufferMemoryInfo* pBindInfos) nothrow;
+alias PFN_vkBindImageMemory = extern(Windows) VkResult function(VkDevice device, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset) nothrow;
+alias PFN_vkBindImageMemory2 = extern(Windows) VkResult function(VkDevice device, uint32_t bindInfoCount, VkBindImageMemoryInfo* pBindInfos) nothrow;
+alias PFN_vkBindImageMemory2KHR = extern(Windows) VkResult function(VkDevice device, uint32_t bindInfoCount, VkBindImageMemoryInfo* pBindInfos) nothrow;
+alias PFN_vkBuildAccelerationStructuresKHR = extern(Windows) VkResult function(VkDevice device, VkDeferredOperationKHR deferredOperation, uint32_t infoCount, VkAccelerationStructureBuildGeometryInfoKHR* pInfos, VkAccelerationStructureBuildRangeInfoKHR** ppBuildRangeInfos) nothrow;
+alias PFN_vkCmdBeginConditionalRenderingEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, VkConditionalRenderingBeginInfoEXT* pConditionalRenderingBegin) nothrow;
+alias PFN_vkCmdBeginDebugUtilsLabelEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, VkDebugUtilsLabelEXT* pLabelInfo) nothrow;
+alias PFN_vkCmdBeginQuery = extern(Windows) void function(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags) nothrow;
+alias PFN_vkCmdBeginQueryIndexedEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags, uint32_t index) nothrow;
+alias PFN_vkCmdBeginRenderPass = extern(Windows) void function(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo* pRenderPassBegin, VkSubpassContents contents) nothrow;
+alias PFN_vkCmdBeginRenderPass2 = extern(Windows) void function(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo* pRenderPassBegin, VkSubpassBeginInfo* pSubpassBeginInfo) nothrow;
+alias PFN_vkCmdBeginRenderPass2KHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo* pRenderPassBegin, VkSubpassBeginInfo* pSubpassBeginInfo) nothrow;
+alias PFN_vkCmdBeginRendering = extern(Windows) void function(VkCommandBuffer commandBuffer, VkRenderingInfo* pRenderingInfo) nothrow;
+alias PFN_vkCmdBeginRenderingKHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkRenderingInfo* pRenderingInfo) nothrow;
+alias PFN_vkCmdBeginTransformFeedbackEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t firstCounterBuffer, uint32_t counterBufferCount, VkBuffer* pCounterBuffers, VkDeviceSize* pCounterBufferOffsets) nothrow;
+alias PFN_vkCmdBindDescriptorSets = extern(Windows) void function(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount, VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount, uint32_t* pDynamicOffsets) nothrow;
+alias PFN_vkCmdBindIndexBuffer = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkIndexType indexType) nothrow;
+alias PFN_vkCmdBindInvocationMaskHUAWEI = extern(Windows) void function(VkCommandBuffer commandBuffer, VkImageView imageView, VkImageLayout imageLayout) nothrow;
+alias PFN_vkCmdBindPipeline = extern(Windows) void function(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline) nothrow;
+alias PFN_vkCmdBindPipelineShaderGroupNV = extern(Windows) void function(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline, uint32_t groupIndex) nothrow;
+alias PFN_vkCmdBindShadingRateImageNV = extern(Windows) void function(VkCommandBuffer commandBuffer, VkImageView imageView, VkImageLayout imageLayout) nothrow;
+alias PFN_vkCmdBindTransformFeedbackBuffersEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, VkBuffer* pBuffers, VkDeviceSize* pOffsets, VkDeviceSize* pSizes) nothrow;
+alias PFN_vkCmdBindVertexBuffers = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, VkBuffer* pBuffers, VkDeviceSize* pOffsets) nothrow;
+alias PFN_vkCmdBindVertexBuffers2 = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, VkBuffer* pBuffers, VkDeviceSize* pOffsets, VkDeviceSize* pSizes, VkDeviceSize* pStrides) nothrow;
+alias PFN_vkCmdBindVertexBuffers2EXT = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, VkBuffer* pBuffers, VkDeviceSize* pOffsets, VkDeviceSize* pSizes, VkDeviceSize* pStrides) nothrow;
+alias PFN_vkCmdBlitImage = extern(Windows) void function(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, VkImageBlit* pRegions, VkFilter filter) nothrow;
+alias PFN_vkCmdBlitImage2 = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBlitImageInfo2* pBlitImageInfo) nothrow;
+alias PFN_vkCmdBlitImage2KHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBlitImageInfo2* pBlitImageInfo) nothrow;
+alias PFN_vkCmdBuildAccelerationStructureNV = extern(Windows) void function(VkCommandBuffer commandBuffer, VkAccelerationStructureInfoNV* pInfo, VkBuffer instanceData, VkDeviceSize instanceOffset, VkBool32 update, VkAccelerationStructureNV dst, VkAccelerationStructureNV src, VkBuffer scratch, VkDeviceSize scratchOffset) nothrow;
+alias PFN_vkCmdBuildAccelerationStructuresIndirectKHR = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t infoCount, VkAccelerationStructureBuildGeometryInfoKHR* pInfos, VkDeviceAddress* pIndirectDeviceAddresses, uint32_t* pIndirectStrides, uint32_t** ppMaxPrimitiveCounts) nothrow;
+alias PFN_vkCmdBuildAccelerationStructuresKHR = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t infoCount, VkAccelerationStructureBuildGeometryInfoKHR* pInfos, VkAccelerationStructureBuildRangeInfoKHR** ppBuildRangeInfos) nothrow;
+alias PFN_vkCmdClearAttachments = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t attachmentCount, VkClearAttachment* pAttachments, uint32_t rectCount, VkClearRect* pRects) nothrow;
+alias PFN_vkCmdClearColorImage = extern(Windows) void function(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout, VkClearColorValue* pColor, uint32_t rangeCount, VkImageSubresourceRange* pRanges) nothrow;
+alias PFN_vkCmdClearDepthStencilImage = extern(Windows) void function(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout, VkClearDepthStencilValue* pDepthStencil, uint32_t rangeCount, VkImageSubresourceRange* pRanges) nothrow;
+alias PFN_vkCmdCopyAccelerationStructureKHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkCopyAccelerationStructureInfoKHR* pInfo) nothrow;
+alias PFN_vkCmdCopyAccelerationStructureNV = extern(Windows) void function(VkCommandBuffer commandBuffer, VkAccelerationStructureNV dst, VkAccelerationStructureNV src, VkCopyAccelerationStructureModeKHR mode) nothrow;
+alias PFN_vkCmdCopyAccelerationStructureToMemoryKHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkCopyAccelerationStructureToMemoryInfoKHR* pInfo) nothrow;
+alias PFN_vkCmdCopyBuffer = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer, uint32_t regionCount, VkBufferCopy* pRegions) nothrow;
+alias PFN_vkCmdCopyBuffer2 = extern(Windows) void function(VkCommandBuffer commandBuffer, VkCopyBufferInfo2* pCopyBufferInfo) nothrow;
+alias PFN_vkCmdCopyBuffer2KHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkCopyBufferInfo2* pCopyBufferInfo) nothrow;
+alias PFN_vkCmdCopyBufferToImage = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, VkBufferImageCopy* pRegions) nothrow;
+alias PFN_vkCmdCopyBufferToImage2 = extern(Windows) void function(VkCommandBuffer commandBuffer, VkCopyBufferToImageInfo2* pCopyBufferToImageInfo) nothrow;
+alias PFN_vkCmdCopyBufferToImage2KHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkCopyBufferToImageInfo2* pCopyBufferToImageInfo) nothrow;
+alias PFN_vkCmdCopyImage = extern(Windows) void function(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, VkImageCopy* pRegions) nothrow;
+alias PFN_vkCmdCopyImage2 = extern(Windows) void function(VkCommandBuffer commandBuffer, VkCopyImageInfo2* pCopyImageInfo) nothrow;
+alias PFN_vkCmdCopyImage2KHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkCopyImageInfo2* pCopyImageInfo) nothrow;
+alias PFN_vkCmdCopyImageToBuffer = extern(Windows) void function(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkBuffer dstBuffer, uint32_t regionCount, VkBufferImageCopy* pRegions) nothrow;
+alias PFN_vkCmdCopyImageToBuffer2 = extern(Windows) void function(VkCommandBuffer commandBuffer, VkCopyImageToBufferInfo2* pCopyImageToBufferInfo) nothrow;
+alias PFN_vkCmdCopyImageToBuffer2KHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkCopyImageToBufferInfo2* pCopyImageToBufferInfo) nothrow;
+alias PFN_vkCmdCopyMemoryToAccelerationStructureKHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkCopyMemoryToAccelerationStructureInfoKHR* pInfo) nothrow;
+alias PFN_vkCmdCopyQueryPoolResults = extern(Windows) void function(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize stride, VkQueryResultFlags flags) nothrow;
+alias PFN_vkCmdCuLaunchKernelNVX = extern(Windows) void function(VkCommandBuffer commandBuffer, VkCuLaunchInfoNVX* pLaunchInfo) nothrow;
+alias PFN_vkCmdDebugMarkerBeginEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, VkDebugMarkerMarkerInfoEXT* pMarkerInfo) nothrow;
+alias PFN_vkCmdDebugMarkerEndEXT = extern(Windows) void function(VkCommandBuffer commandBuffer) nothrow;
+alias PFN_vkCmdDebugMarkerInsertEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, VkDebugMarkerMarkerInfoEXT* pMarkerInfo) nothrow;
+alias PFN_vkCmdDispatch = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) nothrow;
+alias PFN_vkCmdDispatchBase = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t baseGroupX, uint32_t baseGroupY, uint32_t baseGroupZ, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) nothrow;
+alias PFN_vkCmdDispatchBaseKHR = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t baseGroupX, uint32_t baseGroupY, uint32_t baseGroupZ, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) nothrow;
+alias PFN_vkCmdDispatchIndirect = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset) nothrow;
+alias PFN_vkCmdDraw = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance) nothrow;
+alias PFN_vkCmdDrawIndexed = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance) nothrow;
+alias PFN_vkCmdDrawIndexedIndirect = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride) nothrow;
+alias PFN_vkCmdDrawIndexedIndirectCount = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) nothrow;
+alias PFN_vkCmdDrawIndexedIndirectCountAMD = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) nothrow;
+alias PFN_vkCmdDrawIndexedIndirectCountKHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) nothrow;
+alias PFN_vkCmdDrawIndirect = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride) nothrow;
+alias PFN_vkCmdDrawIndirectByteCountEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t instanceCount, uint32_t firstInstance, VkBuffer counterBuffer, VkDeviceSize counterBufferOffset, uint32_t counterOffset, uint32_t vertexStride) nothrow;
+alias PFN_vkCmdDrawIndirectCount = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) nothrow;
+alias PFN_vkCmdDrawIndirectCountAMD = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) nothrow;
+alias PFN_vkCmdDrawIndirectCountKHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) nothrow;
+alias PFN_vkCmdDrawMeshTasksIndirectCountNV = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) nothrow;
+alias PFN_vkCmdDrawMeshTasksIndirectNV = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride) nothrow;
+alias PFN_vkCmdDrawMeshTasksNV = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t taskCount, uint32_t firstTask) nothrow;
+alias PFN_vkCmdDrawMultiEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t drawCount, VkMultiDrawInfoEXT* pVertexInfo, uint32_t instanceCount, uint32_t firstInstance, uint32_t stride) nothrow;
+alias PFN_vkCmdDrawMultiIndexedEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t drawCount, VkMultiDrawIndexedInfoEXT* pIndexInfo, uint32_t instanceCount, uint32_t firstInstance, uint32_t stride, int32_t* pVertexOffset) nothrow;
+alias PFN_vkCmdEndConditionalRenderingEXT = extern(Windows) void function(VkCommandBuffer commandBuffer) nothrow;
+alias PFN_vkCmdEndDebugUtilsLabelEXT = extern(Windows) void function(VkCommandBuffer commandBuffer) nothrow;
+alias PFN_vkCmdEndQuery = extern(Windows) void function(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query) nothrow;
+alias PFN_vkCmdEndQueryIndexedEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, uint32_t index) nothrow;
+alias PFN_vkCmdEndRenderPass = extern(Windows) void function(VkCommandBuffer commandBuffer) nothrow;
+alias PFN_vkCmdEndRenderPass2 = extern(Windows) void function(VkCommandBuffer commandBuffer, VkSubpassEndInfo* pSubpassEndInfo) nothrow;
+alias PFN_vkCmdEndRenderPass2KHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkSubpassEndInfo* pSubpassEndInfo) nothrow;
+alias PFN_vkCmdEndRendering = extern(Windows) void function(VkCommandBuffer commandBuffer) nothrow;
+alias PFN_vkCmdEndRenderingKHR = extern(Windows) void function(VkCommandBuffer commandBuffer) nothrow;
+alias PFN_vkCmdEndTransformFeedbackEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t firstCounterBuffer, uint32_t counterBufferCount, VkBuffer* pCounterBuffers, VkDeviceSize* pCounterBufferOffsets) nothrow;
+alias PFN_vkCmdExecuteCommands = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t commandBufferCount, VkCommandBuffer* pCommandBuffers) nothrow;
+alias PFN_vkCmdExecuteGeneratedCommandsNV = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed, VkGeneratedCommandsInfoNV* pGeneratedCommandsInfo) nothrow;
+alias PFN_vkCmdFillBuffer = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize size, uint32_t data) nothrow;
+alias PFN_vkCmdInsertDebugUtilsLabelEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, VkDebugUtilsLabelEXT* pLabelInfo) nothrow;
+alias PFN_vkCmdNextSubpass = extern(Windows) void function(VkCommandBuffer commandBuffer, VkSubpassContents contents) nothrow;
+alias PFN_vkCmdNextSubpass2 = extern(Windows) void function(VkCommandBuffer commandBuffer, VkSubpassBeginInfo* pSubpassBeginInfo, VkSubpassEndInfo* pSubpassEndInfo) nothrow;
+alias PFN_vkCmdNextSubpass2KHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkSubpassBeginInfo* pSubpassBeginInfo, VkSubpassEndInfo* pSubpassEndInfo) nothrow;
+alias PFN_vkCmdPipelineBarrier = extern(Windows) void function(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, uint32_t memoryBarrierCount, VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount, VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount, VkImageMemoryBarrier* pImageMemoryBarriers) nothrow;
+alias PFN_vkCmdPipelineBarrier2 = extern(Windows) void function(VkCommandBuffer commandBuffer, VkDependencyInfo* pDependencyInfo) nothrow;
+alias PFN_vkCmdPipelineBarrier2KHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkDependencyInfo* pDependencyInfo) nothrow;
+alias PFN_vkCmdPreprocessGeneratedCommandsNV = extern(Windows) void function(VkCommandBuffer commandBuffer, VkGeneratedCommandsInfoNV* pGeneratedCommandsInfo) nothrow;
+alias PFN_vkCmdPushConstants = extern(Windows) void function(VkCommandBuffer commandBuffer, VkPipelineLayout layout, VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size, void* pValues) nothrow;
+alias PFN_vkCmdPushDescriptorSetKHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount, VkWriteDescriptorSet* pDescriptorWrites) nothrow;
+alias PFN_vkCmdPushDescriptorSetWithTemplateKHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkPipelineLayout layout, uint32_t set, void* pData) nothrow;
+alias PFN_vkCmdResetEvent = extern(Windows) void function(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) nothrow;
+alias PFN_vkCmdResetEvent2 = extern(Windows) void function(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2 stageMask) nothrow;
+alias PFN_vkCmdResetEvent2KHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2 stageMask) nothrow;
+alias PFN_vkCmdResetQueryPool = extern(Windows) void function(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount) nothrow;
+alias PFN_vkCmdResolveImage = extern(Windows) void function(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, VkImageResolve* pRegions) nothrow;
+alias PFN_vkCmdResolveImage2 = extern(Windows) void function(VkCommandBuffer commandBuffer, VkResolveImageInfo2* pResolveImageInfo) nothrow;
+alias PFN_vkCmdResolveImage2KHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkResolveImageInfo2* pResolveImageInfo) nothrow;
+alias PFN_vkCmdSetBlendConstants = extern(Windows) void function(VkCommandBuffer commandBuffer, float[4] blendConstants) nothrow;
+alias PFN_vkCmdSetCheckpointNV = extern(Windows) void function(VkCommandBuffer commandBuffer, void* pCheckpointMarker) nothrow;
+alias PFN_vkCmdSetCoarseSampleOrderNV = extern(Windows) void function(VkCommandBuffer commandBuffer, VkCoarseSampleOrderTypeNV sampleOrderType, uint32_t customSampleOrderCount, VkCoarseSampleOrderCustomNV* pCustomSampleOrders) nothrow;
+alias PFN_vkCmdSetColorWriteEnableEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t attachmentCount, VkBool32* pColorWriteEnables) nothrow;
+alias PFN_vkCmdSetCullMode = extern(Windows) void function(VkCommandBuffer commandBuffer, VkCullModeFlags cullMode) nothrow;
+alias PFN_vkCmdSetCullModeEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, VkCullModeFlags cullMode) nothrow;
+alias PFN_vkCmdSetDepthBias = extern(Windows) void function(VkCommandBuffer commandBuffer, float depthBiasConstantFactor, float depthBiasClamp, float depthBiasSlopeFactor) nothrow;
+alias PFN_vkCmdSetDepthBiasEnable = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBool32 depthBiasEnable) nothrow;
+alias PFN_vkCmdSetDepthBiasEnableEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBool32 depthBiasEnable) nothrow;
+alias PFN_vkCmdSetDepthBounds = extern(Windows) void function(VkCommandBuffer commandBuffer, float minDepthBounds, float maxDepthBounds) nothrow;
+alias PFN_vkCmdSetDepthBoundsTestEnable = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBool32 depthBoundsTestEnable) nothrow;
+alias PFN_vkCmdSetDepthBoundsTestEnableEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBool32 depthBoundsTestEnable) nothrow;
+alias PFN_vkCmdSetDepthCompareOp = extern(Windows) void function(VkCommandBuffer commandBuffer, VkCompareOp depthCompareOp) nothrow;
+alias PFN_vkCmdSetDepthCompareOpEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, VkCompareOp depthCompareOp) nothrow;
+alias PFN_vkCmdSetDepthTestEnable = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBool32 depthTestEnable) nothrow;
+alias PFN_vkCmdSetDepthTestEnableEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBool32 depthTestEnable) nothrow;
+alias PFN_vkCmdSetDepthWriteEnable = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBool32 depthWriteEnable) nothrow;
+alias PFN_vkCmdSetDepthWriteEnableEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBool32 depthWriteEnable) nothrow;
+alias PFN_vkCmdSetDeviceMask = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t deviceMask) nothrow;
+alias PFN_vkCmdSetDeviceMaskKHR = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t deviceMask) nothrow;
+alias PFN_vkCmdSetDiscardRectangleEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t firstDiscardRectangle, uint32_t discardRectangleCount, VkRect2D* pDiscardRectangles) nothrow;
+alias PFN_vkCmdSetEvent = extern(Windows) void function(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) nothrow;
+alias PFN_vkCmdSetEvent2 = extern(Windows) void function(VkCommandBuffer commandBuffer, VkEvent event, VkDependencyInfo* pDependencyInfo) nothrow;
+alias PFN_vkCmdSetEvent2KHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkEvent event, VkDependencyInfo* pDependencyInfo) nothrow;
+alias PFN_vkCmdSetExclusiveScissorNV = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t firstExclusiveScissor, uint32_t exclusiveScissorCount, VkRect2D* pExclusiveScissors) nothrow;
+alias PFN_vkCmdSetFragmentShadingRateEnumNV = extern(Windows) void function(VkCommandBuffer commandBuffer, VkFragmentShadingRateNV shadingRate, VkFragmentShadingRateCombinerOpKHR[2] combinerOps) nothrow;
+alias PFN_vkCmdSetFragmentShadingRateKHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkExtent2D* pFragmentSize, VkFragmentShadingRateCombinerOpKHR[2] combinerOps) nothrow;
+alias PFN_vkCmdSetFrontFace = extern(Windows) void function(VkCommandBuffer commandBuffer, VkFrontFace frontFace) nothrow;
+alias PFN_vkCmdSetFrontFaceEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, VkFrontFace frontFace) nothrow;
+alias PFN_vkCmdSetLineStippleEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern) nothrow;
+alias PFN_vkCmdSetLineWidth = extern(Windows) void function(VkCommandBuffer commandBuffer, float lineWidth) nothrow;
+alias PFN_vkCmdSetLogicOpEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, VkLogicOp logicOp) nothrow;
+alias PFN_vkCmdSetPatchControlPointsEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t patchControlPoints) nothrow;
+alias PFN_vkCmdSetPerformanceMarkerINTEL = extern(Windows) VkResult function(VkCommandBuffer commandBuffer, VkPerformanceMarkerInfoINTEL* pMarkerInfo) nothrow;
+alias PFN_vkCmdSetPerformanceOverrideINTEL = extern(Windows) VkResult function(VkCommandBuffer commandBuffer, VkPerformanceOverrideInfoINTEL* pOverrideInfo) nothrow;
+alias PFN_vkCmdSetPerformanceStreamMarkerINTEL = extern(Windows) VkResult function(VkCommandBuffer commandBuffer, VkPerformanceStreamMarkerInfoINTEL* pMarkerInfo) nothrow;
+alias PFN_vkCmdSetPrimitiveRestartEnable = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBool32 primitiveRestartEnable) nothrow;
+alias PFN_vkCmdSetPrimitiveRestartEnableEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBool32 primitiveRestartEnable) nothrow;
+alias PFN_vkCmdSetPrimitiveTopology = extern(Windows) void function(VkCommandBuffer commandBuffer, VkPrimitiveTopology primitiveTopology) nothrow;
+alias PFN_vkCmdSetPrimitiveTopologyEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, VkPrimitiveTopology primitiveTopology) nothrow;
+alias PFN_vkCmdSetRasterizerDiscardEnable = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBool32 rasterizerDiscardEnable) nothrow;
+alias PFN_vkCmdSetRasterizerDiscardEnableEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBool32 rasterizerDiscardEnable) nothrow;
+alias PFN_vkCmdSetRayTracingPipelineStackSizeKHR = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t pipelineStackSize) nothrow;
+alias PFN_vkCmdSetSampleLocationsEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, VkSampleLocationsInfoEXT* pSampleLocationsInfo) nothrow;
+alias PFN_vkCmdSetScissor = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t firstScissor, uint32_t scissorCount, VkRect2D* pScissors) nothrow;
+alias PFN_vkCmdSetScissorWithCount = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t scissorCount, VkRect2D* pScissors) nothrow;
+alias PFN_vkCmdSetScissorWithCountEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t scissorCount, VkRect2D* pScissors) nothrow;
+alias PFN_vkCmdSetStencilCompareMask = extern(Windows) void function(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t compareMask) nothrow;
+alias PFN_vkCmdSetStencilOp = extern(Windows) void function(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, VkStencilOp failOp, VkStencilOp passOp, VkStencilOp depthFailOp, VkCompareOp compareOp) nothrow;
+alias PFN_vkCmdSetStencilOpEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, VkStencilOp failOp, VkStencilOp passOp, VkStencilOp depthFailOp, VkCompareOp compareOp) nothrow;
+alias PFN_vkCmdSetStencilReference = extern(Windows) void function(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t reference) nothrow;
+alias PFN_vkCmdSetStencilTestEnable = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBool32 stencilTestEnable) nothrow;
+alias PFN_vkCmdSetStencilTestEnableEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBool32 stencilTestEnable) nothrow;
+alias PFN_vkCmdSetStencilWriteMask = extern(Windows) void function(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t writeMask) nothrow;
+alias PFN_vkCmdSetVertexInputEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t vertexBindingDescriptionCount, VkVertexInputBindingDescription2EXT* pVertexBindingDescriptions, uint32_t vertexAttributeDescriptionCount, VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions) nothrow;
+alias PFN_vkCmdSetViewport = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, VkViewport* pViewports) nothrow;
+alias PFN_vkCmdSetViewportShadingRatePaletteNV = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, VkShadingRatePaletteNV* pShadingRatePalettes) nothrow;
+alias PFN_vkCmdSetViewportWScalingNV = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, VkViewportWScalingNV* pViewportWScalings) nothrow;
+alias PFN_vkCmdSetViewportWithCount = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t viewportCount, VkViewport* pViewports) nothrow;
+alias PFN_vkCmdSetViewportWithCountEXT = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t viewportCount, VkViewport* pViewports) nothrow;
+alias PFN_vkCmdSubpassShadingHUAWEI = extern(Windows) void function(VkCommandBuffer commandBuffer) nothrow;
+alias PFN_vkCmdTraceRaysIndirectKHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable, VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable, VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable, VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable, VkDeviceAddress indirectDeviceAddress) nothrow;
+alias PFN_vkCmdTraceRaysKHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable, VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable, VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable, VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable, uint32_t width, uint32_t height, uint32_t depth) nothrow;
+alias PFN_vkCmdTraceRaysNV = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBuffer raygenShaderBindingTableBuffer, VkDeviceSize raygenShaderBindingOffset, VkBuffer missShaderBindingTableBuffer, VkDeviceSize missShaderBindingOffset, VkDeviceSize missShaderBindingStride, VkBuffer hitShaderBindingTableBuffer, VkDeviceSize hitShaderBindingOffset, VkDeviceSize hitShaderBindingStride, VkBuffer callableShaderBindingTableBuffer, VkDeviceSize callableShaderBindingOffset, VkDeviceSize callableShaderBindingStride, uint32_t width, uint32_t height, uint32_t depth) nothrow;
+alias PFN_vkCmdUpdateBuffer = extern(Windows) void function(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize dataSize, void* pData) nothrow;
+alias PFN_vkCmdWaitEvents = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t eventCount, VkEvent* pEvents, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, uint32_t memoryBarrierCount, VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount, VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount, VkImageMemoryBarrier* pImageMemoryBarriers) nothrow;
+alias PFN_vkCmdWaitEvents2 = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t eventCount, VkEvent* pEvents, VkDependencyInfo* pDependencyInfos) nothrow;
+alias PFN_vkCmdWaitEvents2KHR = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t eventCount, VkEvent* pEvents, VkDependencyInfo* pDependencyInfos) nothrow;
+alias PFN_vkCmdWriteAccelerationStructuresPropertiesKHR = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t accelerationStructureCount, VkAccelerationStructureKHR* pAccelerationStructures, VkQueryType queryType, VkQueryPool queryPool, uint32_t firstQuery) nothrow;
+alias PFN_vkCmdWriteAccelerationStructuresPropertiesNV = extern(Windows) void function(VkCommandBuffer commandBuffer, uint32_t accelerationStructureCount, VkAccelerationStructureNV* pAccelerationStructures, VkQueryType queryType, VkQueryPool queryPool, uint32_t firstQuery) nothrow;
+alias PFN_vkCmdWriteBufferMarker2AMD = extern(Windows) void function(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) nothrow;
+alias PFN_vkCmdWriteBufferMarkerAMD = extern(Windows) void function(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) nothrow;
+alias PFN_vkCmdWriteTimestamp = extern(Windows) void function(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, VkQueryPool queryPool, uint32_t query) nothrow;
+alias PFN_vkCmdWriteTimestamp2 = extern(Windows) void function(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkQueryPool queryPool, uint32_t query) nothrow;
+alias PFN_vkCmdWriteTimestamp2KHR = extern(Windows) void function(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkQueryPool queryPool, uint32_t query) nothrow;
+alias PFN_vkCompileDeferredNV = extern(Windows) VkResult function(VkDevice device, VkPipeline pipeline, uint32_t shader) nothrow;
+alias PFN_vkCopyAccelerationStructureKHR = extern(Windows) VkResult function(VkDevice device, VkDeferredOperationKHR deferredOperation, VkCopyAccelerationStructureInfoKHR* pInfo) nothrow;
+alias PFN_vkCopyAccelerationStructureToMemoryKHR = extern(Windows) VkResult function(VkDevice device, VkDeferredOperationKHR deferredOperation, VkCopyAccelerationStructureToMemoryInfoKHR* pInfo) nothrow;
+alias PFN_vkCopyMemoryToAccelerationStructureKHR = extern(Windows) VkResult function(VkDevice device, VkDeferredOperationKHR deferredOperation, VkCopyMemoryToAccelerationStructureInfoKHR* pInfo) nothrow;
+alias PFN_vkCreateAccelerationStructureKHR = extern(Windows) VkResult function(VkDevice device, VkAccelerationStructureCreateInfoKHR* pCreateInfo, VkAllocationCallbacks* pAllocator, VkAccelerationStructureKHR* pAccelerationStructure) nothrow;
+alias PFN_vkCreateAccelerationStructureNV = extern(Windows) VkResult function(VkDevice device, VkAccelerationStructureCreateInfoNV* pCreateInfo, VkAllocationCallbacks* pAllocator, VkAccelerationStructureNV* pAccelerationStructure) nothrow;
+alias PFN_vkCreateBuffer = extern(Windows) VkResult function(VkDevice device, VkBufferCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkBuffer* pBuffer) nothrow;
+alias PFN_vkCreateBufferView = extern(Windows) VkResult function(VkDevice device, VkBufferViewCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkBufferView* pView) nothrow;
+alias PFN_vkCreateCommandPool = extern(Windows) VkResult function(VkDevice device, VkCommandPoolCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool) nothrow;
+alias PFN_vkCreateComputePipelines = extern(Windows) VkResult function(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, VkComputePipelineCreateInfo* pCreateInfos, VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines) nothrow;
+alias PFN_vkCreateCuFunctionNVX = extern(Windows) VkResult function(VkDevice device, VkCuFunctionCreateInfoNVX* pCreateInfo, VkAllocationCallbacks* pAllocator, VkCuFunctionNVX* pFunction) nothrow;
+alias PFN_vkCreateCuModuleNVX = extern(Windows) VkResult function(VkDevice device, VkCuModuleCreateInfoNVX* pCreateInfo, VkAllocationCallbacks* pAllocator, VkCuModuleNVX* pModule) nothrow;
+alias PFN_vkCreateDebugReportCallbackEXT = extern(Windows) VkResult function(VkInstance instance, VkDebugReportCallbackCreateInfoEXT* pCreateInfo, VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT* pCallback) nothrow;
+alias PFN_vkCreateDebugUtilsMessengerEXT = extern(Windows) VkResult function(VkInstance instance, VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pMessenger) nothrow;
+alias PFN_vkCreateDeferredOperationKHR = extern(Windows) VkResult function(VkDevice device, VkAllocationCallbacks* pAllocator, VkDeferredOperationKHR* pDeferredOperation) nothrow;
+alias PFN_vkCreateDescriptorPool = extern(Windows) VkResult function(VkDevice device, VkDescriptorPoolCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkDescriptorPool* pDescriptorPool) nothrow;
+alias PFN_vkCreateDescriptorSetLayout = extern(Windows) VkResult function(VkDevice device, VkDescriptorSetLayoutCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkDescriptorSetLayout* pSetLayout) nothrow;
+alias PFN_vkCreateDescriptorUpdateTemplate = extern(Windows) VkResult function(VkDevice device, VkDescriptorUpdateTemplateCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkDescriptorUpdateTemplate* pDescriptorUpdateTemplate) nothrow;
+alias PFN_vkCreateDescriptorUpdateTemplateKHR = extern(Windows) VkResult function(VkDevice device, VkDescriptorUpdateTemplateCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkDescriptorUpdateTemplate* pDescriptorUpdateTemplate) nothrow;
+alias PFN_vkCreateDevice = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, VkDeviceCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkDevice* pDevice) nothrow;
+alias PFN_vkCreateDisplayModeKHR = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, VkDisplayKHR display, VkDisplayModeCreateInfoKHR* pCreateInfo, VkAllocationCallbacks* pAllocator, VkDisplayModeKHR* pMode) nothrow;
+alias PFN_vkCreateDisplayPlaneSurfaceKHR = extern(Windows) VkResult function(VkInstance instance, VkDisplaySurfaceCreateInfoKHR* pCreateInfo, VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) nothrow;
+alias PFN_vkCreateEvent = extern(Windows) VkResult function(VkDevice device, VkEventCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkEvent* pEvent) nothrow;
+alias PFN_vkCreateFence = extern(Windows) VkResult function(VkDevice device, VkFenceCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkFence* pFence) nothrow;
+alias PFN_vkCreateFramebuffer = extern(Windows) VkResult function(VkDevice device, VkFramebufferCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkFramebuffer* pFramebuffer) nothrow;
+alias PFN_vkCreateGraphicsPipelines = extern(Windows) VkResult function(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, VkGraphicsPipelineCreateInfo* pCreateInfos, VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines) nothrow;
+alias PFN_vkCreateHeadlessSurfaceEXT = extern(Windows) VkResult function(VkInstance instance, VkHeadlessSurfaceCreateInfoEXT* pCreateInfo, VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) nothrow;
+alias PFN_vkCreateImage = extern(Windows) VkResult function(VkDevice device, VkImageCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkImage* pImage) nothrow;
+alias PFN_vkCreateImageView = extern(Windows) VkResult function(VkDevice device, VkImageViewCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkImageView* pView) nothrow;
+alias PFN_vkCreateIndirectCommandsLayoutNV = extern(Windows) VkResult function(VkDevice device, VkIndirectCommandsLayoutCreateInfoNV* pCreateInfo, VkAllocationCallbacks* pAllocator, VkIndirectCommandsLayoutNV* pIndirectCommandsLayout) nothrow;
+alias PFN_vkCreateInstance = extern(Windows) VkResult function(VkInstanceCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkInstance* pInstance) nothrow;
+alias PFN_vkCreatePipelineCache = extern(Windows) VkResult function(VkDevice device, VkPipelineCacheCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkPipelineCache* pPipelineCache) nothrow;
+alias PFN_vkCreatePipelineLayout = extern(Windows) VkResult function(VkDevice device, VkPipelineLayoutCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkPipelineLayout* pPipelineLayout) nothrow;
+alias PFN_vkCreatePrivateDataSlot = extern(Windows) VkResult function(VkDevice device, VkPrivateDataSlotCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkPrivateDataSlot* pPrivateDataSlot) nothrow;
+alias PFN_vkCreatePrivateDataSlotEXT = extern(Windows) VkResult function(VkDevice device, VkPrivateDataSlotCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkPrivateDataSlot* pPrivateDataSlot) nothrow;
+alias PFN_vkCreateQueryPool = extern(Windows) VkResult function(VkDevice device, VkQueryPoolCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkQueryPool* pQueryPool) nothrow;
+alias PFN_vkCreateRayTracingPipelinesKHR = extern(Windows) VkResult function(VkDevice device, VkDeferredOperationKHR deferredOperation, VkPipelineCache pipelineCache, uint32_t createInfoCount, VkRayTracingPipelineCreateInfoKHR* pCreateInfos, VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines) nothrow;
+alias PFN_vkCreateRayTracingPipelinesNV = extern(Windows) VkResult function(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, VkRayTracingPipelineCreateInfoNV* pCreateInfos, VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines) nothrow;
+alias PFN_vkCreateRenderPass = extern(Windows) VkResult function(VkDevice device, VkRenderPassCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass) nothrow;
+alias PFN_vkCreateRenderPass2 = extern(Windows) VkResult function(VkDevice device, VkRenderPassCreateInfo2* pCreateInfo, VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass) nothrow;
+alias PFN_vkCreateRenderPass2KHR = extern(Windows) VkResult function(VkDevice device, VkRenderPassCreateInfo2* pCreateInfo, VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass) nothrow;
+alias PFN_vkCreateSampler = extern(Windows) VkResult function(VkDevice device, VkSamplerCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkSampler* pSampler) nothrow;
+alias PFN_vkCreateSamplerYcbcrConversion = extern(Windows) VkResult function(VkDevice device, VkSamplerYcbcrConversionCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkSamplerYcbcrConversion* pYcbcrConversion) nothrow;
+alias PFN_vkCreateSamplerYcbcrConversionKHR = extern(Windows) VkResult function(VkDevice device, VkSamplerYcbcrConversionCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkSamplerYcbcrConversion* pYcbcrConversion) nothrow;
+alias PFN_vkCreateSemaphore = extern(Windows) VkResult function(VkDevice device, VkSemaphoreCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore) nothrow;
+alias PFN_vkCreateShaderModule = extern(Windows) VkResult function(VkDevice device, VkShaderModuleCreateInfo* pCreateInfo, VkAllocationCallbacks* pAllocator, VkShaderModule* pShaderModule) nothrow;
+alias PFN_vkCreateSharedSwapchainsKHR = extern(Windows) VkResult function(VkDevice device, uint32_t swapchainCount, VkSwapchainCreateInfoKHR* pCreateInfos, VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchains) nothrow;
+alias PFN_vkCreateSwapchainKHR = extern(Windows) VkResult function(VkDevice device, VkSwapchainCreateInfoKHR* pCreateInfo, VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchain) nothrow;
+alias PFN_vkCreateValidationCacheEXT = extern(Windows) VkResult function(VkDevice device, VkValidationCacheCreateInfoEXT* pCreateInfo, VkAllocationCallbacks* pAllocator, VkValidationCacheEXT* pValidationCache) nothrow;
+alias PFN_vkCreateWin32SurfaceKHR = extern(Windows) VkResult function(VkInstance instance, VkWin32SurfaceCreateInfoKHR* pCreateInfo, VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) nothrow;
+alias PFN_vkDebugMarkerSetObjectNameEXT = extern(Windows) VkResult function(VkDevice device, VkDebugMarkerObjectNameInfoEXT* pNameInfo) nothrow;
+alias PFN_vkDebugMarkerSetObjectTagEXT = extern(Windows) VkResult function(VkDevice device, VkDebugMarkerObjectTagInfoEXT* pTagInfo) nothrow;
+alias PFN_vkDebugReportMessageEXT = extern(Windows) void function(VkInstance instance, VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, immutable(char)* pLayerPrefix, immutable(char)* pMessage) nothrow;
+alias PFN_vkDeferredOperationJoinKHR = extern(Windows) VkResult function(VkDevice device, VkDeferredOperationKHR operation) nothrow;
+alias PFN_vkDestroyAccelerationStructureKHR = extern(Windows) void function(VkDevice device, VkAccelerationStructureKHR accelerationStructure, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyAccelerationStructureNV = extern(Windows) void function(VkDevice device, VkAccelerationStructureNV accelerationStructure, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyBuffer = extern(Windows) void function(VkDevice device, VkBuffer buffer, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyBufferView = extern(Windows) void function(VkDevice device, VkBufferView bufferView, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyCommandPool = extern(Windows) void function(VkDevice device, VkCommandPool commandPool, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyCuFunctionNVX = extern(Windows) void function(VkDevice device, VkCuFunctionNVX function_, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyCuModuleNVX = extern(Windows) void function(VkDevice device, VkCuModuleNVX module_, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyDebugReportCallbackEXT = extern(Windows) void function(VkInstance instance, VkDebugReportCallbackEXT callback, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyDebugUtilsMessengerEXT = extern(Windows) void function(VkInstance instance, VkDebugUtilsMessengerEXT messenger, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyDeferredOperationKHR = extern(Windows) void function(VkDevice device, VkDeferredOperationKHR operation, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyDescriptorPool = extern(Windows) void function(VkDevice device, VkDescriptorPool descriptorPool, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyDescriptorSetLayout = extern(Windows) void function(VkDevice device, VkDescriptorSetLayout descriptorSetLayout, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyDescriptorUpdateTemplate = extern(Windows) void function(VkDevice device, VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyDescriptorUpdateTemplateKHR = extern(Windows) void function(VkDevice device, VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyDevice = extern(Windows) void function(VkDevice device, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyEvent = extern(Windows) void function(VkDevice device, VkEvent event, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyFence = extern(Windows) void function(VkDevice device, VkFence fence, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyFramebuffer = extern(Windows) void function(VkDevice device, VkFramebuffer framebuffer, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyImage = extern(Windows) void function(VkDevice device, VkImage image, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyImageView = extern(Windows) void function(VkDevice device, VkImageView imageView, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyIndirectCommandsLayoutNV = extern(Windows) void function(VkDevice device, VkIndirectCommandsLayoutNV indirectCommandsLayout, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyInstance = extern(Windows) void function(VkInstance instance, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyPipeline = extern(Windows) void function(VkDevice device, VkPipeline pipeline, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyPipelineCache = extern(Windows) void function(VkDevice device, VkPipelineCache pipelineCache, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyPipelineLayout = extern(Windows) void function(VkDevice device, VkPipelineLayout pipelineLayout, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyPrivateDataSlot = extern(Windows) void function(VkDevice device, VkPrivateDataSlot privateDataSlot, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyPrivateDataSlotEXT = extern(Windows) void function(VkDevice device, VkPrivateDataSlot privateDataSlot, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyQueryPool = extern(Windows) void function(VkDevice device, VkQueryPool queryPool, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyRenderPass = extern(Windows) void function(VkDevice device, VkRenderPass renderPass, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroySampler = extern(Windows) void function(VkDevice device, VkSampler sampler, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroySamplerYcbcrConversion = extern(Windows) void function(VkDevice device, VkSamplerYcbcrConversion ycbcrConversion, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroySamplerYcbcrConversionKHR = extern(Windows) void function(VkDevice device, VkSamplerYcbcrConversion ycbcrConversion, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroySemaphore = extern(Windows) void function(VkDevice device, VkSemaphore semaphore, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyShaderModule = extern(Windows) void function(VkDevice device, VkShaderModule shaderModule, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroySurfaceKHR = extern(Windows) void function(VkInstance instance, VkSurfaceKHR surface, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroySwapchainKHR = extern(Windows) void function(VkDevice device, VkSwapchainKHR swapchain, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDestroyValidationCacheEXT = extern(Windows) void function(VkDevice device, VkValidationCacheEXT validationCache, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkDeviceWaitIdle = extern(Windows) VkResult function(VkDevice device) nothrow;
+alias PFN_vkDisplayPowerControlEXT = extern(Windows) VkResult function(VkDevice device, VkDisplayKHR display, VkDisplayPowerInfoEXT* pDisplayPowerInfo) nothrow;
+alias PFN_vkEndCommandBuffer = extern(Windows) VkResult function(VkCommandBuffer commandBuffer) nothrow;
+alias PFN_vkEnumerateDeviceExtensionProperties = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, immutable(char)* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties) nothrow;
+alias PFN_vkEnumerateDeviceLayerProperties = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkLayerProperties* pProperties) nothrow;
+alias PFN_vkEnumerateInstanceExtensionProperties = extern(Windows) VkResult function(immutable(char)* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties) nothrow;
+alias PFN_vkEnumerateInstanceLayerProperties = extern(Windows) VkResult function(uint32_t* pPropertyCount, VkLayerProperties* pProperties) nothrow;
+alias PFN_vkEnumerateInstanceVersion = extern(Windows) VkResult function(uint32_t* pApiVersion) nothrow;
+alias PFN_vkEnumeratePhysicalDeviceGroups = extern(Windows) VkResult function(VkInstance instance, uint32_t* pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties) nothrow;
+alias PFN_vkEnumeratePhysicalDeviceGroupsKHR = extern(Windows) VkResult function(VkInstance instance, uint32_t* pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties) nothrow;
+alias PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t* pCounterCount, VkPerformanceCounterKHR* pCounters, VkPerformanceCounterDescriptionKHR* pCounterDescriptions) nothrow;
+alias PFN_vkEnumeratePhysicalDevices = extern(Windows) VkResult function(VkInstance instance, uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices) nothrow;
+alias PFN_vkFlushMappedMemoryRanges = extern(Windows) VkResult function(VkDevice device, uint32_t memoryRangeCount, VkMappedMemoryRange* pMemoryRanges) nothrow;
+alias PFN_vkFreeCommandBuffers = extern(Windows) void function(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount, VkCommandBuffer* pCommandBuffers) nothrow;
+alias PFN_vkFreeDescriptorSets = extern(Windows) VkResult function(VkDevice device, VkDescriptorPool descriptorPool, uint32_t descriptorSetCount, VkDescriptorSet* pDescriptorSets) nothrow;
+alias PFN_vkFreeMemory = extern(Windows) void function(VkDevice device, VkDeviceMemory memory, VkAllocationCallbacks* pAllocator) nothrow;
+alias PFN_vkGetAccelerationStructureBuildSizesKHR = extern(Windows) void function(VkDevice device, VkAccelerationStructureBuildTypeKHR buildType, VkAccelerationStructureBuildGeometryInfoKHR* pBuildInfo, uint32_t* pMaxPrimitiveCounts, VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo) nothrow;
+alias PFN_vkGetAccelerationStructureDeviceAddressKHR = extern(Windows) VkDeviceAddress function(VkDevice device, VkAccelerationStructureDeviceAddressInfoKHR* pInfo) nothrow;
+alias PFN_vkGetAccelerationStructureHandleNV = extern(Windows) VkResult function(VkDevice device, VkAccelerationStructureNV accelerationStructure, size_t dataSize, void* pData) nothrow;
+alias PFN_vkGetAccelerationStructureMemoryRequirementsNV = extern(Windows) void function(VkDevice device, VkAccelerationStructureMemoryRequirementsInfoNV* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements) nothrow;
+alias PFN_vkGetBufferDeviceAddress = extern(Windows) VkDeviceAddress function(VkDevice device, VkBufferDeviceAddressInfo* pInfo) nothrow;
+alias PFN_vkGetBufferDeviceAddressEXT = extern(Windows) VkDeviceAddress function(VkDevice device, VkBufferDeviceAddressInfo* pInfo) nothrow;
+alias PFN_vkGetBufferDeviceAddressKHR = extern(Windows) VkDeviceAddress function(VkDevice device, VkBufferDeviceAddressInfo* pInfo) nothrow;
+alias PFN_vkGetBufferMemoryRequirements = extern(Windows) void function(VkDevice device, VkBuffer buffer, VkMemoryRequirements* pMemoryRequirements) nothrow;
+alias PFN_vkGetBufferMemoryRequirements2 = extern(Windows) void function(VkDevice device, VkBufferMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements) nothrow;
+alias PFN_vkGetBufferMemoryRequirements2KHR = extern(Windows) void function(VkDevice device, VkBufferMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements) nothrow;
+alias PFN_vkGetBufferOpaqueCaptureAddress = extern(Windows) uint64_t function(VkDevice device, VkBufferDeviceAddressInfo* pInfo) nothrow;
+alias PFN_vkGetBufferOpaqueCaptureAddressKHR = extern(Windows) uint64_t function(VkDevice device, VkBufferDeviceAddressInfo* pInfo) nothrow;
+alias PFN_vkGetCalibratedTimestampsEXT = extern(Windows) VkResult function(VkDevice device, uint32_t timestampCount, VkCalibratedTimestampInfoEXT* pTimestampInfos, uint64_t* pTimestamps, uint64_t* pMaxDeviation) nothrow;
+alias PFN_vkGetDeferredOperationMaxConcurrencyKHR = extern(Windows) uint32_t function(VkDevice device, VkDeferredOperationKHR operation) nothrow;
+alias PFN_vkGetDeferredOperationResultKHR = extern(Windows) VkResult function(VkDevice device, VkDeferredOperationKHR operation) nothrow;
+alias PFN_vkGetDescriptorSetHostMappingVALVE = extern(Windows) void function(VkDevice device, VkDescriptorSet descriptorSet, void** ppData) nothrow;
+alias PFN_vkGetDescriptorSetLayoutHostMappingInfoVALVE = extern(Windows) void function(VkDevice device, VkDescriptorSetBindingReferenceVALVE* pBindingReference, VkDescriptorSetLayoutHostMappingInfoVALVE* pHostMapping) nothrow;
+alias PFN_vkGetDescriptorSetLayoutSupport = extern(Windows) void function(VkDevice device, VkDescriptorSetLayoutCreateInfo* pCreateInfo, VkDescriptorSetLayoutSupport* pSupport) nothrow;
+alias PFN_vkGetDescriptorSetLayoutSupportKHR = extern(Windows) void function(VkDevice device, VkDescriptorSetLayoutCreateInfo* pCreateInfo, VkDescriptorSetLayoutSupport* pSupport) nothrow;
+alias PFN_vkGetDeviceAccelerationStructureCompatibilityKHR = extern(Windows) void function(VkDevice device, VkAccelerationStructureVersionInfoKHR* pVersionInfo, VkAccelerationStructureCompatibilityKHR* pCompatibility) nothrow;
+alias PFN_vkGetDeviceBufferMemoryRequirements = extern(Windows) void function(VkDevice device, VkDeviceBufferMemoryRequirements* pInfo, VkMemoryRequirements2* pMemoryRequirements) nothrow;
+alias PFN_vkGetDeviceBufferMemoryRequirementsKHR = extern(Windows) void function(VkDevice device, VkDeviceBufferMemoryRequirements* pInfo, VkMemoryRequirements2* pMemoryRequirements) nothrow;
+alias PFN_vkGetDeviceGroupPeerMemoryFeatures = extern(Windows) void function(VkDevice device, uint32_t heapIndex, uint32_t localDeviceIndex, uint32_t remoteDeviceIndex, VkPeerMemoryFeatureFlags* pPeerMemoryFeatures) nothrow;
+alias PFN_vkGetDeviceGroupPeerMemoryFeaturesKHR = extern(Windows) void function(VkDevice device, uint32_t heapIndex, uint32_t localDeviceIndex, uint32_t remoteDeviceIndex, VkPeerMemoryFeatureFlags* pPeerMemoryFeatures) nothrow;
+alias PFN_vkGetDeviceGroupPresentCapabilitiesKHR = extern(Windows) VkResult function(VkDevice device, VkDeviceGroupPresentCapabilitiesKHR* pDeviceGroupPresentCapabilities) nothrow;
+alias PFN_vkGetDeviceGroupSurfacePresentModes2EXT = extern(Windows) VkResult function(VkDevice device, VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, VkDeviceGroupPresentModeFlagsKHR* pModes) nothrow;
+alias PFN_vkGetDeviceGroupSurfacePresentModesKHR = extern(Windows) VkResult function(VkDevice device, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes) nothrow;
+alias PFN_vkGetDeviceImageMemoryRequirements = extern(Windows) void function(VkDevice device, VkDeviceImageMemoryRequirements* pInfo, VkMemoryRequirements2* pMemoryRequirements) nothrow;
+alias PFN_vkGetDeviceImageMemoryRequirementsKHR = extern(Windows) void function(VkDevice device, VkDeviceImageMemoryRequirements* pInfo, VkMemoryRequirements2* pMemoryRequirements) nothrow;
+alias PFN_vkGetDeviceImageSparseMemoryRequirements = extern(Windows) void function(VkDevice device, VkDeviceImageMemoryRequirements* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2* pSparseMemoryRequirements) nothrow;
+alias PFN_vkGetDeviceImageSparseMemoryRequirementsKHR = extern(Windows) void function(VkDevice device, VkDeviceImageMemoryRequirements* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2* pSparseMemoryRequirements) nothrow;
+alias PFN_vkGetDeviceMemoryCommitment = extern(Windows) void function(VkDevice device, VkDeviceMemory memory, VkDeviceSize* pCommittedMemoryInBytes) nothrow;
+alias PFN_vkGetDeviceMemoryOpaqueCaptureAddress = extern(Windows) uint64_t function(VkDevice device, VkDeviceMemoryOpaqueCaptureAddressInfo* pInfo) nothrow;
+alias PFN_vkGetDeviceMemoryOpaqueCaptureAddressKHR = extern(Windows) uint64_t function(VkDevice device, VkDeviceMemoryOpaqueCaptureAddressInfo* pInfo) nothrow;
+alias PFN_vkGetDeviceProcAddr = extern(Windows) PFN_vkVoidFunction function(VkDevice device, immutable(char)* pName) nothrow;
+alias PFN_vkGetDeviceQueue = extern(Windows) void function(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue) nothrow;
+alias PFN_vkGetDeviceQueue2 = extern(Windows) void function(VkDevice device, VkDeviceQueueInfo2* pQueueInfo, VkQueue* pQueue) nothrow;
+alias PFN_vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI = extern(Windows) VkResult function(VkDevice device, VkRenderPass renderpass, VkExtent2D* pMaxWorkgroupSize) nothrow;
+alias PFN_vkGetDisplayModeProperties2KHR = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, VkDisplayKHR display, uint32_t* pPropertyCount, VkDisplayModeProperties2KHR* pProperties) nothrow;
+alias PFN_vkGetDisplayModePropertiesKHR = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, VkDisplayKHR display, uint32_t* pPropertyCount, VkDisplayModePropertiesKHR* pProperties) nothrow;
+alias PFN_vkGetDisplayPlaneCapabilities2KHR = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, VkDisplayPlaneInfo2KHR* pDisplayPlaneInfo, VkDisplayPlaneCapabilities2KHR* pCapabilities) nothrow;
+alias PFN_vkGetDisplayPlaneCapabilitiesKHR = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, VkDisplayModeKHR mode, uint32_t planeIndex, VkDisplayPlaneCapabilitiesKHR* pCapabilities) nothrow;
+alias PFN_vkGetDisplayPlaneSupportedDisplaysKHR = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, uint32_t planeIndex, uint32_t* pDisplayCount, VkDisplayKHR* pDisplays) nothrow;
+alias PFN_vkGetDrmDisplayEXT = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, int32_t drmFd, uint32_t connectorId, VkDisplayKHR* display) nothrow;
+alias PFN_vkGetEventStatus = extern(Windows) VkResult function(VkDevice device, VkEvent event) nothrow;
+alias PFN_vkGetFenceFdKHR = extern(Windows) VkResult function(VkDevice device, VkFenceGetFdInfoKHR* pGetFdInfo, int* pFd) nothrow;
+alias PFN_vkGetFenceStatus = extern(Windows) VkResult function(VkDevice device, VkFence fence) nothrow;
+alias PFN_vkGetFenceWin32HandleKHR = extern(Windows) VkResult function(VkDevice device, VkFenceGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle) nothrow;
+alias PFN_vkGetGeneratedCommandsMemoryRequirementsNV = extern(Windows) void function(VkDevice device, VkGeneratedCommandsMemoryRequirementsInfoNV* pInfo, VkMemoryRequirements2* pMemoryRequirements) nothrow;
+alias PFN_vkGetImageDrmFormatModifierPropertiesEXT = extern(Windows) VkResult function(VkDevice device, VkImage image, VkImageDrmFormatModifierPropertiesEXT* pProperties) nothrow;
+alias PFN_vkGetImageMemoryRequirements = extern(Windows) void function(VkDevice device, VkImage image, VkMemoryRequirements* pMemoryRequirements) nothrow;
+alias PFN_vkGetImageMemoryRequirements2 = extern(Windows) void function(VkDevice device, VkImageMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements) nothrow;
+alias PFN_vkGetImageMemoryRequirements2KHR = extern(Windows) void function(VkDevice device, VkImageMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements) nothrow;
+alias PFN_vkGetImageSparseMemoryRequirements = extern(Windows) void function(VkDevice device, VkImage image, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements* pSparseMemoryRequirements) nothrow;
+alias PFN_vkGetImageSparseMemoryRequirements2 = extern(Windows) void function(VkDevice device, VkImageSparseMemoryRequirementsInfo2* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2* pSparseMemoryRequirements) nothrow;
+alias PFN_vkGetImageSparseMemoryRequirements2KHR = extern(Windows) void function(VkDevice device, VkImageSparseMemoryRequirementsInfo2* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2* pSparseMemoryRequirements) nothrow;
+alias PFN_vkGetImageSubresourceLayout = extern(Windows) void function(VkDevice device, VkImage image, VkImageSubresource* pSubresource, VkSubresourceLayout* pLayout) nothrow;
+alias PFN_vkGetImageViewAddressNVX = extern(Windows) VkResult function(VkDevice device, VkImageView imageView, VkImageViewAddressPropertiesNVX* pProperties) nothrow;
+alias PFN_vkGetImageViewHandleNVX = extern(Windows) uint32_t function(VkDevice device, VkImageViewHandleInfoNVX* pInfo) nothrow;
+alias PFN_vkGetInstanceProcAddr = extern(Windows) PFN_vkVoidFunction function(VkInstance instance, immutable(char)* pName) nothrow;
+alias PFN_vkGetMemoryFdKHR = extern(Windows) VkResult function(VkDevice device, VkMemoryGetFdInfoKHR* pGetFdInfo, int* pFd) nothrow;
+alias PFN_vkGetMemoryFdPropertiesKHR = extern(Windows) VkResult function(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, int fd, VkMemoryFdPropertiesKHR* pMemoryFdProperties) nothrow;
+alias PFN_vkGetMemoryHostPointerPropertiesEXT = extern(Windows) VkResult function(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, void* pHostPointer, VkMemoryHostPointerPropertiesEXT* pMemoryHostPointerProperties) nothrow;
+alias PFN_vkGetMemoryRemoteAddressNV = extern(Windows) VkResult function(VkDevice device, VkMemoryGetRemoteAddressInfoNV* pMemoryGetRemoteAddressInfo, VkRemoteAddressNV* pAddress) nothrow;
+alias PFN_vkGetMemoryWin32HandleKHR = extern(Windows) VkResult function(VkDevice device, VkMemoryGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle) nothrow;
+alias PFN_vkGetMemoryWin32HandleNV = extern(Windows) VkResult function(VkDevice device, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagsNV handleType, HANDLE* pHandle) nothrow;
+alias PFN_vkGetMemoryWin32HandlePropertiesKHR = extern(Windows) VkResult function(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties) nothrow;
+alias PFN_vkGetPastPresentationTimingGOOGLE = extern(Windows) VkResult function(VkDevice device, VkSwapchainKHR swapchain, uint32_t* pPresentationTimingCount, VkPastPresentationTimingGOOGLE* pPresentationTimings) nothrow;
+alias PFN_vkGetPerformanceParameterINTEL = extern(Windows) VkResult function(VkDevice device, VkPerformanceParameterTypeINTEL parameter, VkPerformanceValueINTEL* pValue) nothrow;
+alias PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsEXT = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, uint32_t* pTimeDomainCount, VkTimeDomainEXT* pTimeDomains) nothrow;
+alias PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesNV = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeMatrixPropertiesNV* pProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceDisplayPlaneProperties2KHR = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayPlaneProperties2KHR* pProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayPlanePropertiesKHR* pProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceDisplayProperties2KHR = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayProperties2KHR* pProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceDisplayPropertiesKHR = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayPropertiesKHR* pProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceExternalBufferProperties = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceExternalBufferInfo* pExternalBufferInfo, VkExternalBufferProperties* pExternalBufferProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceExternalBufferInfo* pExternalBufferInfo, VkExternalBufferProperties* pExternalBufferProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceExternalFenceProperties = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceExternalFenceInfo* pExternalFenceInfo, VkExternalFenceProperties* pExternalFenceProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceExternalFenceInfo* pExternalFenceInfo, VkExternalFenceProperties* pExternalFenceProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, VkExternalMemoryHandleTypeFlagsNV externalHandleType, VkExternalImageFormatPropertiesNV* pExternalImageFormatProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceExternalSemaphoreProperties = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceExternalSemaphoreInfo* pExternalSemaphoreInfo, VkExternalSemaphoreProperties* pExternalSemaphoreProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceExternalSemaphoreInfo* pExternalSemaphoreInfo, VkExternalSemaphoreProperties* pExternalSemaphoreProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceFeatures = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures* pFeatures) nothrow;
+alias PFN_vkGetPhysicalDeviceFeatures2 = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures2* pFeatures) nothrow;
+alias PFN_vkGetPhysicalDeviceFeatures2KHR = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures2* pFeatures) nothrow;
+alias PFN_vkGetPhysicalDeviceFormatProperties = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties* pFormatProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceFormatProperties2 = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties2* pFormatProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceFormatProperties2KHR = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties2* pFormatProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceFragmentShadingRatesKHR = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, uint32_t* pFragmentShadingRateCount, VkPhysicalDeviceFragmentShadingRateKHR* pFragmentShadingRates) nothrow;
+alias PFN_vkGetPhysicalDeviceImageFormatProperties = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, VkImageFormatProperties* pImageFormatProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceImageFormatProperties2 = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo, VkImageFormatProperties2* pImageFormatProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceImageFormatProperties2KHR = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo, VkImageFormatProperties2* pImageFormatProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceMemoryProperties = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties* pMemoryProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceMemoryProperties2 = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties2* pMemoryProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceMemoryProperties2KHR = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties2* pMemoryProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkSampleCountFlagBits samples, VkMultisamplePropertiesEXT* pMultisampleProperties) nothrow;
+alias PFN_vkGetPhysicalDevicePresentRectanglesKHR = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pRectCount, VkRect2D* pRects) nothrow;
+alias PFN_vkGetPhysicalDeviceProperties = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties* pProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceProperties2 = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties2* pProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceProperties2KHR = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties2* pProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkQueryPoolPerformanceCreateInfoKHR* pPerformanceQueryCreateInfo, uint32_t* pNumPasses) nothrow;
+alias PFN_vkGetPhysicalDeviceQueueFamilyProperties = extern(Windows) void function(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties* pQueueFamilyProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceQueueFamilyProperties2 = extern(Windows) void function(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties2* pQueueFamilyProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR = extern(Windows) void function(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties2* pQueueFamilyProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceSparseImageFormatProperties = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkSampleCountFlagBits samples, VkImageUsageFlags usage, VkImageTiling tiling, uint32_t* pPropertyCount, VkSparseImageFormatProperties* pProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceSparseImageFormatProperties2 = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo, uint32_t* pPropertyCount, VkSparseImageFormatProperties2* pProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR = extern(Windows) void function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo, uint32_t* pPropertyCount, VkSparseImageFormatProperties2* pProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, uint32_t* pCombinationCount, VkFramebufferMixedSamplesCombinationNV* pCombinations) nothrow;
+alias PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilities2EXT* pSurfaceCapabilities) nothrow;
+alias PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, VkSurfaceCapabilities2KHR* pSurfaceCapabilities) nothrow;
+alias PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* pSurfaceCapabilities) nothrow;
+alias PFN_vkGetPhysicalDeviceSurfaceFormats2KHR = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, uint32_t* pSurfaceFormatCount, VkSurfaceFormat2KHR* pSurfaceFormats) nothrow;
+alias PFN_vkGetPhysicalDeviceSurfaceFormatsKHR = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pSurfaceFormatCount, VkSurfaceFormatKHR* pSurfaceFormats) nothrow;
+alias PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, uint32_t* pPresentModeCount, VkPresentModeKHR* pPresentModes) nothrow;
+alias PFN_vkGetPhysicalDeviceSurfacePresentModesKHR = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pPresentModeCount, VkPresentModeKHR* pPresentModes) nothrow;
+alias PFN_vkGetPhysicalDeviceSurfaceSupportKHR = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32* pSupported) nothrow;
+alias PFN_vkGetPhysicalDeviceToolProperties = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, uint32_t* pToolCount, VkPhysicalDeviceToolProperties* pToolProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceToolPropertiesEXT = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, uint32_t* pToolCount, VkPhysicalDeviceToolProperties* pToolProperties) nothrow;
+alias PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR = extern(Windows) VkBool32 function(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex) nothrow;
+alias PFN_vkGetPipelineCacheData = extern(Windows) VkResult function(VkDevice device, VkPipelineCache pipelineCache, size_t* pDataSize, void* pData) nothrow;
+alias PFN_vkGetPipelineExecutableInternalRepresentationsKHR = extern(Windows) VkResult function(VkDevice device, VkPipelineExecutableInfoKHR* pExecutableInfo, uint32_t* pInternalRepresentationCount, VkPipelineExecutableInternalRepresentationKHR* pInternalRepresentations) nothrow;
+alias PFN_vkGetPipelineExecutablePropertiesKHR = extern(Windows) VkResult function(VkDevice device, VkPipelineInfoKHR* pPipelineInfo, uint32_t* pExecutableCount, VkPipelineExecutablePropertiesKHR* pProperties) nothrow;
+alias PFN_vkGetPipelineExecutableStatisticsKHR = extern(Windows) VkResult function(VkDevice device, VkPipelineExecutableInfoKHR* pExecutableInfo, uint32_t* pStatisticCount, VkPipelineExecutableStatisticKHR* pStatistics) nothrow;
+alias PFN_vkGetPrivateData = extern(Windows) void function(VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t* pData) nothrow;
+alias PFN_vkGetPrivateDataEXT = extern(Windows) void function(VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t* pData) nothrow;
+alias PFN_vkGetQueryPoolResults = extern(Windows) VkResult function(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, size_t dataSize, void* pData, VkDeviceSize stride, VkQueryResultFlags flags) nothrow;
+alias PFN_vkGetQueueCheckpointData2NV = extern(Windows) void function(VkQueue queue, uint32_t* pCheckpointDataCount, VkCheckpointData2NV* pCheckpointData) nothrow;
+alias PFN_vkGetQueueCheckpointDataNV = extern(Windows) void function(VkQueue queue, uint32_t* pCheckpointDataCount, VkCheckpointDataNV* pCheckpointData) nothrow;
+alias PFN_vkGetRayTracingCaptureReplayShaderGroupHandlesKHR = extern(Windows) VkResult function(VkDevice device, VkPipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, void* pData) nothrow;
+alias PFN_vkGetRayTracingShaderGroupHandlesKHR = extern(Windows) VkResult function(VkDevice device, VkPipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, void* pData) nothrow;
+alias PFN_vkGetRayTracingShaderGroupHandlesNV = extern(Windows) VkResult function(VkDevice device, VkPipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, void* pData) nothrow;
+alias PFN_vkGetRayTracingShaderGroupStackSizeKHR = extern(Windows) VkDeviceSize function(VkDevice device, VkPipeline pipeline, uint32_t group, VkShaderGroupShaderKHR groupShader) nothrow;
+alias PFN_vkGetRefreshCycleDurationGOOGLE = extern(Windows) VkResult function(VkDevice device, VkSwapchainKHR swapchain, VkRefreshCycleDurationGOOGLE* pDisplayTimingProperties) nothrow;
+alias PFN_vkGetRenderAreaGranularity = extern(Windows) void function(VkDevice device, VkRenderPass renderPass, VkExtent2D* pGranularity) nothrow;
+alias PFN_vkGetSemaphoreCounterValue = extern(Windows) VkResult function(VkDevice device, VkSemaphore semaphore, uint64_t* pValue) nothrow;
+alias PFN_vkGetSemaphoreCounterValueKHR = extern(Windows) VkResult function(VkDevice device, VkSemaphore semaphore, uint64_t* pValue) nothrow;
+alias PFN_vkGetSemaphoreFdKHR = extern(Windows) VkResult function(VkDevice device, VkSemaphoreGetFdInfoKHR* pGetFdInfo, int* pFd) nothrow;
+alias PFN_vkGetSemaphoreWin32HandleKHR = extern(Windows) VkResult function(VkDevice device, VkSemaphoreGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle) nothrow;
+alias PFN_vkGetShaderInfoAMD = extern(Windows) VkResult function(VkDevice device, VkPipeline pipeline, VkShaderStageFlagBits shaderStage, VkShaderInfoTypeAMD infoType, size_t* pInfoSize, void* pInfo) nothrow;
+alias PFN_vkGetSwapchainCounterEXT = extern(Windows) VkResult function(VkDevice device, VkSwapchainKHR swapchain, VkSurfaceCounterFlagBitsEXT counter, uint64_t* pCounterValue) nothrow;
+alias PFN_vkGetSwapchainImagesKHR = extern(Windows) VkResult function(VkDevice device, VkSwapchainKHR swapchain, uint32_t* pSwapchainImageCount, VkImage* pSwapchainImages) nothrow;
+alias PFN_vkGetSwapchainStatusKHR = extern(Windows) VkResult function(VkDevice device, VkSwapchainKHR swapchain) nothrow;
+alias PFN_vkGetValidationCacheDataEXT = extern(Windows) VkResult function(VkDevice device, VkValidationCacheEXT validationCache, size_t* pDataSize, void* pData) nothrow;
+alias PFN_vkGetWinrtDisplayNV = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay) nothrow;
+alias PFN_vkImportFenceFdKHR = extern(Windows) VkResult function(VkDevice device, VkImportFenceFdInfoKHR* pImportFenceFdInfo) nothrow;
+alias PFN_vkImportFenceWin32HandleKHR = extern(Windows) VkResult function(VkDevice device, VkImportFenceWin32HandleInfoKHR* pImportFenceWin32HandleInfo) nothrow;
+alias PFN_vkImportSemaphoreFdKHR = extern(Windows) VkResult function(VkDevice device, VkImportSemaphoreFdInfoKHR* pImportSemaphoreFdInfo) nothrow;
+alias PFN_vkImportSemaphoreWin32HandleKHR = extern(Windows) VkResult function(VkDevice device, VkImportSemaphoreWin32HandleInfoKHR* pImportSemaphoreWin32HandleInfo) nothrow;
+alias PFN_vkInitializePerformanceApiINTEL = extern(Windows) VkResult function(VkDevice device, VkInitializePerformanceApiInfoINTEL* pInitializeInfo) nothrow;
+alias PFN_vkInvalidateMappedMemoryRanges = extern(Windows) VkResult function(VkDevice device, uint32_t memoryRangeCount, VkMappedMemoryRange* pMemoryRanges) nothrow;
+alias PFN_vkMapMemory = extern(Windows) VkResult function(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** ppData) nothrow;
+alias PFN_vkMergePipelineCaches = extern(Windows) VkResult function(VkDevice device, VkPipelineCache dstCache, uint32_t srcCacheCount, VkPipelineCache* pSrcCaches) nothrow;
+alias PFN_vkMergeValidationCachesEXT = extern(Windows) VkResult function(VkDevice device, VkValidationCacheEXT dstCache, uint32_t srcCacheCount, VkValidationCacheEXT* pSrcCaches) nothrow;
+alias PFN_vkQueueBeginDebugUtilsLabelEXT = extern(Windows) void function(VkQueue queue, VkDebugUtilsLabelEXT* pLabelInfo) nothrow;
+alias PFN_vkQueueBindSparse = extern(Windows) VkResult function(VkQueue queue, uint32_t bindInfoCount, VkBindSparseInfo* pBindInfo, VkFence fence) nothrow;
+alias PFN_vkQueueEndDebugUtilsLabelEXT = extern(Windows) void function(VkQueue queue) nothrow;
+alias PFN_vkQueueInsertDebugUtilsLabelEXT = extern(Windows) void function(VkQueue queue, VkDebugUtilsLabelEXT* pLabelInfo) nothrow;
+alias PFN_vkQueuePresentKHR = extern(Windows) VkResult function(VkQueue queue, VkPresentInfoKHR* pPresentInfo) nothrow;
+alias PFN_vkQueueSetPerformanceConfigurationINTEL = extern(Windows) VkResult function(VkQueue queue, VkPerformanceConfigurationINTEL configuration) nothrow;
+alias PFN_vkQueueSubmit = extern(Windows) VkResult function(VkQueue queue, uint32_t submitCount, VkSubmitInfo* pSubmits, VkFence fence) nothrow;
+alias PFN_vkQueueSubmit2 = extern(Windows) VkResult function(VkQueue queue, uint32_t submitCount, VkSubmitInfo2* pSubmits, VkFence fence) nothrow;
+alias PFN_vkQueueSubmit2KHR = extern(Windows) VkResult function(VkQueue queue, uint32_t submitCount, VkSubmitInfo2* pSubmits, VkFence fence) nothrow;
+alias PFN_vkQueueWaitIdle = extern(Windows) VkResult function(VkQueue queue) nothrow;
+alias PFN_vkRegisterDeviceEventEXT = extern(Windows) VkResult function(VkDevice device, VkDeviceEventInfoEXT* pDeviceEventInfo, VkAllocationCallbacks* pAllocator, VkFence* pFence) nothrow;
+alias PFN_vkRegisterDisplayEventEXT = extern(Windows) VkResult function(VkDevice device, VkDisplayKHR display, VkDisplayEventInfoEXT* pDisplayEventInfo, VkAllocationCallbacks* pAllocator, VkFence* pFence) nothrow;
+alias PFN_vkReleaseDisplayEXT = extern(Windows) VkResult function(VkPhysicalDevice physicalDevice, VkDisplayKHR display) nothrow;
+alias PFN_vkReleaseFullScreenExclusiveModeEXT = extern(Windows) VkResult function(VkDevice device, VkSwapchainKHR swapchain) nothrow;
+alias PFN_vkReleasePerformanceConfigurationINTEL = extern(Windows) VkResult function(VkDevice device, VkPerformanceConfigurationINTEL configuration) nothrow;
+alias PFN_vkReleaseProfilingLockKHR = extern(Windows) void function(VkDevice device) nothrow;
+alias PFN_vkResetCommandBuffer = extern(Windows) VkResult function(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags) nothrow;
+alias PFN_vkResetCommandPool = extern(Windows) VkResult function(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags) nothrow;
+alias PFN_vkResetDescriptorPool = extern(Windows) VkResult function(VkDevice device, VkDescriptorPool descriptorPool, VkDescriptorPoolResetFlags flags) nothrow;
+alias PFN_vkResetEvent = extern(Windows) VkResult function(VkDevice device, VkEvent event) nothrow;
+alias PFN_vkResetFences = extern(Windows) VkResult function(VkDevice device, uint32_t fenceCount, VkFence* pFences) nothrow;
+alias PFN_vkResetQueryPool = extern(Windows) void function(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount) nothrow;
+alias PFN_vkResetQueryPoolEXT = extern(Windows) void function(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount) nothrow;
+alias PFN_vkSetDebugUtilsObjectNameEXT = extern(Windows) VkResult function(VkDevice device, VkDebugUtilsObjectNameInfoEXT* pNameInfo) nothrow;
+alias PFN_vkSetDebugUtilsObjectTagEXT = extern(Windows) VkResult function(VkDevice device, VkDebugUtilsObjectTagInfoEXT* pTagInfo) nothrow;
+alias PFN_vkSetDeviceMemoryPriorityEXT = extern(Windows) void function(VkDevice device, VkDeviceMemory memory, float priority) nothrow;
+alias PFN_vkSetEvent = extern(Windows) VkResult function(VkDevice device, VkEvent event) nothrow;
+alias PFN_vkSetHdrMetadataEXT = extern(Windows) void function(VkDevice device, uint32_t swapchainCount, VkSwapchainKHR* pSwapchains, VkHdrMetadataEXT* pMetadata) nothrow;
+alias PFN_vkSetLocalDimmingAMD = extern(Windows) void function(VkDevice device, VkSwapchainKHR swapChain, VkBool32 localDimmingEnable) nothrow;
+alias PFN_vkSetPrivateData = extern(Windows) VkResult function(VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t data) nothrow;
+alias PFN_vkSetPrivateDataEXT = extern(Windows) VkResult function(VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t data) nothrow;
+alias PFN_vkSignalSemaphore = extern(Windows) VkResult function(VkDevice device, VkSemaphoreSignalInfo* pSignalInfo) nothrow;
+alias PFN_vkSignalSemaphoreKHR = extern(Windows) VkResult function(VkDevice device, VkSemaphoreSignalInfo* pSignalInfo) nothrow;
+alias PFN_vkSubmitDebugUtilsMessageEXT = extern(Windows) void function(VkInstance instance, VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, VkDebugUtilsMessengerCallbackDataEXT* pCallbackData) nothrow;
+alias PFN_vkTrimCommandPool = extern(Windows) void function(VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlags flags) nothrow;
+alias PFN_vkTrimCommandPoolKHR = extern(Windows) void function(VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlags flags) nothrow;
+alias PFN_vkUninitializePerformanceApiINTEL = extern(Windows) void function(VkDevice device) nothrow;
+alias PFN_vkUnmapMemory = extern(Windows) void function(VkDevice device, VkDeviceMemory memory) nothrow;
+alias PFN_vkUpdateDescriptorSetWithTemplate = extern(Windows) void function(VkDevice device, VkDescriptorSet descriptorSet, VkDescriptorUpdateTemplate descriptorUpdateTemplate, void* pData) nothrow;
+alias PFN_vkUpdateDescriptorSetWithTemplateKHR = extern(Windows) void function(VkDevice device, VkDescriptorSet descriptorSet, VkDescriptorUpdateTemplate descriptorUpdateTemplate, void* pData) nothrow;
+alias PFN_vkUpdateDescriptorSets = extern(Windows) void function(VkDevice device, uint32_t descriptorWriteCount, VkWriteDescriptorSet* pDescriptorWrites, uint32_t descriptorCopyCount, VkCopyDescriptorSet* pDescriptorCopies) nothrow;
+alias PFN_vkWaitForFences = extern(Windows) VkResult function(VkDevice device, uint32_t fenceCount, VkFence* pFences, VkBool32 waitAll, uint64_t timeout) nothrow;
+alias PFN_vkWaitForPresentKHR = extern(Windows) VkResult function(VkDevice device, VkSwapchainKHR swapchain, uint64_t presentId, uint64_t timeout) nothrow;
+alias PFN_vkWaitSemaphores = extern(Windows) VkResult function(VkDevice device, VkSemaphoreWaitInfo* pWaitInfo, uint64_t timeout) nothrow;
+alias PFN_vkWaitSemaphoresKHR = extern(Windows) VkResult function(VkDevice device, VkSemaphoreWaitInfo* pWaitInfo, uint64_t timeout) nothrow;
+alias PFN_vkWriteAccelerationStructuresPropertiesKHR = extern(Windows) VkResult function(VkDevice device, uint32_t accelerationStructureCount, VkAccelerationStructureKHR* pAccelerationStructures, VkQueryType queryType, size_t dataSize, void* pData, size_t stride) nothrow;
+
+// Enums
+enum VK_TRUE = 1;
+enum VK_FALSE = 0;
+enum VK_REMAINING_ARRAY_LAYERS = (~0U);
+enum VK_REMAINING_MIP_LEVELS = (~0U);
+enum VK_SUBPASS_EXTERNAL = (~0U);
+enum VK_WHOLE_SIZE = (~0UL);
+enum VK_NULL_HANDLE = null;
+enum VK_QUEUE_FAMILY_IGNORED = (~0U);
 
 enum VkAccelerationStructureBuildTypeKHR {
 	VK_ACCELERATION_STRUCTURE_BUILD_TYPE_HOST_KHR = 0,
@@ -3096,6 +3121,20 @@ enum : VkGeometryTypeKHR {
 	VK_GEOMETRY_TYPE_AABBS_NV = VkGeometryTypeKHR.VK_GEOMETRY_TYPE_AABBS_NV,
 	VK_GEOMETRY_TYPE_MAX_ENUM_KHR = VkGeometryTypeKHR.VK_GEOMETRY_TYPE_MAX_ENUM_KHR,
 }
+enum VkGraphicsPipelineLibraryFlagBitsEXT {
+	VK_GRAPHICS_PIPELINE_LIBRARY_VERTEX_INPUT_INTERFACE_BIT_EXT = 0x00000001,
+	VK_GRAPHICS_PIPELINE_LIBRARY_PRE_RASTERIZATION_SHADERS_BIT_EXT = 0x00000002,
+	VK_GRAPHICS_PIPELINE_LIBRARY_FRAGMENT_SHADER_BIT_EXT = 0x00000004,
+	VK_GRAPHICS_PIPELINE_LIBRARY_FRAGMENT_OUTPUT_INTERFACE_BIT_EXT = 0x00000008,
+	VK_GRAPHICS_PIPELINE_LIBRARY_FLAG_BITS_MAX_ENUM_EXT = 0x7FFFFFFF,
+}
+enum : VkGraphicsPipelineLibraryFlagBitsEXT {
+	VK_GRAPHICS_PIPELINE_LIBRARY_VERTEX_INPUT_INTERFACE_BIT_EXT = VkGraphicsPipelineLibraryFlagBitsEXT.VK_GRAPHICS_PIPELINE_LIBRARY_VERTEX_INPUT_INTERFACE_BIT_EXT,
+	VK_GRAPHICS_PIPELINE_LIBRARY_PRE_RASTERIZATION_SHADERS_BIT_EXT = VkGraphicsPipelineLibraryFlagBitsEXT.VK_GRAPHICS_PIPELINE_LIBRARY_PRE_RASTERIZATION_SHADERS_BIT_EXT,
+	VK_GRAPHICS_PIPELINE_LIBRARY_FRAGMENT_SHADER_BIT_EXT = VkGraphicsPipelineLibraryFlagBitsEXT.VK_GRAPHICS_PIPELINE_LIBRARY_FRAGMENT_SHADER_BIT_EXT,
+	VK_GRAPHICS_PIPELINE_LIBRARY_FRAGMENT_OUTPUT_INTERFACE_BIT_EXT = VkGraphicsPipelineLibraryFlagBitsEXT.VK_GRAPHICS_PIPELINE_LIBRARY_FRAGMENT_OUTPUT_INTERFACE_BIT_EXT,
+	VK_GRAPHICS_PIPELINE_LIBRARY_FLAG_BITS_MAX_ENUM_EXT = VkGraphicsPipelineLibraryFlagBitsEXT.VK_GRAPHICS_PIPELINE_LIBRARY_FLAG_BITS_MAX_ENUM_EXT,
+}
 enum VkImageAspectFlagBits {
 	VK_IMAGE_ASPECT_COLOR_BIT = 0x00000001,
 	VK_IMAGE_ASPECT_DEPTH_BIT = 0x00000002,
@@ -3104,14 +3143,15 @@ enum VkImageAspectFlagBits {
 	VK_IMAGE_ASPECT_PLANE_0_BIT = 0x00000010,
 	VK_IMAGE_ASPECT_PLANE_1_BIT = 0x00000020,
 	VK_IMAGE_ASPECT_PLANE_2_BIT = 0x00000040,
+	VK_IMAGE_ASPECT_NONE = 0,
 	VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT = 0x00000080,
 	VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT = 0x00000100,
 	VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT = 0x00000200,
 	VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT = 0x00000400,
-	VK_IMAGE_ASPECT_NONE_KHR = 0,
 	VK_IMAGE_ASPECT_PLANE_0_BIT_KHR = VK_IMAGE_ASPECT_PLANE_0_BIT,
 	VK_IMAGE_ASPECT_PLANE_1_BIT_KHR = VK_IMAGE_ASPECT_PLANE_1_BIT,
 	VK_IMAGE_ASPECT_PLANE_2_BIT_KHR = VK_IMAGE_ASPECT_PLANE_2_BIT,
+	VK_IMAGE_ASPECT_NONE_KHR = VK_IMAGE_ASPECT_NONE,
 	VK_IMAGE_ASPECT_FLAG_BITS_MAX_ENUM = 0x7FFFFFFF,
 }
 enum : VkImageAspectFlagBits {
@@ -3122,14 +3162,15 @@ enum : VkImageAspectFlagBits {
 	VK_IMAGE_ASPECT_PLANE_0_BIT = VkImageAspectFlagBits.VK_IMAGE_ASPECT_PLANE_0_BIT,
 	VK_IMAGE_ASPECT_PLANE_1_BIT = VkImageAspectFlagBits.VK_IMAGE_ASPECT_PLANE_1_BIT,
 	VK_IMAGE_ASPECT_PLANE_2_BIT = VkImageAspectFlagBits.VK_IMAGE_ASPECT_PLANE_2_BIT,
+	VK_IMAGE_ASPECT_NONE = VkImageAspectFlagBits.VK_IMAGE_ASPECT_NONE,
 	VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT = VkImageAspectFlagBits.VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT,
 	VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT = VkImageAspectFlagBits.VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT,
 	VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT = VkImageAspectFlagBits.VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT,
 	VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT = VkImageAspectFlagBits.VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT,
-	VK_IMAGE_ASPECT_NONE_KHR = VkImageAspectFlagBits.VK_IMAGE_ASPECT_NONE_KHR,
 	VK_IMAGE_ASPECT_PLANE_0_BIT_KHR = VkImageAspectFlagBits.VK_IMAGE_ASPECT_PLANE_0_BIT_KHR,
 	VK_IMAGE_ASPECT_PLANE_1_BIT_KHR = VkImageAspectFlagBits.VK_IMAGE_ASPECT_PLANE_1_BIT_KHR,
 	VK_IMAGE_ASPECT_PLANE_2_BIT_KHR = VkImageAspectFlagBits.VK_IMAGE_ASPECT_PLANE_2_BIT_KHR,
+	VK_IMAGE_ASPECT_NONE_KHR = VkImageAspectFlagBits.VK_IMAGE_ASPECT_NONE_KHR,
 	VK_IMAGE_ASPECT_FLAG_BITS_MAX_ENUM = VkImageAspectFlagBits.VK_IMAGE_ASPECT_FLAG_BITS_MAX_ENUM,
 }
 enum VkImageCreateFlagBits {
@@ -3148,6 +3189,7 @@ enum VkImageCreateFlagBits {
 	VK_IMAGE_CREATE_CORNER_SAMPLED_BIT_NV = 0x00002000,
 	VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT = 0x00001000,
 	VK_IMAGE_CREATE_SUBSAMPLED_BIT_EXT = 0x00004000,
+	VK_IMAGE_CREATE_2D_VIEW_COMPATIBLE_BIT_EXT = 0x00020000,
 	VK_IMAGE_CREATE_FRAGMENT_DENSITY_MAP_OFFSET_BIT_QCOM = 0x00008000,
 	VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR = VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT,
 	VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT_KHR = VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT,
@@ -3173,6 +3215,7 @@ enum : VkImageCreateFlagBits {
 	VK_IMAGE_CREATE_CORNER_SAMPLED_BIT_NV = VkImageCreateFlagBits.VK_IMAGE_CREATE_CORNER_SAMPLED_BIT_NV,
 	VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT = VkImageCreateFlagBits.VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT,
 	VK_IMAGE_CREATE_SUBSAMPLED_BIT_EXT = VkImageCreateFlagBits.VK_IMAGE_CREATE_SUBSAMPLED_BIT_EXT,
+	VK_IMAGE_CREATE_2D_VIEW_COMPATIBLE_BIT_EXT = VkImageCreateFlagBits.VK_IMAGE_CREATE_2D_VIEW_COMPATIBLE_BIT_EXT,
 	VK_IMAGE_CREATE_FRAGMENT_DENSITY_MAP_OFFSET_BIT_QCOM = VkImageCreateFlagBits.VK_IMAGE_CREATE_FRAGMENT_DENSITY_MAP_OFFSET_BIT_QCOM,
 	VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR = VkImageCreateFlagBits.VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR,
 	VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT_KHR = VkImageCreateFlagBits.VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT_KHR,
@@ -3389,6 +3432,14 @@ enum VkIndirectStateFlagBitsNV {
 enum : VkIndirectStateFlagBitsNV {
 	VK_INDIRECT_STATE_FLAG_FRONTFACE_BIT_NV = VkIndirectStateFlagBitsNV.VK_INDIRECT_STATE_FLAG_FRONTFACE_BIT_NV,
 	VK_INDIRECT_STATE_FLAG_BITS_MAX_ENUM_NV = VkIndirectStateFlagBitsNV.VK_INDIRECT_STATE_FLAG_BITS_MAX_ENUM_NV,
+}
+enum VkInstanceCreateFlagBits {
+	VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR = 0x00000001,
+	VK_INSTANCE_CREATE_FLAG_BITS_MAX_ENUM = 0x7FFFFFFF,
+}
+enum : VkInstanceCreateFlagBits {
+	VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR = VkInstanceCreateFlagBits.VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR,
+	VK_INSTANCE_CREATE_FLAG_BITS_MAX_ENUM = VkInstanceCreateFlagBits.VK_INSTANCE_CREATE_FLAG_BITS_MAX_ENUM,
 }
 enum VkInternalAllocationType {
 	VK_INTERNAL_ALLOCATION_TYPE_EXECUTABLE = 0,
@@ -3846,6 +3897,8 @@ enum VkPipelineCreateFlagBits {
 	VK_PIPELINE_CREATE_CAPTURE_INTERNAL_REPRESENTATIONS_BIT_KHR = 0x00000080,
 	VK_PIPELINE_CREATE_INDIRECT_BINDABLE_BIT_NV = 0x00040000,
 	VK_PIPELINE_CREATE_LIBRARY_BIT_KHR = 0x00000800,
+	VK_PIPELINE_CREATE_RETAIN_LINK_TIME_OPTIMIZATION_INFO_BIT_EXT = 0x00800000,
+	VK_PIPELINE_CREATE_LINK_TIME_OPTIMIZATION_BIT_EXT = 0x00000400,
 	VK_PIPELINE_CREATE_RAY_TRACING_ALLOW_MOTION_BIT_NV = 0x00100000,
 	VK_PIPELINE_CREATE_DISPATCH_BASE = VK_PIPELINE_CREATE_DISPATCH_BASE_BIT,
 	VK_PIPELINE_RASTERIZATION_STATE_CREATE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR = VK_PIPELINE_CREATE_RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR,
@@ -3878,6 +3931,8 @@ enum : VkPipelineCreateFlagBits {
 	VK_PIPELINE_CREATE_CAPTURE_INTERNAL_REPRESENTATIONS_BIT_KHR = VkPipelineCreateFlagBits.VK_PIPELINE_CREATE_CAPTURE_INTERNAL_REPRESENTATIONS_BIT_KHR,
 	VK_PIPELINE_CREATE_INDIRECT_BINDABLE_BIT_NV = VkPipelineCreateFlagBits.VK_PIPELINE_CREATE_INDIRECT_BINDABLE_BIT_NV,
 	VK_PIPELINE_CREATE_LIBRARY_BIT_KHR = VkPipelineCreateFlagBits.VK_PIPELINE_CREATE_LIBRARY_BIT_KHR,
+	VK_PIPELINE_CREATE_RETAIN_LINK_TIME_OPTIMIZATION_INFO_BIT_EXT = VkPipelineCreateFlagBits.VK_PIPELINE_CREATE_RETAIN_LINK_TIME_OPTIMIZATION_INFO_BIT_EXT,
+	VK_PIPELINE_CREATE_LINK_TIME_OPTIMIZATION_BIT_EXT = VkPipelineCreateFlagBits.VK_PIPELINE_CREATE_LINK_TIME_OPTIMIZATION_BIT_EXT,
 	VK_PIPELINE_CREATE_RAY_TRACING_ALLOW_MOTION_BIT_NV = VkPipelineCreateFlagBits.VK_PIPELINE_CREATE_RAY_TRACING_ALLOW_MOTION_BIT_NV,
 	VK_PIPELINE_CREATE_DISPATCH_BASE = VkPipelineCreateFlagBits.VK_PIPELINE_CREATE_DISPATCH_BASE,
 	VK_PIPELINE_RASTERIZATION_STATE_CREATE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR = VkPipelineCreateFlagBits.VK_PIPELINE_RASTERIZATION_STATE_CREATE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR,
@@ -3929,6 +3984,14 @@ enum : VkPipelineExecutableStatisticFormatKHR {
 	VK_PIPELINE_EXECUTABLE_STATISTIC_FORMAT_UINT64_KHR = VkPipelineExecutableStatisticFormatKHR.VK_PIPELINE_EXECUTABLE_STATISTIC_FORMAT_UINT64_KHR,
 	VK_PIPELINE_EXECUTABLE_STATISTIC_FORMAT_FLOAT64_KHR = VkPipelineExecutableStatisticFormatKHR.VK_PIPELINE_EXECUTABLE_STATISTIC_FORMAT_FLOAT64_KHR,
 	VK_PIPELINE_EXECUTABLE_STATISTIC_FORMAT_MAX_ENUM_KHR = VkPipelineExecutableStatisticFormatKHR.VK_PIPELINE_EXECUTABLE_STATISTIC_FORMAT_MAX_ENUM_KHR,
+}
+enum VkPipelineLayoutCreateFlagBits {
+	VK_PIPELINE_LAYOUT_CREATE_INDEPENDENT_SETS_BIT_EXT = 0x00000002,
+	VK_PIPELINE_LAYOUT_CREATE_FLAG_BITS_MAX_ENUM = 0x7FFFFFFF,
+}
+enum : VkPipelineLayoutCreateFlagBits {
+	VK_PIPELINE_LAYOUT_CREATE_INDEPENDENT_SETS_BIT_EXT = VkPipelineLayoutCreateFlagBits.VK_PIPELINE_LAYOUT_CREATE_INDEPENDENT_SETS_BIT_EXT,
+	VK_PIPELINE_LAYOUT_CREATE_FLAG_BITS_MAX_ENUM = VkPipelineLayoutCreateFlagBits.VK_PIPELINE_LAYOUT_CREATE_FLAG_BITS_MAX_ENUM,
 }
 enum VkPipelineShaderStageCreateFlagBits {
 	VK_PIPELINE_SHADER_STAGE_CREATE_ALLOW_VARYING_SUBGROUP_SIZE_BIT = 0x00000001,
@@ -4086,12 +4149,6 @@ enum : VkPrimitiveTopology {
 	VK_PRIMITIVE_TOPOLOGY_PATCH_LIST = VkPrimitiveTopology.VK_PRIMITIVE_TOPOLOGY_PATCH_LIST,
 	VK_PRIMITIVE_TOPOLOGY_MAX_ENUM = VkPrimitiveTopology.VK_PRIMITIVE_TOPOLOGY_MAX_ENUM,
 }
-enum VkPrivateDataSlotCreateFlagBits {
-	VK_PRIVATE_DATA_SLOT_CREATE_FLAG_BITS_MAX_ENUM = 0x7FFFFFFF,
-}
-enum : VkPrivateDataSlotCreateFlagBits {
-	VK_PRIVATE_DATA_SLOT_CREATE_FLAG_BITS_MAX_ENUM = VkPrivateDataSlotCreateFlagBits.VK_PRIVATE_DATA_SLOT_CREATE_FLAG_BITS_MAX_ENUM,
-}
 enum VkProvokingVertexModeEXT {
 	VK_PROVOKING_VERTEX_MODE_FIRST_VERTEX_EXT = 0,
 	VK_PROVOKING_VERTEX_MODE_LAST_VERTEX_EXT = 1,
@@ -4170,6 +4227,7 @@ enum VkQueryType {
 	VK_QUERY_TYPE_ACCELERATION_STRUCTURE_SERIALIZATION_SIZE_KHR = 1000150001,
 	VK_QUERY_TYPE_ACCELERATION_STRUCTURE_COMPACTED_SIZE_NV = 1000165000,
 	VK_QUERY_TYPE_PERFORMANCE_QUERY_INTEL = 1000210000,
+	VK_QUERY_TYPE_PRIMITIVES_GENERATED_EXT = 1000382000,
 	VK_QUERY_TYPE_MAX_ENUM = 0x7FFFFFFF,
 }
 enum : VkQueryType {
@@ -4182,6 +4240,7 @@ enum : VkQueryType {
 	VK_QUERY_TYPE_ACCELERATION_STRUCTURE_SERIALIZATION_SIZE_KHR = VkQueryType.VK_QUERY_TYPE_ACCELERATION_STRUCTURE_SERIALIZATION_SIZE_KHR,
 	VK_QUERY_TYPE_ACCELERATION_STRUCTURE_COMPACTED_SIZE_NV = VkQueryType.VK_QUERY_TYPE_ACCELERATION_STRUCTURE_COMPACTED_SIZE_NV,
 	VK_QUERY_TYPE_PERFORMANCE_QUERY_INTEL = VkQueryType.VK_QUERY_TYPE_PERFORMANCE_QUERY_INTEL,
+	VK_QUERY_TYPE_PRIMITIVES_GENERATED_EXT = VkQueryType.VK_QUERY_TYPE_PRIMITIVES_GENERATED_EXT,
 	VK_QUERY_TYPE_MAX_ENUM = VkQueryType.VK_QUERY_TYPE_MAX_ENUM,
 }
 enum VkQueueFlagBits {
@@ -5269,6 +5328,9 @@ enum VkStructureType {
 	VK_STRUCTURE_TYPE_DEVICE_DIAGNOSTICS_CONFIG_CREATE_INFO_NV = 1000300001,
 	VK_STRUCTURE_TYPE_QUEUE_FAMILY_CHECKPOINT_PROPERTIES_2_NV = 1000314008,
 	VK_STRUCTURE_TYPE_CHECKPOINT_DATA_2_NV = 1000314009,
+	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GRAPHICS_PIPELINE_LIBRARY_FEATURES_EXT = 1000320000,
+	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GRAPHICS_PIPELINE_LIBRARY_PROPERTIES_EXT = 1000320001,
+	VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_LIBRARY_CREATE_INFO_EXT = 1000320002,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_UNIFORM_CONTROL_FLOW_FEATURES_KHR = 1000323000,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_ENUMS_PROPERTIES_NV = 1000326000,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_ENUMS_FEATURES_NV = 1000326001,
@@ -5319,13 +5381,18 @@ enum VkStructureType {
 	VK_STRUCTURE_TYPE_SCREEN_SURFACE_CREATE_INFO_QNX = 1000378000,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COLOR_WRITE_ENABLE_FEATURES_EXT = 1000381000,
 	VK_STRUCTURE_TYPE_PIPELINE_COLOR_WRITE_CREATE_INFO_EXT = 1000381001,
+	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVES_GENERATED_QUERY_FEATURES_EXT = 1000382000,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_MIN_LOD_FEATURES_EXT = 1000391000,
 	VK_STRUCTURE_TYPE_IMAGE_VIEW_MIN_LOD_CREATE_INFO_EXT = 1000391001,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTI_DRAW_FEATURES_EXT = 1000392000,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTI_DRAW_PROPERTIES_EXT = 1000392001,
+	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_2D_VIEW_OF_3D_FEATURES_EXT = 1000393000,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BORDER_COLOR_SWIZZLE_FEATURES_EXT = 1000411000,
 	VK_STRUCTURE_TYPE_SAMPLER_BORDER_COLOR_COMPONENT_MAPPING_CREATE_INFO_EXT = 1000411001,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PAGEABLE_DEVICE_LOCAL_MEMORY_FEATURES_EXT = 1000412000,
+	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_SET_HOST_MAPPING_FEATURES_VALVE = 1000420000,
+	VK_STRUCTURE_TYPE_DESCRIPTOR_SET_BINDING_REFERENCE_VALVE = 1000420001,
+	VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_HOST_MAPPING_INFO_VALVE = 1000420002,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_FEATURES_QCOM = 1000425000,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_PROPERTIES_QCOM = 1000425001,
 	VK_STRUCTURE_TYPE_SUBPASS_FRAGMENT_DENSITY_MAP_OFFSET_END_INFO_QCOM = 1000425002,
@@ -6007,6 +6074,9 @@ enum : VkStructureType {
 	VK_STRUCTURE_TYPE_DEVICE_DIAGNOSTICS_CONFIG_CREATE_INFO_NV = VkStructureType.VK_STRUCTURE_TYPE_DEVICE_DIAGNOSTICS_CONFIG_CREATE_INFO_NV,
 	VK_STRUCTURE_TYPE_QUEUE_FAMILY_CHECKPOINT_PROPERTIES_2_NV = VkStructureType.VK_STRUCTURE_TYPE_QUEUE_FAMILY_CHECKPOINT_PROPERTIES_2_NV,
 	VK_STRUCTURE_TYPE_CHECKPOINT_DATA_2_NV = VkStructureType.VK_STRUCTURE_TYPE_CHECKPOINT_DATA_2_NV,
+	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GRAPHICS_PIPELINE_LIBRARY_FEATURES_EXT = VkStructureType.VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GRAPHICS_PIPELINE_LIBRARY_FEATURES_EXT,
+	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GRAPHICS_PIPELINE_LIBRARY_PROPERTIES_EXT = VkStructureType.VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GRAPHICS_PIPELINE_LIBRARY_PROPERTIES_EXT,
+	VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_LIBRARY_CREATE_INFO_EXT = VkStructureType.VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_LIBRARY_CREATE_INFO_EXT,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_UNIFORM_CONTROL_FLOW_FEATURES_KHR = VkStructureType.VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_UNIFORM_CONTROL_FLOW_FEATURES_KHR,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_ENUMS_PROPERTIES_NV = VkStructureType.VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_ENUMS_PROPERTIES_NV,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_ENUMS_FEATURES_NV = VkStructureType.VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_ENUMS_FEATURES_NV,
@@ -6057,13 +6127,18 @@ enum : VkStructureType {
 	VK_STRUCTURE_TYPE_SCREEN_SURFACE_CREATE_INFO_QNX = VkStructureType.VK_STRUCTURE_TYPE_SCREEN_SURFACE_CREATE_INFO_QNX,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COLOR_WRITE_ENABLE_FEATURES_EXT = VkStructureType.VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COLOR_WRITE_ENABLE_FEATURES_EXT,
 	VK_STRUCTURE_TYPE_PIPELINE_COLOR_WRITE_CREATE_INFO_EXT = VkStructureType.VK_STRUCTURE_TYPE_PIPELINE_COLOR_WRITE_CREATE_INFO_EXT,
+	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVES_GENERATED_QUERY_FEATURES_EXT = VkStructureType.VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVES_GENERATED_QUERY_FEATURES_EXT,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_MIN_LOD_FEATURES_EXT = VkStructureType.VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_MIN_LOD_FEATURES_EXT,
 	VK_STRUCTURE_TYPE_IMAGE_VIEW_MIN_LOD_CREATE_INFO_EXT = VkStructureType.VK_STRUCTURE_TYPE_IMAGE_VIEW_MIN_LOD_CREATE_INFO_EXT,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTI_DRAW_FEATURES_EXT = VkStructureType.VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTI_DRAW_FEATURES_EXT,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTI_DRAW_PROPERTIES_EXT = VkStructureType.VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTI_DRAW_PROPERTIES_EXT,
+	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_2D_VIEW_OF_3D_FEATURES_EXT = VkStructureType.VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_2D_VIEW_OF_3D_FEATURES_EXT,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BORDER_COLOR_SWIZZLE_FEATURES_EXT = VkStructureType.VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BORDER_COLOR_SWIZZLE_FEATURES_EXT,
 	VK_STRUCTURE_TYPE_SAMPLER_BORDER_COLOR_COMPONENT_MAPPING_CREATE_INFO_EXT = VkStructureType.VK_STRUCTURE_TYPE_SAMPLER_BORDER_COLOR_COMPONENT_MAPPING_CREATE_INFO_EXT,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PAGEABLE_DEVICE_LOCAL_MEMORY_FEATURES_EXT = VkStructureType.VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PAGEABLE_DEVICE_LOCAL_MEMORY_FEATURES_EXT,
+	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_SET_HOST_MAPPING_FEATURES_VALVE = VkStructureType.VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_SET_HOST_MAPPING_FEATURES_VALVE,
+	VK_STRUCTURE_TYPE_DESCRIPTOR_SET_BINDING_REFERENCE_VALVE = VkStructureType.VK_STRUCTURE_TYPE_DESCRIPTOR_SET_BINDING_REFERENCE_VALVE,
+	VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_HOST_MAPPING_INFO_VALVE = VkStructureType.VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_HOST_MAPPING_INFO_VALVE,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_FEATURES_QCOM = VkStructureType.VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_FEATURES_QCOM,
 	VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_PROPERTIES_QCOM = VkStructureType.VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_PROPERTIES_QCOM,
 	VK_STRUCTURE_TYPE_SUBPASS_FRAGMENT_DENSITY_MAP_OFFSET_END_INFO_QCOM = VkStructureType.VK_STRUCTURE_TYPE_SUBPASS_FRAGMENT_DENSITY_MAP_OFFSET_END_INFO_QCOM,
@@ -6529,6 +6604,57 @@ enum : VkViewportCoordinateSwizzleNV {
 	VK_VIEWPORT_COORDINATE_SWIZZLE_MAX_ENUM_NV = VkViewportCoordinateSwizzleNV.VK_VIEWPORT_COORDINATE_SWIZZLE_MAX_ENUM_NV,
 }
 
+// Unions
+union VkAccelerationStructureGeometryDataKHR {
+	VkAccelerationStructureGeometryTrianglesDataKHR triangles;
+	VkAccelerationStructureGeometryAabbsDataKHR aabbs;
+	VkAccelerationStructureGeometryInstancesDataKHR instances;
+}
+union VkAccelerationStructureMotionInstanceDataNV {
+	VkAccelerationStructureInstanceKHR staticInstance;
+	VkAccelerationStructureMatrixMotionInstanceNV matrixMotionInstance;
+	VkAccelerationStructureSRTMotionInstanceNV srtMotionInstance;
+}
+union VkClearColorValue {
+	float[4] float32;
+	int32_t[4] int32;
+	uint32_t[4] uint32;
+}
+union VkClearValue {
+	VkClearColorValue color;
+	VkClearDepthStencilValue depthStencil;
+}
+union VkDeviceOrHostAddressConstKHR {
+	VkDeviceAddress deviceAddress;
+	void* hostAddress;
+}
+union VkDeviceOrHostAddressKHR {
+	VkDeviceAddress deviceAddress;
+	void* hostAddress;
+}
+union VkPerformanceCounterResultKHR {
+	int32_t int32;
+	int64_t int64;
+	uint32_t uint32;
+	uint64_t uint64;
+	float float32;
+	double float64;
+}
+union VkPerformanceValueDataINTEL {
+	uint32_t value32;
+	uint64_t value64;
+	float valueFloat;
+	VkBool32 valueBool;
+	byte* valueString;
+}
+union VkPipelineExecutableStatisticValueKHR {
+	VkBool32 b32;
+	int64_t i64;
+	uint64_t u64;
+	double f64;
+}
+
+// Structs
 struct HINSTANCE__ {
 	int unused;
 }
@@ -6537,11 +6663,6 @@ struct HMONITOR__ {
 }
 struct HWND__ {
 	int unused;
-}
-struct SECURITY_ATTRIBUTES {
-	DWORD nLength;
-	LPVOID lpSecurityDescriptor;
-	BOOL bInheritHandle;
 }
 struct VkAabbPositionsKHR {
 	float minX;
@@ -6720,9 +6841,9 @@ struct VkAllocationCallbacks {
 struct VkApplicationInfo {
 	VkStructureType sType;
 	void* pNext;
-	byte* pApplicationName;
+	immutable(char)* pApplicationName;
 	uint32_t applicationVersion;
-	byte* pEngineName;
+	immutable(char)* pEngineName;
 	uint32_t engineVersion;
 	uint32_t apiVersion;
 }
@@ -7201,7 +7322,7 @@ struct VkCuFunctionCreateInfoNVX {
 	VkStructureType sType;
 	void* pNext;
 	VkCuModuleNVX module_;
-	byte* pName;
+	immutable(char)* pName;
 }
 struct VkCuFunctionNVX_T {
 }
@@ -7240,7 +7361,7 @@ struct VkD3D12FenceSubmitInfoKHR {
 struct VkDebugMarkerMarkerInfoEXT {
 	VkStructureType sType;
 	void* pNext;
-	byte* pMarkerName;
+	immutable(char)* pMarkerName;
 	float[4] color;
 }
 struct VkDebugMarkerObjectNameInfoEXT {
@@ -7248,7 +7369,7 @@ struct VkDebugMarkerObjectNameInfoEXT {
 	void* pNext;
 	VkDebugReportObjectTypeEXT objectType;
 	uint64_t object;
-	byte* pObjectName;
+	immutable(char)* pObjectName;
 }
 struct VkDebugMarkerObjectTagInfoEXT {
 	VkStructureType sType;
@@ -7271,16 +7392,16 @@ struct VkDebugReportCallbackEXT_T {
 struct VkDebugUtilsLabelEXT {
 	VkStructureType sType;
 	void* pNext;
-	byte* pLabelName;
+	immutable(char)* pLabelName;
 	float[4] color;
 }
 struct VkDebugUtilsMessengerCallbackDataEXT {
 	VkStructureType sType;
 	void* pNext;
 	VkDebugUtilsMessengerCallbackDataFlagsEXT flags;
-	byte* pMessageIdName;
+	immutable(char)* pMessageIdName;
 	int32_t messageIdNumber;
-	byte* pMessage;
+	immutable(char)* pMessage;
 	uint32_t queueLabelCount;
 	VkDebugUtilsLabelEXT* pQueueLabels;
 	uint32_t cmdBufLabelCount;
@@ -7304,7 +7425,7 @@ struct VkDebugUtilsObjectNameInfoEXT {
 	void* pNext;
 	VkObjectType objectType;
 	uint64_t objectHandle;
-	byte* pObjectName;
+	immutable(char)* pObjectName;
 }
 struct VkDebugUtilsObjectTagInfoEXT {
 	VkStructureType sType;
@@ -7380,6 +7501,12 @@ struct VkDescriptorSetAllocateInfo {
 	uint32_t descriptorSetCount;
 	VkDescriptorSetLayout* pSetLayouts;
 }
+struct VkDescriptorSetBindingReferenceVALVE {
+	VkStructureType sType;
+	void* pNext;
+	VkDescriptorSetLayout descriptorSetLayout;
+	uint32_t binding;
+}
 struct VkDescriptorSetLayoutBinding {
 	uint32_t binding;
 	VkDescriptorType descriptorType;
@@ -7399,6 +7526,12 @@ struct VkDescriptorSetLayoutCreateInfo {
 	VkDescriptorSetLayoutCreateFlags flags;
 	uint32_t bindingCount;
 	VkDescriptorSetLayoutBinding* pBindings;
+}
+struct VkDescriptorSetLayoutHostMappingInfoVALVE {
+	VkStructureType sType;
+	void* pNext;
+	size_t descriptorOffset;
+	uint32_t descriptorSize;
 }
 struct VkDescriptorSetLayoutSupport {
 	VkStructureType sType;
@@ -7454,9 +7587,9 @@ struct VkDeviceCreateInfo {
 	uint32_t queueCreateInfoCount;
 	VkDeviceQueueCreateInfo* pQueueCreateInfos;
 	uint32_t enabledLayerCount;
-	byte** ppEnabledLayerNames;
+	immutable(char)** ppEnabledLayerNames;
 	uint32_t enabledExtensionCount;
-	byte** ppEnabledExtensionNames;
+	immutable(char)** ppEnabledExtensionNames;
 	VkPhysicalDeviceFeatures* pEnabledFeatures;
 }
 struct VkDeviceDeviceMemoryReportCreateInfoEXT {
@@ -7672,7 +7805,7 @@ struct VkDisplayProperties2KHR {
 }
 struct VkDisplayPropertiesKHR {
 	VkDisplayKHR display;
-	byte* displayName;
+	immutable(char)* displayName;
 	VkExtent2D physicalDimensions;
 	VkExtent2D physicalResolution;
 	VkSurfaceTransformFlagsKHR supportedTransforms;
@@ -7785,7 +7918,7 @@ struct VkExportSemaphoreWin32HandleInfoKHR {
 	LPCWSTR name;
 }
 struct VkExtensionProperties {
-	byte[256U] extensionName;
+	char[256U] extensionName;
 	uint32_t specVersion;
 }
 struct VkExtent2D {
@@ -8012,6 +8145,11 @@ struct VkGraphicsPipelineCreateInfo {
 	uint32_t subpass;
 	VkPipeline basePipelineHandle;
 	int32_t basePipelineIndex;
+}
+struct VkGraphicsPipelineLibraryCreateInfoEXT {
+	VkStructureType sType;
+	void* pNext;
+	VkGraphicsPipelineLibraryFlagsEXT flags;
 }
 struct VkGraphicsPipelineShaderGroupsCreateInfoNV {
 	VkStructureType sType;
@@ -8364,17 +8502,17 @@ struct VkInstanceCreateInfo {
 	VkInstanceCreateFlags flags;
 	VkApplicationInfo* pApplicationInfo;
 	uint32_t enabledLayerCount;
-	byte** ppEnabledLayerNames;
+	immutable(char)** ppEnabledLayerNames;
 	uint32_t enabledExtensionCount;
-	byte** ppEnabledExtensionNames;
+	immutable(char)** ppEnabledExtensionNames;
 }
 struct VkInstance_T {
 }
 struct VkLayerProperties {
-	byte[256U] layerName;
+	char[256U] layerName;
 	uint32_t specVersion;
 	uint32_t implementationVersion;
-	byte[256U] description;
+	char[256U] description;
 }
 struct VkMappedMemoryRange {
 	VkStructureType sType;
@@ -8539,9 +8677,9 @@ struct VkPerformanceCounterDescriptionKHR {
 	VkStructureType sType;
 	void* pNext;
 	VkPerformanceCounterDescriptionFlagsKHR flags;
-	byte[256U] name;
+	char[256U] name;
 	byte[256U] category;
-	byte[256U] description;
+	char[256U] description;
 }
 struct VkPerformanceCounterKHR {
 	VkStructureType sType;
@@ -8800,6 +8938,11 @@ struct VkPhysicalDeviceDescriptorIndexingProperties {
 	uint32_t maxDescriptorSetUpdateAfterBindStorageImages;
 	uint32_t maxDescriptorSetUpdateAfterBindInputAttachments;
 }
+struct VkPhysicalDeviceDescriptorSetHostMappingFeaturesVALVE {
+	VkStructureType sType;
+	void* pNext;
+	VkBool32 descriptorSetHostMapping;
+}
 struct VkPhysicalDeviceDeviceGeneratedCommandsFeaturesNV {
 	VkStructureType sType;
 	void* pNext;
@@ -8837,7 +8980,7 @@ struct VkPhysicalDeviceDriverProperties {
 	VkStructureType sType;
 	void* pNext;
 	VkDriverId driverID;
-	byte[256U] driverName;
+	char[256U] driverName;
 	byte[256U] driverInfo;
 	VkConformanceVersion conformanceVersion;
 }
@@ -9088,6 +9231,17 @@ struct VkPhysicalDeviceGlobalPriorityQueryFeaturesKHR {
 	void* pNext;
 	VkBool32 globalPriorityQuery;
 }
+struct VkPhysicalDeviceGraphicsPipelineLibraryFeaturesEXT {
+	VkStructureType sType;
+	void* pNext;
+	VkBool32 graphicsPipelineLibrary;
+}
+struct VkPhysicalDeviceGraphicsPipelineLibraryPropertiesEXT {
+	VkStructureType sType;
+	void* pNext;
+	VkBool32 graphicsPipelineLibraryFastLinking;
+	VkBool32 graphicsPipelineLibraryIndependentInterpolationDecoration;
+}
 struct VkPhysicalDeviceGroupProperties {
 	VkStructureType sType;
 	void* pNext;
@@ -9108,6 +9262,12 @@ struct VkPhysicalDeviceIDProperties {
 	uint8_t[8U] deviceLUID;
 	uint32_t deviceNodeMask;
 	VkBool32 deviceLUIDValid;
+}
+struct VkPhysicalDeviceImage2DViewOf3DFeaturesEXT {
+	VkStructureType sType;
+	void* pNext;
+	VkBool32 image2DViewOf3D;
+	VkBool32 sampler2DViewOf3D;
 }
 struct VkPhysicalDeviceImageDrmFormatModifierInfoEXT {
 	VkStructureType sType;
@@ -9453,6 +9613,13 @@ struct VkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT {
 	VkBool32 primitiveTopologyListRestart;
 	VkBool32 primitiveTopologyPatchListRestart;
 }
+struct VkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT {
+	VkStructureType sType;
+	void* pNext;
+	VkBool32 primitivesGeneratedQuery;
+	VkBool32 primitivesGeneratedQueryWithRasterizerDiscard;
+	VkBool32 primitivesGeneratedQueryWithNonZeroStreams;
+}
 struct VkPhysicalDevicePrivateDataFeatures {
 	VkStructureType sType;
 	void* pNext;
@@ -9464,7 +9631,7 @@ struct VkPhysicalDeviceProperties {
 	uint32_t vendorID;
 	uint32_t deviceID;
 	VkPhysicalDeviceType deviceType;
-	byte[256U] deviceName;
+	char[256U] deviceName;
 	uint8_t[16U] pipelineCacheUUID;
 	VkPhysicalDeviceLimits limits;
 	VkPhysicalDeviceSparseProperties sparseProperties;
@@ -9872,10 +10039,10 @@ struct VkPhysicalDeviceTimelineSemaphoreProperties {
 struct VkPhysicalDeviceToolProperties {
 	VkStructureType sType;
 	void* pNext;
-	byte[256U] name;
+	char[256U] name;
 	byte[256U] version_;
 	VkToolPurposeFlags purposes;
-	byte[256U] description;
+	char[256U] description;
 	byte[256U] layer;
 }
 struct VkPhysicalDeviceTransformFeedbackFeaturesEXT {
@@ -10015,7 +10182,7 @@ struct VkPhysicalDeviceVulkan12Properties {
 	VkStructureType sType;
 	void* pNext;
 	VkDriverId driverID;
-	byte[256U] driverName;
+	char[256U] driverName;
 	byte[256U] driverInfo;
 	VkConformanceVersion conformanceVersion;
 	VkShaderFloatControlsIndependence denormBehaviorIndependence;
@@ -10292,8 +10459,8 @@ struct VkPipelineExecutableInfoKHR {
 struct VkPipelineExecutableInternalRepresentationKHR {
 	VkStructureType sType;
 	void* pNext;
-	byte[256U] name;
-	byte[256U] description;
+	char[256U] name;
+	char[256U] description;
 	VkBool32 isText;
 	size_t dataSize;
 	void* pData;
@@ -10302,15 +10469,15 @@ struct VkPipelineExecutablePropertiesKHR {
 	VkStructureType sType;
 	void* pNext;
 	VkShaderStageFlags stages;
-	byte[256U] name;
-	byte[256U] description;
+	char[256U] name;
+	char[256U] description;
 	uint32_t subgroupSize;
 }
 struct VkPipelineExecutableStatisticKHR {
 	VkStructureType sType;
 	void* pNext;
-	byte[256U] name;
-	byte[256U] description;
+	char[256U] name;
+	char[256U] description;
 	VkPipelineExecutableStatisticFormatKHR format;
 	VkPipelineExecutableStatisticValueKHR value;
 }
@@ -10445,7 +10612,7 @@ struct VkPipelineShaderStageCreateInfo {
 	VkPipelineShaderStageCreateFlags flags;
 	VkShaderStageFlagBits stage;
 	VkShaderModule module_;
-	byte* pName;
+	immutable(char)* pName;
 	VkSpecializationInfo* pSpecializationInfo;
 }
 struct VkPipelineShaderStageRequiredSubgroupSizeCreateInfo {
@@ -11440,7 +11607,13 @@ struct VkXYColorEXT {
 	float x;
 	float y;
 }
+struct _SECURITY_ATTRIBUTES {
+	DWORD nLength;
+	LPVOID lpSecurityDescriptor;
+	BOOL bInheritHandle;
+}
 
+// Global variables
 
 extern(Windows) { __gshared {
 
@@ -12185,7 +12358,7 @@ VkResult function(VkDevice device, VkDebugMarkerObjectNameInfoEXT* pNameInfo)
 VkResult function(VkDevice device, VkDebugMarkerObjectTagInfoEXT* pTagInfo)
 	vkDebugMarkerSetObjectTagEXT;
 
-void function(VkInstance instance, VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, byte* pLayerPrefix, byte* pMessage)
+void function(VkInstance instance, VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, immutable(char)* pLayerPrefix, immutable(char)* pMessage)
 	vkDebugReportMessageEXT;
 
 VkResult function(VkDevice device, VkDeferredOperationKHR operation)
@@ -12311,13 +12484,13 @@ VkResult function(VkDevice device, VkDisplayKHR display, VkDisplayPowerInfoEXT* 
 VkResult function(VkCommandBuffer commandBuffer)
 	vkEndCommandBuffer;
 
-VkResult function(VkPhysicalDevice physicalDevice, byte* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties)
+VkResult function(VkPhysicalDevice physicalDevice, immutable(char)* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties)
 	vkEnumerateDeviceExtensionProperties;
 
 VkResult function(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkLayerProperties* pProperties)
 	vkEnumerateDeviceLayerProperties;
 
-VkResult function(byte* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties)
+VkResult function(immutable(char)* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties)
 	vkEnumerateInstanceExtensionProperties;
 
 VkResult function(uint32_t* pPropertyCount, VkLayerProperties* pProperties)
@@ -12395,6 +12568,12 @@ uint32_t function(VkDevice device, VkDeferredOperationKHR operation)
 VkResult function(VkDevice device, VkDeferredOperationKHR operation)
 	vkGetDeferredOperationResultKHR;
 
+void function(VkDevice device, VkDescriptorSet descriptorSet, void** ppData)
+	vkGetDescriptorSetHostMappingVALVE;
+
+void function(VkDevice device, VkDescriptorSetBindingReferenceVALVE* pBindingReference, VkDescriptorSetLayoutHostMappingInfoVALVE* pHostMapping)
+	vkGetDescriptorSetLayoutHostMappingInfoVALVE;
+
 void function(VkDevice device, VkDescriptorSetLayoutCreateInfo* pCreateInfo, VkDescriptorSetLayoutSupport* pSupport)
 	vkGetDescriptorSetLayoutSupport;
 
@@ -12446,7 +12625,7 @@ uint64_t function(VkDevice device, VkDeviceMemoryOpaqueCaptureAddressInfo* pInfo
 uint64_t function(VkDevice device, VkDeviceMemoryOpaqueCaptureAddressInfo* pInfo)
 	vkGetDeviceMemoryOpaqueCaptureAddressKHR;
 
-PFN_vkVoidFunction function(VkDevice device, byte* pName)
+PFN_vkVoidFunction function(VkDevice device, immutable(char)* pName)
 	vkGetDeviceProcAddr;
 
 void function(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue)
@@ -12521,7 +12700,7 @@ VkResult function(VkDevice device, VkImageView imageView, VkImageViewAddressProp
 uint32_t function(VkDevice device, VkImageViewHandleInfoNVX* pInfo)
 	vkGetImageViewHandleNVX;
 
-PFN_vkVoidFunction function(VkInstance instance, byte* pName)
+PFN_vkVoidFunction function(VkInstance instance, immutable(char)* pName)
 	vkGetInstanceProcAddr;
 
 VkResult function(VkDevice device, VkMemoryGetFdInfoKHR* pGetFdInfo, int* pFd)

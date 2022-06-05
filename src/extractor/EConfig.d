@@ -8,6 +8,7 @@ private:
 public:
     Regex!char[] requiredFunctionRegexes;
     Regex!char[] requiredTypeRegexes;
+    Regex!char[] requiredTypedefRegexes;
 
     Regex!char[] excludeRegexes;
 
@@ -20,6 +21,9 @@ public:
 
     bool isRequiredFunction(string name) {
         return checkMatch(requiredFunctionRegexes, name);
+    }
+    bool isRequiredTypedef(string name) {
+        return checkMatch(requiredTypedefRegexes, name);
     }
     bool isRequiredType(string name) {
         return checkMatch(requiredTypeRegexes, name);

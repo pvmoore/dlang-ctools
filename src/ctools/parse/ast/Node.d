@@ -84,6 +84,15 @@ public:
     }
 }
 
+T getAncestor(T)(Node n) {
+    if(!n.parent) return null;
+    if(T t = n.parent.as!T) {
+        return t;
+    } else {
+        return getAncestor!T(n.parent);
+    }
+}
+
 Typedef findTypedef(Node node, string name) {
 
     while(node.parent) {

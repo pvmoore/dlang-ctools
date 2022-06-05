@@ -30,7 +30,7 @@ public:
         file.writefln("\t\tif(!handle) throw new Exception(\"Unable to load '%s'\");", libraryName);
         file.writefln("\t\t");
         foreach(n; functionNames) {
-            file.writef("\t\t*(cast(void**)&%s) = GetProcAddr(handle, \"%s\");", n,n);
+            file.writef("\t\t*(cast(void**)&%s) = GetProcAddress(handle, \"%s\");", n,n);
             file.writefln(" throwIf(!%s);", n);
         }
 

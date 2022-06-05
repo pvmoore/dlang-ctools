@@ -12,9 +12,11 @@ public:
     FuncDef[string] funcDefs;
     FuncDecl[string] funcDecls;
     StructDef[string] structDefs;
+    Union[string] unions;
     Enum[string] enums;
     Var[string] vars;
     TypeRef[string] aliases;
+    Typedef[string] typedefs;
 
     T[] getOrderedValues(T)(T[string] map) {
         import std : sort,array;
@@ -46,6 +48,8 @@ public:
             break;
         }
 
+        filterTypedefs();
+
         this.log("Results:::::::::::");
         foreach(n; funcDefs) {
             this.log("\tFuncDef: %s", n);
@@ -55,6 +59,9 @@ public:
         }
         foreach(n; enums) {
             this.log("\tEnum: %s", n);
+        }
+        foreach(u; unions) {
+            this.log("\tUnion: %s", u);
         }
         foreach(n; structDefs) {
             this.log("\tStructDef: %s", n);
@@ -88,12 +95,17 @@ private:
                 break;
             case FUNCDECL: {
                 auto fd = n.as!FuncDecl;
+                auto td = fd.getAncestor!Typedef;
+
                 if(config.isRequiredFunction(fd.name)) {
                     if(fd.isDefinition) {
                         include(fd.definition());
                     } else {
                         include(fd);
                     }
+                }
+                else if(td && config.isRequiredTypedef(td.name)) {
+                    include(td);
                 }
                 break;
             }
@@ -112,25 +124,34 @@ private:
             case STRING: break;
             case STRUCTDEF: {
                 auto sd = n.as!StructDef;
-                if(sd.name !is null) {
-                    if(config.isRequiredType(sd.name)) {
-                        include(sd);
-                    }
+                if(config.isRequiredType(sd.name)) {
+                    include(sd);
                 }
                 break;
             }
             case TERNARY: break;
-            case TYPEDEF: {
-                // auto td = n.as!Typedef;
-                // if(config.isRequiredStruct(td.name)) {
-                //     include(td);
-                // }
-                break;
-            }
+            case TYPEDEF: break;
             case TYPEREF: break;
             case UNARY: break;
-            case UNION: break;
+            case UNION:
+                auto u = n.as!Union;
+                if(config.isRequiredType(u.name)) {
+                    include(u);
+                }
+                break;
             case VAR: break;
+        }
+    }
+    void filterTypedefs() {
+        // Filter out Typedefs where a FuncDecl already exists in aliases
+        string[] removeMe;
+        foreach(td; typedefs) {
+            if(auto fd = td.type().getFuncDecl(false)) {
+                if(td.name in aliases) removeMe ~= td.name;
+            }
+        }
+        foreach(r; removeMe) {
+            typedefs.remove(r);
         }
     }
     void include(Node n) {
@@ -197,6 +218,13 @@ private:
         enums[e.name] = e;
         modified = true;
     }
+    void include(Union u) {
+        if(u.name && u.name in unions) return;
+        if(config.isExcluded(u.name)) return;
+
+        unions[u.name] = u;
+        modified = true;
+    }
     void include(TypeRef tr) {
         if(tr.name in aliases) return;
 
@@ -206,6 +234,7 @@ private:
                 modified = true;
             }
         }
+
         include(tr.type);
     }
     void include(Var var) {
@@ -217,16 +246,13 @@ private:
         }
         include(var.type());
     }
-    // void include(Typedef td) {
-    //     Type type = td.type();
-    //     Type baseType = type.getBaseType();
-    //     if(Enum e = baseType.as!Enum) {
-    //         string name = firstNotNull(e.name, td.name);
-    //         enums[name] = e;
-    //     }
+    void include(Typedef td) {
+        if(td.name in typedefs) return;
 
-    //     this.log("Include Typedef %s", td.name);
-    //     include(td.type());
-    // }
+        typedefs[td.name] = td;
+        modified = true;
 
+        this.log("Include Typedef %s", td.name);
+        include(td.type());
+    }
 }

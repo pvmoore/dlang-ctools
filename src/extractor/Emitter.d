@@ -6,7 +6,7 @@ import extractor;
 final class Emitter {
 private:
     enum DEFAULT_FLAGS = Flag.QUALIFIED_ENUM;
-    enum Stage { PLUGINS, ALIASES, ENUMS, STRUCT_DEFS, VARS, FUNC_DECLS, FUNC_DEFS }
+    enum Stage { PLUGINS, ALIASES, ENUMS, UNIONS, STRUCT_DEFS, VARS, FUNC_DECLS, FUNC_DEFS }
     File file;
     Extractor extractor;
     string moduleName;
@@ -16,6 +16,9 @@ private:
     string[] pvtImports;
     string[] pubImports;
     FuncDecl[] addUFCS;
+    string[string] extraDefs;
+    string[string] extraAliases_;
+    Regex!char byteOrCharPattern = regex(r"^.*([Nn]ame|[Ss]tr]|[Pp]refix|[Mm]essage|[Mm]sg|[Dd]esc).*$");
 public:
     interface Plugin {
         void emit(File);
@@ -44,6 +47,14 @@ public:
         this.pubImports = imports;
         return this;
     }
+    auto extraDefinitions(string[string] extraDefs) {
+        this.extraDefs = extraDefs;
+        return this;
+    }
+    auto extraAliases(string[string] extraAliases) {
+        this.extraAliases_ = extraAliases;
+        return this;
+    }
     void emitTo(string filename) {
         this.file = File(filename, "wb");
         prolog();
@@ -51,22 +62,39 @@ public:
         foreach(p; plugins) {
             p.emit(file);
         }
+
         stage = Stage.ALIASES;
+        file.writeln("// Aliases");
+        addExtraAliases();
         foreach(tr; extractor.getOrderedValues(extractor.aliases)) {
             emit(tr, false);
         }
+        foreach(td; extractor.getOrderedValues(extractor.typedefs)) {
+            emit(td);
+        }
         file.writeln();
+
         stage = Stage.ENUMS;
+        file.writeln("// Enums");
+        addExtraDefinitions();
         foreach(e; extractor.getOrderedValues(extractor.enums)) {
             emit(e);
         }
         file.writeln();
+        stage = Stage.UNIONS;
+        file.writeln("// Unions");
+        foreach(u; extractor.getOrderedValues(extractor.unions)) {
+            emit(u);
+        }
+        file.writeln();
         stage = Stage.STRUCT_DEFS;
+        file.writeln("// Structs");
         foreach(sd; extractor.getOrderedValues(extractor.structDefs)) {
             emit(sd);
         }
         file.writeln();
         stage = Stage.VARS;
+        file.writeln("// Global variables");
         foreach(v; extractor.getOrderedValues(extractor.vars)) {
             emit(v);
         }
@@ -176,6 +204,32 @@ private:
         }
         file.writeln("} // pragma\n");
     }
+    void addExtraDefinitions() {
+        foreach(e; extraDefs.byKeyValue()) {
+            file.writefln("enum %s = %s;", e.key, e.value);
+        }
+        if(extraDefs.length > 0) file.writeln();
+    }
+    void addExtraAliases() {
+        foreach(e; extraAliases_.byKeyValue()) {
+            file.writefln("alias %s = %s;", e.key, e.value);
+        }
+    }
+    string getByteOrChar(PrimitiveType t) {
+        auto isPtrOrArray = t.parent.isA!PtrType || t.parent.isA!ArrayType;
+
+        if(isPtrOrArray) {
+            if(auto v = t.getAncestor!Var) {
+                if(v.name.matches(byteOrCharPattern)) {
+                    if(t.parent.isA!ArrayType) {
+                        return "char";
+                    }
+                    return "immutable(char)";
+                }
+            }
+        }
+        return "byte";
+    }
     void emit(Node n) {
         final switch(n.nid) with(Nid) {
             case VAR: emit(n.as!Var); break;
@@ -211,11 +265,16 @@ private:
                 break;
         }
     }
+    void emit(Typedef td) {
+        file.writef("alias %s = ", td.name);
+        emit(td.type());
+        file.writefln(";");
+    }
     void emit(PrimitiveType t) {
         string s = t.unsigned ? "u" : "";
         switch(t.kind) with(TKind) {
             case BOOL: s = "bool"; break;
-            case CHAR: s ~= "byte"; break;
+            case CHAR: s ~= getByteOrChar(t); break;
             case SHORT: s ~= "short"; break;
             case INT: s ~= "int"; break;
             case LONG: s ~= "int"; break;
@@ -234,27 +293,38 @@ private:
         file.write("*".repeat(depth));
     }
     void emit(TypeRef tr, bool isType) {
-        if(isType) {
-            if(tr.hasName()) {
-                file.write(tr.name);
-            } else {
-                emit(tr.type);
-            }
-        } else {
+        if(!isType) {
             if(auto e = tr.type.as!Enum) {
+                auto temp = e.name;
                 e.name = tr.name;
                 emit(e);
+                e.name = temp;
                 return;
             }
             if(auto sd = tr.type.as!StructDef) {
+                auto temp = sd.name;
                 sd.name = tr.name;
                 emit(sd);
+                sd.name = temp;
+                return;
+            }
+            if(auto u = tr.type.as!Union) {
+                auto temp = u.name;
+                u.name = tr.name;
+                emit(u);
+                u.name = temp;
                 return;
             }
 
             file.writef("alias %s = ", tr.name);
             emit(tr.type);
             file.writeln(";");
+        } else {
+            if(tr.hasName()) {
+                file.write(tr.name);
+            } else {
+                emit(tr.type);
+            }
         }
     }
     void emit(ArrayType at) {
@@ -329,6 +399,12 @@ private:
     }
     void emit(FuncDecl fd, bool isType) {
 
+        if(isType) {
+            if(fd.cconv == CConv.STDCALL) {
+                file.write("extern(Windows) ");
+            }
+        }
+
         emit(fd.returnType());
         file.write(" function(");
         foreach(i, v; fd.parameterVars()) {
@@ -343,6 +419,9 @@ private:
 
         if(isType) {
             file.write(")");
+            if(fd.cconv == CConv.STDCALL) {
+                file.write(" nothrow");
+            }
         } else {
             file.writefln(")\n\t%s;\n", fd.name);
         }
