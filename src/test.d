@@ -23,6 +23,10 @@ import processor_glfw;
 //     "gcopt=profile:1"
 // ];
 
+void foo(const char*[] poo) {
+
+}
+
 void main(string[] args) {
 
     // C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\ucrt
@@ -45,12 +49,12 @@ void main(string[] args) {
     }
 
     // Extract Vulkan
-    if(true) {
+    if(false) {
         auto vulkanProcessor = new VulkanProcessor();
         vulkanProcessor.process();
     }
     // Extract GLFW
-    if(false) {
+    if(true) {
         auto glfwProcessor = new GLFWProcessor();
         glfwProcessor.process();
     }

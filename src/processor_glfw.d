@@ -14,7 +14,7 @@ public:
     void process() {
         prepare();
 
-        parseState.dumpIncludeTokens = false;
+        parseState.dumpIncludeTokens = true;
 
         string glfwH = glfwPath ~ "include/GLFW/glfw3.h";
 

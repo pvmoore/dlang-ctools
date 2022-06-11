@@ -331,10 +331,16 @@ private:
         emit(at.type());
         foreach(dim; at.dimensions()) {
             file.write("[");
-            emit(dim);
+            Number n = dim.as!Number ;
+            if(n && n.stringValue=="-1") {
+                // Don't emit empty array dimension
+            } else {
+                emit(dim);
+            }
             file.write("]");
         }
     }
+
     void emit(Enum e) {
         if(flag(Flag.QUALIFIED_ENUM)) {
             // QUALIFIED enums
