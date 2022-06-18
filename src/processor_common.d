@@ -12,7 +12,6 @@ abstract class Processor {
 private:
 protected:
     ParseState parseState;
-    Token[] tokens;
     Node parent;
 public:
     void prepare() {
@@ -45,9 +44,14 @@ protected:
     void adjustIncludes(ref string[] includeDirs) {
 
     }
-    void parse(Filepath path) {
+    void parse(Filepath[] paths...) {
 
-        this.tokens = parseState.preProcess(path);
+        Token[] tokens;
+
+        foreach(path; paths) {
+            tokens ~= parseState.preProcess(path);
+        }
+
         this.parent = parseState.parse(tokens);
 
         writefln("Preprocess time %s seconds", parseState.preprocessTime.peek().total!"nsecs"/1_000_000_000.0);

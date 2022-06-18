@@ -17,8 +17,9 @@ public:
         parseState.dumpIncludeTokens = true;
 
         string glfwH = glfwPath ~ "include/GLFW/glfw3.h";
+        string glfwNativeH = glfwPath ~ "include/GLFW/glfw3native.h";
 
-        parse(Filepath(glfwH));
+        parse(Filepath(glfwH), Filepath(glfwNativeH));
         extract();
     	emit();
     }
@@ -26,6 +27,7 @@ protected:
     override void adjustDefines(ref string[string] defines) {
         defines["GLFW_INCLUDE_VULKAN"] = "1";
         defines["VK_USE_PLATFORM_WIN32_KHR"] = "1";
+        defines["GLFW_EXPOSE_NATIVE_WIN32"] = "1";
     }
     override void adjustIncludes(ref string[] includeDirs) {
         string vulkanSdk = environment.get("VULKAN_SDK");
@@ -66,7 +68,7 @@ private:
         ];
         import std : map, array;
         auto loader = new EmitDLLLoader("GLFWLoader", dllName)
-            .loadFunctions(extractor.getOrderedValues(extractor.funcDecls)
+            .loadFunctions(getOrderedValues(extractor.funcDecls)
                                               .map!(it=>it.name)
                                               .array);
 

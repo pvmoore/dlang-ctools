@@ -18,16 +18,6 @@ public:
     TypeRef[string] aliases;
     Typedef[string] typedefs;
 
-    T[] getOrderedValues(T)(T[string] map) {
-        import std : sort,array;
-        static if(__traits(compiles, map[""].name)) {
-            alias cmp = (a,b)=>a.name<b.name;
-        } else {
-            alias cmp = (a,b)=>a.getName()<b.getName();
-        }
-        return map.values().sort!cmp().array;
-    }
-
     this(EConfig config) {
         this.config = config;
     }
@@ -49,6 +39,7 @@ public:
         }
 
         filterTypedefs();
+        filterFuncDecls();
 
         this.log("Results:::::::::::");
         foreach(n; funcDefs) {
@@ -153,6 +144,21 @@ private:
         foreach(r; removeMe) {
             typedefs.remove(r);
         }
+    }
+    /**
+     * 1) Remove funcDecls from the 'funcDecls' list if they are also defined as aliases
+     */
+    void filterFuncDecls() {
+        string[] toRemove;
+        foreach(fd; funcDecls.values()) {
+            if(fd.name in aliases) {
+                toRemove ~= fd.name;
+            }
+        }
+        foreach(r; toRemove) {
+            funcDecls.remove(r);
+        }
+        this.funcDecls.rehash();
     }
     void include(Node n) {
         switch(n.nid) with(Nid) {

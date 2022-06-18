@@ -11,6 +11,7 @@ private:
     Extractor extractor;
     string moduleName;
     Plugin[] plugins;
+    CharByteEval charByteEvaluator;
     Flag flags;
     Stage stage;
     string[] pvtImports;
@@ -18,10 +19,15 @@ private:
     FuncDecl[] addUFCS;
     string[string] extraDefs;
     string[string] extraAliases_;
-    Regex!char byteOrCharPattern = regex(r"^.*([Nn]ame|[Ss]tr]|[Pp]refix|[Mm]essage|[Mm]sg|[Dd]esc).*$");
+
+    FuncDecl[string] funcDecls;
+    FuncDecl[] orderedFuncDecls;
 public:
     interface Plugin {
         void emit(File);
+    }
+    interface CharByteEval {
+        string eval(PrimitiveType);
     }
     enum Flag {
         NONE                = 0,
@@ -34,9 +40,17 @@ public:
         this.extractor = extractor;
         this.flags = flags;
         this.moduleName = moduleName;
+        this.charByteEvaluator = new CharByteEvalImpl;
+
+        this.funcDecls = extractor.funcDecls;
+        this.orderedFuncDecls = getOrderedValues(funcDecls);
     }
     auto add(Plugin plugin) {
         plugins ~= plugin;
+        return this;
+    }
+    auto withCharByteEval(CharByteEval cbe) {
+        this.charByteEvaluator = cbe;
         return this;
     }
     auto privateImports(string[] imports) {
@@ -66,10 +80,10 @@ public:
         stage = Stage.ALIASES;
         file.writeln("// Aliases");
         addExtraAliases();
-        foreach(tr; extractor.getOrderedValues(extractor.aliases)) {
+        foreach(tr; getOrderedValues(extractor.aliases)) {
             emit(tr, false);
         }
-        foreach(td; extractor.getOrderedValues(extractor.typedefs)) {
+        foreach(td; getOrderedValues(extractor.typedefs)) {
             emit(td);
         }
         file.writeln();
@@ -77,44 +91,59 @@ public:
         stage = Stage.ENUMS;
         file.writeln("// Enums");
         addExtraDefinitions();
-        foreach(e; extractor.getOrderedValues(extractor.enums)) {
+        foreach(e; getOrderedValues(extractor.enums)) {
             emit(e);
         }
         file.writeln();
         stage = Stage.UNIONS;
         file.writeln("// Unions");
-        foreach(u; extractor.getOrderedValues(extractor.unions)) {
+        foreach(u; getOrderedValues(extractor.unions)) {
             emit(u);
         }
         file.writeln();
         stage = Stage.STRUCT_DEFS;
         file.writeln("// Structs");
-        foreach(sd; extractor.getOrderedValues(extractor.structDefs)) {
+        foreach(sd; getOrderedValues(extractor.structDefs)) {
             emit(sd);
         }
         file.writeln();
         stage = Stage.VARS;
         file.writeln("// Global variables");
-        foreach(v; extractor.getOrderedValues(extractor.vars)) {
+        foreach(v; getOrderedValues(extractor.vars)) {
             emit(v);
         }
         file.writeln();
         stage = Stage.FUNC_DECLS;
-        file.writefln("extern(Windows) { __gshared {\n");
-        foreach(fd; extractor.getOrderedValues(extractor.funcDecls)) {
+
+        file.writefln("extern(Windows) { nothrow __gshared {\n");
+        foreach(fd; getExternWindowsDecls(orderedFuncDecls)) {
             emit(fd, false);
         }
         file.writefln("}} // extern(Windows), __gshared");
         file.writeln();
+
+        file.writefln("extern(C) { nothrow __gshared {\n");
+        foreach(fd; getExternCDecls(orderedFuncDecls)) {
+            emit(fd, false);
+        }
+        file.writefln("}} // extern(C), __gshared");
+        file.writeln();
+
         addUFCSStructMethods();
         stage = Stage.FUNC_DEFS;
-        foreach(fd; extractor.getOrderedValues(extractor.funcDefs)) {
+        foreach(fd; getOrderedValues(extractor.funcDefs)) {
             emit(fd);
         }
         epilog();
         file.close();
     }
 private:
+    FuncDecl[] getExternWindowsDecls(FuncDecl[] decls) {
+        return decls.filter!(it=>it.cconv==CConv.STDCALL).array;
+    }
+    FuncDecl[] getExternCDecls(FuncDecl[] decls) {
+        return decls.filter!(it=>it.cconv==CConv.CDECL).array;
+    }
     bool flag(Flag f) {
         return (flags&f) != 0;
     }
@@ -160,6 +189,7 @@ private:
             case "in":
             case "align":
             case "function":
+            case "string":
                 return name ~ "_";
             default: return name;
         }
@@ -215,25 +245,11 @@ private:
             file.writefln("alias %s = %s;", e.key, e.value);
         }
     }
-    string getByteOrChar(PrimitiveType t) {
-        auto isPtrOrArray = t.parent.isA!PtrType || t.parent.isA!ArrayType;
-
-        if(isPtrOrArray) {
-            if(auto v = t.getAncestor!Var) {
-                if(v.name.matches(byteOrCharPattern)) {
-                    if(t.parent.isA!ArrayType) {
-                        return "char";
-                    }
-                    return "immutable(char)";
-                }
-            }
-        }
-        return "byte";
-    }
     void emit(Node n) {
         final switch(n.nid) with(Nid) {
             case VAR: emit(n.as!Var); break;
             case BINARY: emit(n.as!Binary); break;
+            case UNARY: emit(n.as!Unary); break;
             case IDENTIFIER: emit(n.as!Identifier); break;
             case NUMBER: emit(n.as!Number); break;
             case PARENS: emit(n.as!Parens); break;
@@ -248,7 +264,6 @@ private:
             case UNION: emit(n.as!Union); break;
             case STRING:
             case TERNARY:
-            case UNARY:
             case INDEX:
             case MEMBER:
             case CALL:
@@ -274,7 +289,7 @@ private:
         string s = t.unsigned ? "u" : "";
         switch(t.kind) with(TKind) {
             case BOOL: s = "bool"; break;
-            case CHAR: s ~= getByteOrChar(t); break;
+            case CHAR: s ~= charByteEvaluator.eval(t); break;
             case SHORT: s ~= "short"; break;
             case INT: s ~= "int"; break;
             case LONG: s ~= "int"; break;
@@ -345,11 +360,22 @@ private:
         if(flag(Flag.QUALIFIED_ENUM)) {
             // QUALIFIED enums
             file.writef("enum %s {\n", e.name);
+
+            auto firstIdentifier = e.first().hasChildren() ? getDescendent!Identifier(e.first().first()) : null;
+            // We need the type of this firstIdentifier if it is not null
+
             foreach(id; e.getIdentifiers()) {
                 file.writef("\t%s", id.name);
                 if(id.hasChildren()) {
                     file.write(" = ");
+
+                    if(firstIdentifier) {
+                        //file.writef("cast(%s)(", firstIdentifier.type());
+                    }
                     emit(id.first());
+                    if(firstIdentifier) {
+                        //file.write(")");
+                    }
                 }
                 file.write(",\n");
             }
@@ -406,12 +432,20 @@ private:
     void emit(FuncDecl fd, bool isType) {
 
         if(isType) {
-            if(fd.cconv == CConv.STDCALL) {
+
+            bool isVarType = fd.hasAncestor!Var;
+
+            if(isVarType) {
+
+            } else if(fd.cconv == CConv.STDCALL) {
                 file.write("extern(Windows) ");
+            } else {
+                file.write("extern(C) ");
             }
         }
 
         emit(fd.returnType());
+
         file.write(" function(");
         foreach(i, v; fd.parameterVars()) {
             emit(v.type());
@@ -424,11 +458,9 @@ private:
         }
 
         if(isType) {
-            file.write(")");
-            if(fd.cconv == CConv.STDCALL) {
-                file.write(" nothrow");
-            }
+            file.write(") nothrow");
         } else {
+            // declaration
             file.writefln(")\n\t%s;\n", fd.name);
         }
         if(stage == Stage.FUNC_DECLS) {
@@ -474,6 +506,10 @@ private:
         emit(b.left());
         file.writef(" %s ", stringOf(b.op));
         emit(b.right());
+    }
+    void emit(Unary u) {
+        file.writef("%s", stringOf(u.op));
+        emit(u.expr());
     }
     void emit(Parens p) {
         file.write("(");

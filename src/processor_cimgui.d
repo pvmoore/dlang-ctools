@@ -24,7 +24,7 @@ public:
 protected:
     override void adjustDefines(ref string[string] defines) {
         //defines["GLFW_INCLUDE_VULKAN"] = "1";
-        defines["CIMGUI_FREETYPE"] = "1";
+        //defines["CIMGUI_FREETYPE"] = "1";
         defines["CIMGUI_DEFINE_ENUMS_AND_STRUCTS"] = "1";
     }
     override void adjustIncludes(ref string[] includeDirs) {
@@ -38,7 +38,7 @@ private:
         this.config = new EConfig();
 
         config.requiredFunctionRegexes ~= regex(r"^(ImGui|ig).*$");
-        config.requiredTypeRegexes ~= regex(r"^ImGui.*$");
+        config.requiredTypeRegexes ~= regex(r"^(Im|Stb).*$");
 
         config.excludeRegexes ~= regex(r"^(FILE|_iobuf)$");
         //config.excludeRegexes ~= regex(r"^_iobuf.*$");
@@ -64,13 +64,14 @@ private:
         ];
 
         auto flags = Emitter.Flag.UNQUALIFIED_ENUM |
+                    Emitter.Flag.QUALIFIED_ENUM |
                      Emitter.Flag.UFCS_STRUCT_METHODS;
 
         this.emitter = new Emitter(extractor, "cimgui_api", flags);
 
         import std : map, array;
-        auto loader = new EmitDLLLoader("CImguiLoader", "cimgui.dll")
-            .loadFunctions(extractor.getOrderedValues(extractor.funcDecls)
+        auto loader = new EmitDLLLoader("CImguiLoader", "cimgui-glfw-vk-1.87.dll")
+            .loadFunctions(getOrderedValues(extractor.funcDecls)
                                               .map!(it=>it.name)
                                               .array);
 

@@ -16,6 +16,8 @@ public:
         this.nid = Nid.UNARY;
     }
 
+    Expr expr() { return first().as!Expr; }
+
     override int precedence() { return precedenceOf(op); }
 
     override string toString() {

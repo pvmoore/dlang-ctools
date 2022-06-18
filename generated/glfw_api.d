@@ -71,6 +71,9 @@ private struct _GLFWLoader {
 		*(cast(void**)&glfwGetVersionString) = GetProcAddress(handle, "glfwGetVersionString"); throwIf(!glfwGetVersionString);
 		*(cast(void**)&glfwGetVideoMode) = GetProcAddress(handle, "glfwGetVideoMode"); throwIf(!glfwGetVideoMode);
 		*(cast(void**)&glfwGetVideoModes) = GetProcAddress(handle, "glfwGetVideoModes"); throwIf(!glfwGetVideoModes);
+		*(cast(void**)&glfwGetWin32Adapter) = GetProcAddress(handle, "glfwGetWin32Adapter"); throwIf(!glfwGetWin32Adapter);
+		*(cast(void**)&glfwGetWin32Monitor) = GetProcAddress(handle, "glfwGetWin32Monitor"); throwIf(!glfwGetWin32Monitor);
+		*(cast(void**)&glfwGetWin32Window) = GetProcAddress(handle, "glfwGetWin32Window"); throwIf(!glfwGetWin32Window);
 		*(cast(void**)&glfwGetWindowAttrib) = GetProcAddress(handle, "glfwGetWindowAttrib"); throwIf(!glfwGetWindowAttrib);
 		*(cast(void**)&glfwGetWindowContentScale) = GetProcAddress(handle, "glfwGetWindowContentScale"); throwIf(!glfwGetWindowContentScale);
 		*(cast(void**)&glfwGetWindowFrameSize) = GetProcAddress(handle, "glfwGetWindowFrameSize"); throwIf(!glfwGetWindowFrameSize);
@@ -189,6 +192,7 @@ enum GLFW_DISCONNECTED = 0x00040002;
 enum GLFW_DONT_CARE = - 1;
 enum GLFW_DOUBLEBUFFER = 0x00021010;
 enum GLFW_EGL_CONTEXT_API = 0x00036002;
+enum GLFW_EXPOSE_NATIVE_WIN32 = 1;
 enum GLFW_FALSE = 0;
 enum GLFW_FLOATING = 0x00020007;
 enum GLFW_FOCUSED = 0x00020001;
@@ -448,28 +452,29 @@ enum GLFW_X11_INSTANCE_NAME = 0x00024002;
 // End Definitions
 
 // Aliases
-alias GLFWcharfun = void function(GLFWwindow* window, uint codepoint);
-alias GLFWcharmodsfun = void function(GLFWwindow* window, uint codepoint, int mods);
-alias GLFWcursorenterfun = void function(GLFWwindow* window, int entered);
-alias GLFWcursorposfun = void function(GLFWwindow* window, double xpos, double ypos);
-alias GLFWdropfun = void function(GLFWwindow* window, int path_count, byte*[] paths);
-alias GLFWerrorfun = void function(int error_code, immutable(char)* description);
-alias GLFWframebuffersizefun = void function(GLFWwindow* window, int width, int height);
-alias GLFWglproc = void function();
-alias GLFWjoystickfun = void function(int jid, int event);
-alias GLFWkeyfun = void function(GLFWwindow* window, int key, int scancode, int action, int mods);
-alias GLFWmonitorfun = void function(GLFWmonitor* monitor, int event);
-alias GLFWmousebuttonfun = void function(GLFWwindow* window, int button, int action, int mods);
-alias GLFWscrollfun = void function(GLFWwindow* window, double xoffset, double yoffset);
-alias GLFWvkproc = void function();
-alias GLFWwindowclosefun = void function(GLFWwindow* window);
-alias GLFWwindowcontentscalefun = void function(GLFWwindow* window, float xscale, float yscale);
-alias GLFWwindowfocusfun = void function(GLFWwindow* window, int focused);
-alias GLFWwindowiconifyfun = void function(GLFWwindow* window, int iconified);
-alias GLFWwindowmaximizefun = void function(GLFWwindow* window, int maximized);
-alias GLFWwindowposfun = void function(GLFWwindow* window, int xpos, int ypos);
-alias GLFWwindowrefreshfun = void function(GLFWwindow* window);
-alias GLFWwindowsizefun = void function(GLFWwindow* window, int width, int height);
+alias GLFWcharfun = extern(C) void function(GLFWwindow* window, uint codepoint) nothrow;
+alias GLFWcharmodsfun = extern(C) void function(GLFWwindow* window, uint codepoint, int mods) nothrow;
+alias GLFWcursorenterfun = extern(C) void function(GLFWwindow* window, int entered) nothrow;
+alias GLFWcursorposfun = extern(C) void function(GLFWwindow* window, double xpos, double ypos) nothrow;
+alias GLFWdropfun = extern(C) void function(GLFWwindow* window, int path_count, immutable(char)*[] paths) nothrow;
+alias GLFWerrorfun = extern(C) void function(int error_code, immutable(char)* description) nothrow;
+alias GLFWframebuffersizefun = extern(C) void function(GLFWwindow* window, int width, int height) nothrow;
+alias GLFWglproc = extern(C) void function() nothrow;
+alias GLFWjoystickfun = extern(C) void function(int jid, int event) nothrow;
+alias GLFWkeyfun = extern(C) void function(GLFWwindow* window, int key, int scancode, int action, int mods) nothrow;
+alias GLFWmonitorfun = extern(C) void function(GLFWmonitor* monitor, int event) nothrow;
+alias GLFWmousebuttonfun = extern(C) void function(GLFWwindow* window, int button, int action, int mods) nothrow;
+alias GLFWscrollfun = extern(C) void function(GLFWwindow* window, double xoffset, double yoffset) nothrow;
+alias GLFWvkproc = extern(C) void function() nothrow;
+alias GLFWwindowclosefun = extern(C) void function(GLFWwindow* window) nothrow;
+alias GLFWwindowcontentscalefun = extern(C) void function(GLFWwindow* window, float xscale, float yscale) nothrow;
+alias GLFWwindowfocusfun = extern(C) void function(GLFWwindow* window, int focused) nothrow;
+alias GLFWwindowiconifyfun = extern(C) void function(GLFWwindow* window, int iconified) nothrow;
+alias GLFWwindowmaximizefun = extern(C) void function(GLFWwindow* window, int maximized) nothrow;
+alias GLFWwindowposfun = extern(C) void function(GLFWwindow* window, int xpos, int ypos) nothrow;
+alias GLFWwindowrefreshfun = extern(C) void function(GLFWwindow* window) nothrow;
+alias GLFWwindowsizefun = extern(C) void function(GLFWwindow* window, int width, int height) nothrow;
+alias HWND = HWND__*;
 alias uint32_t = uint;
 alias uint64_t = ulong;
 
@@ -507,10 +512,17 @@ struct GLFWvidmode {
 }
 struct GLFWwindow {
 }
+struct HWND__ {
+	int unused;
+}
 
 // Global variables
 
-extern(Windows) { __gshared {
+extern(Windows) { nothrow __gshared {
+
+}} // extern(Windows), __gshared
+
+extern(C) { nothrow __gshared {
 
 GLFWcursor* function(GLFWimage* image, int xhot, int yhot)
 	glfwCreateCursor;
@@ -518,7 +530,7 @@ GLFWcursor* function(GLFWimage* image, int xhot, int yhot)
 GLFWcursor* function(int shape)
 	glfwCreateStandardCursor;
 
-GLFWwindow* function(int width, int height, byte* title, GLFWmonitor* monitor, GLFWwindow* share)
+GLFWwindow* function(int width, int height, immutable(char)* title, GLFWmonitor* monitor, GLFWwindow* share)
 	glfwCreateWindow;
 
 VkResult function(VkInstance instance, GLFWwindow* window, VkAllocationCallbacks* allocator, VkSurfaceKHR* surface)
@@ -533,13 +545,13 @@ void function(GLFWcursor* cursor)
 void function(GLFWwindow* window)
 	glfwDestroyWindow;
 
-int function(byte* extension)
+int function(immutable(char)* extension)
 	glfwExtensionSupported;
 
 void function(GLFWwindow* window)
 	glfwFocusWindow;
 
-byte* function(GLFWwindow* window)
+immutable(char)* function(GLFWwindow* window)
 	glfwGetClipboardString;
 
 GLFWwindow* function()
@@ -554,7 +566,7 @@ int function(immutable(char)** description)
 void function(GLFWwindow* window, int* width, int* height)
 	glfwGetFramebufferSize;
 
-byte* function(int jid)
+immutable(char)* function(int jid)
 	glfwGetGamepadName;
 
 int function(int jid, GLFWgamepadstate* state)
@@ -575,13 +587,13 @@ float* function(int jid, int* count)
 ubyte* function(int jid, int* count)
 	glfwGetJoystickButtons;
 
-byte* function(int jid)
+immutable(char)* function(int jid)
 	glfwGetJoystickGUID;
 
 ubyte* function(int jid, int* count)
 	glfwGetJoystickHats;
 
-byte* function(int jid)
+immutable(char)* function(int jid)
 	glfwGetJoystickName;
 
 void* function(int jid)
@@ -590,7 +602,7 @@ void* function(int jid)
 int function(GLFWwindow* window, int key)
 	glfwGetKey;
 
-byte* function(int key, int scancode)
+immutable(char)* function(int key, int scancode)
 	glfwGetKeyName;
 
 int function(int key)
@@ -599,7 +611,7 @@ int function(int key)
 void function(GLFWmonitor* monitor, float* xscale, float* yscale)
 	glfwGetMonitorContentScale;
 
-byte* function(GLFWmonitor* monitor)
+immutable(char)* function(GLFWmonitor* monitor)
 	glfwGetMonitorName;
 
 void function(GLFWmonitor* monitor, int* widthMM, int* heightMM)
@@ -629,7 +641,7 @@ GLFWmonitor* function()
 GLFWglproc function(immutable(char)* procname)
 	glfwGetProcAddress;
 
-byte** function(uint32_t* count)
+immutable(char)** function(uint32_t* count)
 	glfwGetRequiredInstanceExtensions;
 
 double function()
@@ -644,7 +656,7 @@ uint64_t function()
 void function(int* major, int* minor, int* rev)
 	glfwGetVersion;
 
-byte* function()
+immutable(char)* function()
 	glfwGetVersionString;
 
 GLFWvidmode* function(GLFWmonitor* monitor)
@@ -652,6 +664,15 @@ GLFWvidmode* function(GLFWmonitor* monitor)
 
 GLFWvidmode* function(GLFWmonitor* monitor, int* count)
 	glfwGetVideoModes;
+
+immutable(char)* function(GLFWmonitor* monitor)
+	glfwGetWin32Adapter;
+
+immutable(char)* function(GLFWmonitor* monitor)
+	glfwGetWin32Monitor;
+
+HWND function(GLFWwindow* window)
+	glfwGetWin32Window;
 
 int function(GLFWwindow* window, int attrib)
 	glfwGetWindowAttrib;
@@ -722,7 +743,7 @@ GLFWcharfun function(GLFWwindow* window, GLFWcharfun callback)
 GLFWcharmodsfun function(GLFWwindow* window, GLFWcharmodsfun callback)
 	glfwSetCharModsCallback;
 
-void function(GLFWwindow* window, byte* string)
+void function(GLFWwindow* window, immutable(char)* string_)
 	glfwSetClipboardString;
 
 void function(GLFWwindow* window, GLFWcursor* cursor)
@@ -830,7 +851,7 @@ GLFWwindowsizefun function(GLFWwindow* window, GLFWwindowsizefun callback)
 void function(GLFWwindow* window, int minwidth, int minheight, int maxwidth, int maxheight)
 	glfwSetWindowSizeLimits;
 
-void function(GLFWwindow* window, byte* title)
+void function(GLFWwindow* window, immutable(char)* title)
 	glfwSetWindowTitle;
 
 void function(GLFWwindow* window, void* pointer)
@@ -848,7 +869,7 @@ void function(int interval)
 void function()
 	glfwTerminate;
 
-int function(byte* string)
+int function(immutable(char)* string_)
 	glfwUpdateGamepadMappings;
 
 int function()
@@ -863,11 +884,11 @@ void function(double timeout)
 void function(int hint, int value)
 	glfwWindowHint;
 
-void function(int hint, byte* value)
+void function(int hint, immutable(char)* value)
 	glfwWindowHintString;
 
 int function(GLFWwindow* window)
 	glfwWindowShouldClose;
 
-}} // extern(Windows), __gshared
+}} // extern(C), __gshared
 

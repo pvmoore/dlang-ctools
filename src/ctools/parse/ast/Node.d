@@ -35,6 +35,13 @@ public:
         children.insertAt(0, child);
         return this;
     }
+    final Node addAll(Node[] nodes) {
+        // Duplicate the list in case it comes from a Node.chilren array which may be modified
+        foreach(n; nodes.dup) {
+            add(n);
+        }
+        return this;
+    }
     final void detach(Node child) {
         if(child.parent) {
             child.parent.children.removeAt(child.index());
@@ -84,6 +91,19 @@ public:
     }
 }
 
+T getDescendent(T)(Node n) {
+    foreach(ch; n.children) {
+        if(auto d = ch.as!T) {
+            return d;
+        }
+        return getDescendent!T(ch);
+    }
+    return null;
+}
+bool hasDescendent(T)(Node n) {
+    return getDescendent!T(n) !is null;
+}
+
 T getAncestor(T)(Node n) {
     if(!n.parent) return null;
     if(T t = n.parent.as!T) {
@@ -91,6 +111,9 @@ T getAncestor(T)(Node n) {
     } else {
         return getAncestor!T(n.parent);
     }
+}
+bool hasAncestor(T)(Node n) {
+    return getAncestor!T(n) !is null;
 }
 
 Typedef findTypedef(Node node, string name) {

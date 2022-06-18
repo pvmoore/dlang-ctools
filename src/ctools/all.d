@@ -2,9 +2,9 @@ module ctools.all;
 
 public:
 
-import std.stdio                : writefln, File;
+import std.stdio                : writefln, writef, writeln, File;
 import std.format               : format;
-import std.algorithm            : map, joiner, sum, all;
+import std.algorithm            : map, joiner, sum, all, filter;
 import std.typecons             : Tuple, tuple;
 import std.range                : array;
 import std.datetime.stopwatch   : StopWatch;

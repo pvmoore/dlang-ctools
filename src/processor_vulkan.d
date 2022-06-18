@@ -73,7 +73,7 @@ private:
             "VK_WHOLE_SIZE" : "(~0UL)",
         ];
 
-        auto funcDecls = extractor.getOrderedValues(extractor.funcDecls);
+        auto funcDecls = getOrderedValues(extractor.funcDecls);
 
         writefln("emitting...");
 
