@@ -24,6 +24,167 @@ private struct _CImguiLoader {
 		this.handle = LoadLibraryA("cimgui-glfw-vk-1.87.dll");
 		if(!handle) throw new Exception("Unable to load 'cimgui-glfw-vk-1.87.dll'");
 		
+		*(cast(void**)&ImBitVector_Clear) = GetProcAddress(handle, "ImBitVector_Clear"); throwIf(!ImBitVector_Clear);
+		*(cast(void**)&ImBitVector_ClearBit) = GetProcAddress(handle, "ImBitVector_ClearBit"); throwIf(!ImBitVector_ClearBit);
+		*(cast(void**)&ImBitVector_Create) = GetProcAddress(handle, "ImBitVector_Create"); throwIf(!ImBitVector_Create);
+		*(cast(void**)&ImBitVector_SetBit) = GetProcAddress(handle, "ImBitVector_SetBit"); throwIf(!ImBitVector_SetBit);
+		*(cast(void**)&ImBitVector_TestBit) = GetProcAddress(handle, "ImBitVector_TestBit"); throwIf(!ImBitVector_TestBit);
+		*(cast(void**)&ImColor_HSV) = GetProcAddress(handle, "ImColor_HSV"); throwIf(!ImColor_HSV);
+		*(cast(void**)&ImColor_ImColor_Float) = GetProcAddress(handle, "ImColor_ImColor_Float"); throwIf(!ImColor_ImColor_Float);
+		*(cast(void**)&ImColor_ImColor_Int) = GetProcAddress(handle, "ImColor_ImColor_Int"); throwIf(!ImColor_ImColor_Int);
+		*(cast(void**)&ImColor_ImColor_Nil) = GetProcAddress(handle, "ImColor_ImColor_Nil"); throwIf(!ImColor_ImColor_Nil);
+		*(cast(void**)&ImColor_ImColor_U32) = GetProcAddress(handle, "ImColor_ImColor_U32"); throwIf(!ImColor_ImColor_U32);
+		*(cast(void**)&ImColor_ImColor_Vec4) = GetProcAddress(handle, "ImColor_ImColor_Vec4"); throwIf(!ImColor_ImColor_Vec4);
+		*(cast(void**)&ImColor_SetHSV) = GetProcAddress(handle, "ImColor_SetHSV"); throwIf(!ImColor_SetHSV);
+		*(cast(void**)&ImColor_destroy) = GetProcAddress(handle, "ImColor_destroy"); throwIf(!ImColor_destroy);
+		*(cast(void**)&ImDrawCmd_GetTexID) = GetProcAddress(handle, "ImDrawCmd_GetTexID"); throwIf(!ImDrawCmd_GetTexID);
+		*(cast(void**)&ImDrawCmd_ImDrawCmd) = GetProcAddress(handle, "ImDrawCmd_ImDrawCmd"); throwIf(!ImDrawCmd_ImDrawCmd);
+		*(cast(void**)&ImDrawCmd_destroy) = GetProcAddress(handle, "ImDrawCmd_destroy"); throwIf(!ImDrawCmd_destroy);
+		*(cast(void**)&ImDrawDataBuilder_Clear) = GetProcAddress(handle, "ImDrawDataBuilder_Clear"); throwIf(!ImDrawDataBuilder_Clear);
+		*(cast(void**)&ImDrawDataBuilder_ClearFreeMemory) = GetProcAddress(handle, "ImDrawDataBuilder_ClearFreeMemory"); throwIf(!ImDrawDataBuilder_ClearFreeMemory);
+		*(cast(void**)&ImDrawDataBuilder_FlattenIntoSingleLayer) = GetProcAddress(handle, "ImDrawDataBuilder_FlattenIntoSingleLayer"); throwIf(!ImDrawDataBuilder_FlattenIntoSingleLayer);
+		*(cast(void**)&ImDrawDataBuilder_GetDrawListCount) = GetProcAddress(handle, "ImDrawDataBuilder_GetDrawListCount"); throwIf(!ImDrawDataBuilder_GetDrawListCount);
+		*(cast(void**)&ImDrawData_Clear) = GetProcAddress(handle, "ImDrawData_Clear"); throwIf(!ImDrawData_Clear);
+		*(cast(void**)&ImDrawData_DeIndexAllBuffers) = GetProcAddress(handle, "ImDrawData_DeIndexAllBuffers"); throwIf(!ImDrawData_DeIndexAllBuffers);
+		*(cast(void**)&ImDrawData_ImDrawData) = GetProcAddress(handle, "ImDrawData_ImDrawData"); throwIf(!ImDrawData_ImDrawData);
+		*(cast(void**)&ImDrawData_ScaleClipRects) = GetProcAddress(handle, "ImDrawData_ScaleClipRects"); throwIf(!ImDrawData_ScaleClipRects);
+		*(cast(void**)&ImDrawData_destroy) = GetProcAddress(handle, "ImDrawData_destroy"); throwIf(!ImDrawData_destroy);
+		*(cast(void**)&ImDrawListSharedData_ImDrawListSharedData) = GetProcAddress(handle, "ImDrawListSharedData_ImDrawListSharedData"); throwIf(!ImDrawListSharedData_ImDrawListSharedData);
+		*(cast(void**)&ImDrawListSharedData_SetCircleTessellationMaxError) = GetProcAddress(handle, "ImDrawListSharedData_SetCircleTessellationMaxError"); throwIf(!ImDrawListSharedData_SetCircleTessellationMaxError);
+		*(cast(void**)&ImDrawListSharedData_destroy) = GetProcAddress(handle, "ImDrawListSharedData_destroy"); throwIf(!ImDrawListSharedData_destroy);
+		*(cast(void**)&ImDrawListSplitter_Clear) = GetProcAddress(handle, "ImDrawListSplitter_Clear"); throwIf(!ImDrawListSplitter_Clear);
+		*(cast(void**)&ImDrawListSplitter_ClearFreeMemory) = GetProcAddress(handle, "ImDrawListSplitter_ClearFreeMemory"); throwIf(!ImDrawListSplitter_ClearFreeMemory);
+		*(cast(void**)&ImDrawListSplitter_ImDrawListSplitter) = GetProcAddress(handle, "ImDrawListSplitter_ImDrawListSplitter"); throwIf(!ImDrawListSplitter_ImDrawListSplitter);
+		*(cast(void**)&ImDrawListSplitter_Merge) = GetProcAddress(handle, "ImDrawListSplitter_Merge"); throwIf(!ImDrawListSplitter_Merge);
+		*(cast(void**)&ImDrawListSplitter_SetCurrentChannel) = GetProcAddress(handle, "ImDrawListSplitter_SetCurrentChannel"); throwIf(!ImDrawListSplitter_SetCurrentChannel);
+		*(cast(void**)&ImDrawListSplitter_Split) = GetProcAddress(handle, "ImDrawListSplitter_Split"); throwIf(!ImDrawListSplitter_Split);
+		*(cast(void**)&ImDrawListSplitter_destroy) = GetProcAddress(handle, "ImDrawListSplitter_destroy"); throwIf(!ImDrawListSplitter_destroy);
+		*(cast(void**)&ImDrawList_AddBezierCubic) = GetProcAddress(handle, "ImDrawList_AddBezierCubic"); throwIf(!ImDrawList_AddBezierCubic);
+		*(cast(void**)&ImDrawList_AddBezierQuadratic) = GetProcAddress(handle, "ImDrawList_AddBezierQuadratic"); throwIf(!ImDrawList_AddBezierQuadratic);
+		*(cast(void**)&ImDrawList_AddCallback) = GetProcAddress(handle, "ImDrawList_AddCallback"); throwIf(!ImDrawList_AddCallback);
+		*(cast(void**)&ImDrawList_AddCircle) = GetProcAddress(handle, "ImDrawList_AddCircle"); throwIf(!ImDrawList_AddCircle);
+		*(cast(void**)&ImDrawList_AddCircleFilled) = GetProcAddress(handle, "ImDrawList_AddCircleFilled"); throwIf(!ImDrawList_AddCircleFilled);
+		*(cast(void**)&ImDrawList_AddConvexPolyFilled) = GetProcAddress(handle, "ImDrawList_AddConvexPolyFilled"); throwIf(!ImDrawList_AddConvexPolyFilled);
+		*(cast(void**)&ImDrawList_AddDrawCmd) = GetProcAddress(handle, "ImDrawList_AddDrawCmd"); throwIf(!ImDrawList_AddDrawCmd);
+		*(cast(void**)&ImDrawList_AddImage) = GetProcAddress(handle, "ImDrawList_AddImage"); throwIf(!ImDrawList_AddImage);
+		*(cast(void**)&ImDrawList_AddImageQuad) = GetProcAddress(handle, "ImDrawList_AddImageQuad"); throwIf(!ImDrawList_AddImageQuad);
+		*(cast(void**)&ImDrawList_AddImageRounded) = GetProcAddress(handle, "ImDrawList_AddImageRounded"); throwIf(!ImDrawList_AddImageRounded);
+		*(cast(void**)&ImDrawList_AddLine) = GetProcAddress(handle, "ImDrawList_AddLine"); throwIf(!ImDrawList_AddLine);
+		*(cast(void**)&ImDrawList_AddNgon) = GetProcAddress(handle, "ImDrawList_AddNgon"); throwIf(!ImDrawList_AddNgon);
+		*(cast(void**)&ImDrawList_AddNgonFilled) = GetProcAddress(handle, "ImDrawList_AddNgonFilled"); throwIf(!ImDrawList_AddNgonFilled);
+		*(cast(void**)&ImDrawList_AddPolyline) = GetProcAddress(handle, "ImDrawList_AddPolyline"); throwIf(!ImDrawList_AddPolyline);
+		*(cast(void**)&ImDrawList_AddQuad) = GetProcAddress(handle, "ImDrawList_AddQuad"); throwIf(!ImDrawList_AddQuad);
+		*(cast(void**)&ImDrawList_AddQuadFilled) = GetProcAddress(handle, "ImDrawList_AddQuadFilled"); throwIf(!ImDrawList_AddQuadFilled);
+		*(cast(void**)&ImDrawList_AddRect) = GetProcAddress(handle, "ImDrawList_AddRect"); throwIf(!ImDrawList_AddRect);
+		*(cast(void**)&ImDrawList_AddRectFilled) = GetProcAddress(handle, "ImDrawList_AddRectFilled"); throwIf(!ImDrawList_AddRectFilled);
+		*(cast(void**)&ImDrawList_AddRectFilledMultiColor) = GetProcAddress(handle, "ImDrawList_AddRectFilledMultiColor"); throwIf(!ImDrawList_AddRectFilledMultiColor);
+		*(cast(void**)&ImDrawList_AddText_FontPtr) = GetProcAddress(handle, "ImDrawList_AddText_FontPtr"); throwIf(!ImDrawList_AddText_FontPtr);
+		*(cast(void**)&ImDrawList_AddText_Vec2) = GetProcAddress(handle, "ImDrawList_AddText_Vec2"); throwIf(!ImDrawList_AddText_Vec2);
+		*(cast(void**)&ImDrawList_AddTriangle) = GetProcAddress(handle, "ImDrawList_AddTriangle"); throwIf(!ImDrawList_AddTriangle);
+		*(cast(void**)&ImDrawList_AddTriangleFilled) = GetProcAddress(handle, "ImDrawList_AddTriangleFilled"); throwIf(!ImDrawList_AddTriangleFilled);
+		*(cast(void**)&ImDrawList_ChannelsMerge) = GetProcAddress(handle, "ImDrawList_ChannelsMerge"); throwIf(!ImDrawList_ChannelsMerge);
+		*(cast(void**)&ImDrawList_ChannelsSetCurrent) = GetProcAddress(handle, "ImDrawList_ChannelsSetCurrent"); throwIf(!ImDrawList_ChannelsSetCurrent);
+		*(cast(void**)&ImDrawList_ChannelsSplit) = GetProcAddress(handle, "ImDrawList_ChannelsSplit"); throwIf(!ImDrawList_ChannelsSplit);
+		*(cast(void**)&ImDrawList_CloneOutput) = GetProcAddress(handle, "ImDrawList_CloneOutput"); throwIf(!ImDrawList_CloneOutput);
+		*(cast(void**)&ImDrawList_GetClipRectMax) = GetProcAddress(handle, "ImDrawList_GetClipRectMax"); throwIf(!ImDrawList_GetClipRectMax);
+		*(cast(void**)&ImDrawList_GetClipRectMin) = GetProcAddress(handle, "ImDrawList_GetClipRectMin"); throwIf(!ImDrawList_GetClipRectMin);
+		*(cast(void**)&ImDrawList_ImDrawList) = GetProcAddress(handle, "ImDrawList_ImDrawList"); throwIf(!ImDrawList_ImDrawList);
+		*(cast(void**)&ImDrawList_PathArcTo) = GetProcAddress(handle, "ImDrawList_PathArcTo"); throwIf(!ImDrawList_PathArcTo);
+		*(cast(void**)&ImDrawList_PathArcToFast) = GetProcAddress(handle, "ImDrawList_PathArcToFast"); throwIf(!ImDrawList_PathArcToFast);
+		*(cast(void**)&ImDrawList_PathBezierCubicCurveTo) = GetProcAddress(handle, "ImDrawList_PathBezierCubicCurveTo"); throwIf(!ImDrawList_PathBezierCubicCurveTo);
+		*(cast(void**)&ImDrawList_PathBezierQuadraticCurveTo) = GetProcAddress(handle, "ImDrawList_PathBezierQuadraticCurveTo"); throwIf(!ImDrawList_PathBezierQuadraticCurveTo);
+		*(cast(void**)&ImDrawList_PathClear) = GetProcAddress(handle, "ImDrawList_PathClear"); throwIf(!ImDrawList_PathClear);
+		*(cast(void**)&ImDrawList_PathFillConvex) = GetProcAddress(handle, "ImDrawList_PathFillConvex"); throwIf(!ImDrawList_PathFillConvex);
+		*(cast(void**)&ImDrawList_PathLineTo) = GetProcAddress(handle, "ImDrawList_PathLineTo"); throwIf(!ImDrawList_PathLineTo);
+		*(cast(void**)&ImDrawList_PathLineToMergeDuplicate) = GetProcAddress(handle, "ImDrawList_PathLineToMergeDuplicate"); throwIf(!ImDrawList_PathLineToMergeDuplicate);
+		*(cast(void**)&ImDrawList_PathRect) = GetProcAddress(handle, "ImDrawList_PathRect"); throwIf(!ImDrawList_PathRect);
+		*(cast(void**)&ImDrawList_PathStroke) = GetProcAddress(handle, "ImDrawList_PathStroke"); throwIf(!ImDrawList_PathStroke);
+		*(cast(void**)&ImDrawList_PopClipRect) = GetProcAddress(handle, "ImDrawList_PopClipRect"); throwIf(!ImDrawList_PopClipRect);
+		*(cast(void**)&ImDrawList_PopTextureID) = GetProcAddress(handle, "ImDrawList_PopTextureID"); throwIf(!ImDrawList_PopTextureID);
+		*(cast(void**)&ImDrawList_PrimQuadUV) = GetProcAddress(handle, "ImDrawList_PrimQuadUV"); throwIf(!ImDrawList_PrimQuadUV);
+		*(cast(void**)&ImDrawList_PrimRect) = GetProcAddress(handle, "ImDrawList_PrimRect"); throwIf(!ImDrawList_PrimRect);
+		*(cast(void**)&ImDrawList_PrimRectUV) = GetProcAddress(handle, "ImDrawList_PrimRectUV"); throwIf(!ImDrawList_PrimRectUV);
+		*(cast(void**)&ImDrawList_PrimReserve) = GetProcAddress(handle, "ImDrawList_PrimReserve"); throwIf(!ImDrawList_PrimReserve);
+		*(cast(void**)&ImDrawList_PrimUnreserve) = GetProcAddress(handle, "ImDrawList_PrimUnreserve"); throwIf(!ImDrawList_PrimUnreserve);
+		*(cast(void**)&ImDrawList_PrimVtx) = GetProcAddress(handle, "ImDrawList_PrimVtx"); throwIf(!ImDrawList_PrimVtx);
+		*(cast(void**)&ImDrawList_PrimWriteIdx) = GetProcAddress(handle, "ImDrawList_PrimWriteIdx"); throwIf(!ImDrawList_PrimWriteIdx);
+		*(cast(void**)&ImDrawList_PrimWriteVtx) = GetProcAddress(handle, "ImDrawList_PrimWriteVtx"); throwIf(!ImDrawList_PrimWriteVtx);
+		*(cast(void**)&ImDrawList_PushClipRect) = GetProcAddress(handle, "ImDrawList_PushClipRect"); throwIf(!ImDrawList_PushClipRect);
+		*(cast(void**)&ImDrawList_PushClipRectFullScreen) = GetProcAddress(handle, "ImDrawList_PushClipRectFullScreen"); throwIf(!ImDrawList_PushClipRectFullScreen);
+		*(cast(void**)&ImDrawList_PushTextureID) = GetProcAddress(handle, "ImDrawList_PushTextureID"); throwIf(!ImDrawList_PushTextureID);
+		*(cast(void**)&ImDrawList__CalcCircleAutoSegmentCount) = GetProcAddress(handle, "ImDrawList__CalcCircleAutoSegmentCount"); throwIf(!ImDrawList__CalcCircleAutoSegmentCount);
+		*(cast(void**)&ImDrawList__ClearFreeMemory) = GetProcAddress(handle, "ImDrawList__ClearFreeMemory"); throwIf(!ImDrawList__ClearFreeMemory);
+		*(cast(void**)&ImDrawList__OnChangedClipRect) = GetProcAddress(handle, "ImDrawList__OnChangedClipRect"); throwIf(!ImDrawList__OnChangedClipRect);
+		*(cast(void**)&ImDrawList__OnChangedTextureID) = GetProcAddress(handle, "ImDrawList__OnChangedTextureID"); throwIf(!ImDrawList__OnChangedTextureID);
+		*(cast(void**)&ImDrawList__OnChangedVtxOffset) = GetProcAddress(handle, "ImDrawList__OnChangedVtxOffset"); throwIf(!ImDrawList__OnChangedVtxOffset);
+		*(cast(void**)&ImDrawList__PathArcToFastEx) = GetProcAddress(handle, "ImDrawList__PathArcToFastEx"); throwIf(!ImDrawList__PathArcToFastEx);
+		*(cast(void**)&ImDrawList__PathArcToN) = GetProcAddress(handle, "ImDrawList__PathArcToN"); throwIf(!ImDrawList__PathArcToN);
+		*(cast(void**)&ImDrawList__PopUnusedDrawCmd) = GetProcAddress(handle, "ImDrawList__PopUnusedDrawCmd"); throwIf(!ImDrawList__PopUnusedDrawCmd);
+		*(cast(void**)&ImDrawList__ResetForNewFrame) = GetProcAddress(handle, "ImDrawList__ResetForNewFrame"); throwIf(!ImDrawList__ResetForNewFrame);
+		*(cast(void**)&ImDrawList__TryMergeDrawCmds) = GetProcAddress(handle, "ImDrawList__TryMergeDrawCmds"); throwIf(!ImDrawList__TryMergeDrawCmds);
+		*(cast(void**)&ImDrawList_destroy) = GetProcAddress(handle, "ImDrawList_destroy"); throwIf(!ImDrawList_destroy);
+		*(cast(void**)&ImFontAtlasCustomRect_ImFontAtlasCustomRect) = GetProcAddress(handle, "ImFontAtlasCustomRect_ImFontAtlasCustomRect"); throwIf(!ImFontAtlasCustomRect_ImFontAtlasCustomRect);
+		*(cast(void**)&ImFontAtlasCustomRect_IsPacked) = GetProcAddress(handle, "ImFontAtlasCustomRect_IsPacked"); throwIf(!ImFontAtlasCustomRect_IsPacked);
+		*(cast(void**)&ImFontAtlasCustomRect_destroy) = GetProcAddress(handle, "ImFontAtlasCustomRect_destroy"); throwIf(!ImFontAtlasCustomRect_destroy);
+		*(cast(void**)&ImFontAtlas_AddCustomRectFontGlyph) = GetProcAddress(handle, "ImFontAtlas_AddCustomRectFontGlyph"); throwIf(!ImFontAtlas_AddCustomRectFontGlyph);
+		*(cast(void**)&ImFontAtlas_AddCustomRectRegular) = GetProcAddress(handle, "ImFontAtlas_AddCustomRectRegular"); throwIf(!ImFontAtlas_AddCustomRectRegular);
+		*(cast(void**)&ImFontAtlas_AddFont) = GetProcAddress(handle, "ImFontAtlas_AddFont"); throwIf(!ImFontAtlas_AddFont);
+		*(cast(void**)&ImFontAtlas_AddFontDefault) = GetProcAddress(handle, "ImFontAtlas_AddFontDefault"); throwIf(!ImFontAtlas_AddFontDefault);
+		*(cast(void**)&ImFontAtlas_AddFontFromFileTTF) = GetProcAddress(handle, "ImFontAtlas_AddFontFromFileTTF"); throwIf(!ImFontAtlas_AddFontFromFileTTF);
+		*(cast(void**)&ImFontAtlas_AddFontFromMemoryCompressedBase85TTF) = GetProcAddress(handle, "ImFontAtlas_AddFontFromMemoryCompressedBase85TTF"); throwIf(!ImFontAtlas_AddFontFromMemoryCompressedBase85TTF);
+		*(cast(void**)&ImFontAtlas_AddFontFromMemoryCompressedTTF) = GetProcAddress(handle, "ImFontAtlas_AddFontFromMemoryCompressedTTF"); throwIf(!ImFontAtlas_AddFontFromMemoryCompressedTTF);
+		*(cast(void**)&ImFontAtlas_AddFontFromMemoryTTF) = GetProcAddress(handle, "ImFontAtlas_AddFontFromMemoryTTF"); throwIf(!ImFontAtlas_AddFontFromMemoryTTF);
+		*(cast(void**)&ImFontAtlas_Build) = GetProcAddress(handle, "ImFontAtlas_Build"); throwIf(!ImFontAtlas_Build);
+		*(cast(void**)&ImFontAtlas_CalcCustomRectUV) = GetProcAddress(handle, "ImFontAtlas_CalcCustomRectUV"); throwIf(!ImFontAtlas_CalcCustomRectUV);
+		*(cast(void**)&ImFontAtlas_Clear) = GetProcAddress(handle, "ImFontAtlas_Clear"); throwIf(!ImFontAtlas_Clear);
+		*(cast(void**)&ImFontAtlas_ClearFonts) = GetProcAddress(handle, "ImFontAtlas_ClearFonts"); throwIf(!ImFontAtlas_ClearFonts);
+		*(cast(void**)&ImFontAtlas_ClearInputData) = GetProcAddress(handle, "ImFontAtlas_ClearInputData"); throwIf(!ImFontAtlas_ClearInputData);
+		*(cast(void**)&ImFontAtlas_ClearTexData) = GetProcAddress(handle, "ImFontAtlas_ClearTexData"); throwIf(!ImFontAtlas_ClearTexData);
+		*(cast(void**)&ImFontAtlas_GetCustomRectByIndex) = GetProcAddress(handle, "ImFontAtlas_GetCustomRectByIndex"); throwIf(!ImFontAtlas_GetCustomRectByIndex);
+		*(cast(void**)&ImFontAtlas_GetGlyphRangesChineseFull) = GetProcAddress(handle, "ImFontAtlas_GetGlyphRangesChineseFull"); throwIf(!ImFontAtlas_GetGlyphRangesChineseFull);
+		*(cast(void**)&ImFontAtlas_GetGlyphRangesChineseSimplifiedCommon) = GetProcAddress(handle, "ImFontAtlas_GetGlyphRangesChineseSimplifiedCommon"); throwIf(!ImFontAtlas_GetGlyphRangesChineseSimplifiedCommon);
+		*(cast(void**)&ImFontAtlas_GetGlyphRangesCyrillic) = GetProcAddress(handle, "ImFontAtlas_GetGlyphRangesCyrillic"); throwIf(!ImFontAtlas_GetGlyphRangesCyrillic);
+		*(cast(void**)&ImFontAtlas_GetGlyphRangesDefault) = GetProcAddress(handle, "ImFontAtlas_GetGlyphRangesDefault"); throwIf(!ImFontAtlas_GetGlyphRangesDefault);
+		*(cast(void**)&ImFontAtlas_GetGlyphRangesJapanese) = GetProcAddress(handle, "ImFontAtlas_GetGlyphRangesJapanese"); throwIf(!ImFontAtlas_GetGlyphRangesJapanese);
+		*(cast(void**)&ImFontAtlas_GetGlyphRangesKorean) = GetProcAddress(handle, "ImFontAtlas_GetGlyphRangesKorean"); throwIf(!ImFontAtlas_GetGlyphRangesKorean);
+		*(cast(void**)&ImFontAtlas_GetGlyphRangesThai) = GetProcAddress(handle, "ImFontAtlas_GetGlyphRangesThai"); throwIf(!ImFontAtlas_GetGlyphRangesThai);
+		*(cast(void**)&ImFontAtlas_GetGlyphRangesVietnamese) = GetProcAddress(handle, "ImFontAtlas_GetGlyphRangesVietnamese"); throwIf(!ImFontAtlas_GetGlyphRangesVietnamese);
+		*(cast(void**)&ImFontAtlas_GetMouseCursorTexData) = GetProcAddress(handle, "ImFontAtlas_GetMouseCursorTexData"); throwIf(!ImFontAtlas_GetMouseCursorTexData);
+		*(cast(void**)&ImFontAtlas_GetTexDataAsAlpha8) = GetProcAddress(handle, "ImFontAtlas_GetTexDataAsAlpha8"); throwIf(!ImFontAtlas_GetTexDataAsAlpha8);
+		*(cast(void**)&ImFontAtlas_GetTexDataAsRGBA32) = GetProcAddress(handle, "ImFontAtlas_GetTexDataAsRGBA32"); throwIf(!ImFontAtlas_GetTexDataAsRGBA32);
+		*(cast(void**)&ImFontAtlas_ImFontAtlas) = GetProcAddress(handle, "ImFontAtlas_ImFontAtlas"); throwIf(!ImFontAtlas_ImFontAtlas);
+		*(cast(void**)&ImFontAtlas_IsBuilt) = GetProcAddress(handle, "ImFontAtlas_IsBuilt"); throwIf(!ImFontAtlas_IsBuilt);
+		*(cast(void**)&ImFontAtlas_SetTexID) = GetProcAddress(handle, "ImFontAtlas_SetTexID"); throwIf(!ImFontAtlas_SetTexID);
+		*(cast(void**)&ImFontAtlas_destroy) = GetProcAddress(handle, "ImFontAtlas_destroy"); throwIf(!ImFontAtlas_destroy);
+		*(cast(void**)&ImFontConfig_ImFontConfig) = GetProcAddress(handle, "ImFontConfig_ImFontConfig"); throwIf(!ImFontConfig_ImFontConfig);
+		*(cast(void**)&ImFontConfig_destroy) = GetProcAddress(handle, "ImFontConfig_destroy"); throwIf(!ImFontConfig_destroy);
+		*(cast(void**)&ImFontGlyphRangesBuilder_AddChar) = GetProcAddress(handle, "ImFontGlyphRangesBuilder_AddChar"); throwIf(!ImFontGlyphRangesBuilder_AddChar);
+		*(cast(void**)&ImFontGlyphRangesBuilder_AddRanges) = GetProcAddress(handle, "ImFontGlyphRangesBuilder_AddRanges"); throwIf(!ImFontGlyphRangesBuilder_AddRanges);
+		*(cast(void**)&ImFontGlyphRangesBuilder_AddText) = GetProcAddress(handle, "ImFontGlyphRangesBuilder_AddText"); throwIf(!ImFontGlyphRangesBuilder_AddText);
+		*(cast(void**)&ImFontGlyphRangesBuilder_BuildRanges) = GetProcAddress(handle, "ImFontGlyphRangesBuilder_BuildRanges"); throwIf(!ImFontGlyphRangesBuilder_BuildRanges);
+		*(cast(void**)&ImFontGlyphRangesBuilder_Clear) = GetProcAddress(handle, "ImFontGlyphRangesBuilder_Clear"); throwIf(!ImFontGlyphRangesBuilder_Clear);
+		*(cast(void**)&ImFontGlyphRangesBuilder_GetBit) = GetProcAddress(handle, "ImFontGlyphRangesBuilder_GetBit"); throwIf(!ImFontGlyphRangesBuilder_GetBit);
+		*(cast(void**)&ImFontGlyphRangesBuilder_ImFontGlyphRangesBuilder) = GetProcAddress(handle, "ImFontGlyphRangesBuilder_ImFontGlyphRangesBuilder"); throwIf(!ImFontGlyphRangesBuilder_ImFontGlyphRangesBuilder);
+		*(cast(void**)&ImFontGlyphRangesBuilder_SetBit) = GetProcAddress(handle, "ImFontGlyphRangesBuilder_SetBit"); throwIf(!ImFontGlyphRangesBuilder_SetBit);
+		*(cast(void**)&ImFontGlyphRangesBuilder_destroy) = GetProcAddress(handle, "ImFontGlyphRangesBuilder_destroy"); throwIf(!ImFontGlyphRangesBuilder_destroy);
+		*(cast(void**)&ImFont_AddGlyph) = GetProcAddress(handle, "ImFont_AddGlyph"); throwIf(!ImFont_AddGlyph);
+		*(cast(void**)&ImFont_AddRemapChar) = GetProcAddress(handle, "ImFont_AddRemapChar"); throwIf(!ImFont_AddRemapChar);
+		*(cast(void**)&ImFont_BuildLookupTable) = GetProcAddress(handle, "ImFont_BuildLookupTable"); throwIf(!ImFont_BuildLookupTable);
+		*(cast(void**)&ImFont_CalcTextSizeA) = GetProcAddress(handle, "ImFont_CalcTextSizeA"); throwIf(!ImFont_CalcTextSizeA);
+		*(cast(void**)&ImFont_CalcWordWrapPositionA) = GetProcAddress(handle, "ImFont_CalcWordWrapPositionA"); throwIf(!ImFont_CalcWordWrapPositionA);
+		*(cast(void**)&ImFont_ClearOutputData) = GetProcAddress(handle, "ImFont_ClearOutputData"); throwIf(!ImFont_ClearOutputData);
+		*(cast(void**)&ImFont_FindGlyph) = GetProcAddress(handle, "ImFont_FindGlyph"); throwIf(!ImFont_FindGlyph);
+		*(cast(void**)&ImFont_FindGlyphNoFallback) = GetProcAddress(handle, "ImFont_FindGlyphNoFallback"); throwIf(!ImFont_FindGlyphNoFallback);
+		*(cast(void**)&ImFont_GetCharAdvance) = GetProcAddress(handle, "ImFont_GetCharAdvance"); throwIf(!ImFont_GetCharAdvance);
+		*(cast(void**)&ImFont_GetDebugName) = GetProcAddress(handle, "ImFont_GetDebugName"); throwIf(!ImFont_GetDebugName);
+		*(cast(void**)&ImFont_GrowIndex) = GetProcAddress(handle, "ImFont_GrowIndex"); throwIf(!ImFont_GrowIndex);
+		*(cast(void**)&ImFont_ImFont) = GetProcAddress(handle, "ImFont_ImFont"); throwIf(!ImFont_ImFont);
+		*(cast(void**)&ImFont_IsGlyphRangeUnused) = GetProcAddress(handle, "ImFont_IsGlyphRangeUnused"); throwIf(!ImFont_IsGlyphRangeUnused);
+		*(cast(void**)&ImFont_IsLoaded) = GetProcAddress(handle, "ImFont_IsLoaded"); throwIf(!ImFont_IsLoaded);
+		*(cast(void**)&ImFont_RenderChar) = GetProcAddress(handle, "ImFont_RenderChar"); throwIf(!ImFont_RenderChar);
+		*(cast(void**)&ImFont_RenderText) = GetProcAddress(handle, "ImFont_RenderText"); throwIf(!ImFont_RenderText);
+		*(cast(void**)&ImFont_SetGlyphVisible) = GetProcAddress(handle, "ImFont_SetGlyphVisible"); throwIf(!ImFont_SetGlyphVisible);
+		*(cast(void**)&ImFont_destroy) = GetProcAddress(handle, "ImFont_destroy"); throwIf(!ImFont_destroy);
 		*(cast(void**)&ImGuiComboPreviewData_ImGuiComboPreviewData) = GetProcAddress(handle, "ImGuiComboPreviewData_ImGuiComboPreviewData"); throwIf(!ImGuiComboPreviewData_ImGuiComboPreviewData);
 		*(cast(void**)&ImGuiComboPreviewData_destroy) = GetProcAddress(handle, "ImGuiComboPreviewData_destroy"); throwIf(!ImGuiComboPreviewData_destroy);
 		*(cast(void**)&ImGuiContextHook_ImGuiContextHook) = GetProcAddress(handle, "ImGuiContextHook_ImGuiContextHook"); throwIf(!ImGuiContextHook_ImGuiContextHook);
@@ -251,6 +412,52 @@ private struct _CImguiLoader {
 		*(cast(void**)&ImGuiWindow_TitleBarHeight) = GetProcAddress(handle, "ImGuiWindow_TitleBarHeight"); throwIf(!ImGuiWindow_TitleBarHeight);
 		*(cast(void**)&ImGuiWindow_TitleBarRect) = GetProcAddress(handle, "ImGuiWindow_TitleBarRect"); throwIf(!ImGuiWindow_TitleBarRect);
 		*(cast(void**)&ImGuiWindow_destroy) = GetProcAddress(handle, "ImGuiWindow_destroy"); throwIf(!ImGuiWindow_destroy);
+		*(cast(void**)&ImRect_Add_Rect) = GetProcAddress(handle, "ImRect_Add_Rect"); throwIf(!ImRect_Add_Rect);
+		*(cast(void**)&ImRect_Add_Vec2) = GetProcAddress(handle, "ImRect_Add_Vec2"); throwIf(!ImRect_Add_Vec2);
+		*(cast(void**)&ImRect_ClipWith) = GetProcAddress(handle, "ImRect_ClipWith"); throwIf(!ImRect_ClipWith);
+		*(cast(void**)&ImRect_ClipWithFull) = GetProcAddress(handle, "ImRect_ClipWithFull"); throwIf(!ImRect_ClipWithFull);
+		*(cast(void**)&ImRect_Contains_Rect) = GetProcAddress(handle, "ImRect_Contains_Rect"); throwIf(!ImRect_Contains_Rect);
+		*(cast(void**)&ImRect_Contains_Vec2) = GetProcAddress(handle, "ImRect_Contains_Vec2"); throwIf(!ImRect_Contains_Vec2);
+		*(cast(void**)&ImRect_Expand_Float) = GetProcAddress(handle, "ImRect_Expand_Float"); throwIf(!ImRect_Expand_Float);
+		*(cast(void**)&ImRect_Expand_Vec2) = GetProcAddress(handle, "ImRect_Expand_Vec2"); throwIf(!ImRect_Expand_Vec2);
+		*(cast(void**)&ImRect_Floor) = GetProcAddress(handle, "ImRect_Floor"); throwIf(!ImRect_Floor);
+		*(cast(void**)&ImRect_GetArea) = GetProcAddress(handle, "ImRect_GetArea"); throwIf(!ImRect_GetArea);
+		*(cast(void**)&ImRect_GetBL) = GetProcAddress(handle, "ImRect_GetBL"); throwIf(!ImRect_GetBL);
+		*(cast(void**)&ImRect_GetBR) = GetProcAddress(handle, "ImRect_GetBR"); throwIf(!ImRect_GetBR);
+		*(cast(void**)&ImRect_GetCenter) = GetProcAddress(handle, "ImRect_GetCenter"); throwIf(!ImRect_GetCenter);
+		*(cast(void**)&ImRect_GetHeight) = GetProcAddress(handle, "ImRect_GetHeight"); throwIf(!ImRect_GetHeight);
+		*(cast(void**)&ImRect_GetSize) = GetProcAddress(handle, "ImRect_GetSize"); throwIf(!ImRect_GetSize);
+		*(cast(void**)&ImRect_GetTL) = GetProcAddress(handle, "ImRect_GetTL"); throwIf(!ImRect_GetTL);
+		*(cast(void**)&ImRect_GetTR) = GetProcAddress(handle, "ImRect_GetTR"); throwIf(!ImRect_GetTR);
+		*(cast(void**)&ImRect_GetWidth) = GetProcAddress(handle, "ImRect_GetWidth"); throwIf(!ImRect_GetWidth);
+		*(cast(void**)&ImRect_ImRect_Float) = GetProcAddress(handle, "ImRect_ImRect_Float"); throwIf(!ImRect_ImRect_Float);
+		*(cast(void**)&ImRect_ImRect_Nil) = GetProcAddress(handle, "ImRect_ImRect_Nil"); throwIf(!ImRect_ImRect_Nil);
+		*(cast(void**)&ImRect_ImRect_Vec2) = GetProcAddress(handle, "ImRect_ImRect_Vec2"); throwIf(!ImRect_ImRect_Vec2);
+		*(cast(void**)&ImRect_ImRect_Vec4) = GetProcAddress(handle, "ImRect_ImRect_Vec4"); throwIf(!ImRect_ImRect_Vec4);
+		*(cast(void**)&ImRect_IsInverted) = GetProcAddress(handle, "ImRect_IsInverted"); throwIf(!ImRect_IsInverted);
+		*(cast(void**)&ImRect_Overlaps) = GetProcAddress(handle, "ImRect_Overlaps"); throwIf(!ImRect_Overlaps);
+		*(cast(void**)&ImRect_ToVec4) = GetProcAddress(handle, "ImRect_ToVec4"); throwIf(!ImRect_ToVec4);
+		*(cast(void**)&ImRect_Translate) = GetProcAddress(handle, "ImRect_Translate"); throwIf(!ImRect_Translate);
+		*(cast(void**)&ImRect_TranslateX) = GetProcAddress(handle, "ImRect_TranslateX"); throwIf(!ImRect_TranslateX);
+		*(cast(void**)&ImRect_TranslateY) = GetProcAddress(handle, "ImRect_TranslateY"); throwIf(!ImRect_TranslateY);
+		*(cast(void**)&ImRect_destroy) = GetProcAddress(handle, "ImRect_destroy"); throwIf(!ImRect_destroy);
+		*(cast(void**)&ImVec1_ImVec1_Float) = GetProcAddress(handle, "ImVec1_ImVec1_Float"); throwIf(!ImVec1_ImVec1_Float);
+		*(cast(void**)&ImVec1_ImVec1_Nil) = GetProcAddress(handle, "ImVec1_ImVec1_Nil"); throwIf(!ImVec1_ImVec1_Nil);
+		*(cast(void**)&ImVec1_destroy) = GetProcAddress(handle, "ImVec1_destroy"); throwIf(!ImVec1_destroy);
+		*(cast(void**)&ImVec2_ImVec2_Float) = GetProcAddress(handle, "ImVec2_ImVec2_Float"); throwIf(!ImVec2_ImVec2_Float);
+		*(cast(void**)&ImVec2_ImVec2_Nil) = GetProcAddress(handle, "ImVec2_ImVec2_Nil"); throwIf(!ImVec2_ImVec2_Nil);
+		*(cast(void**)&ImVec2_destroy) = GetProcAddress(handle, "ImVec2_destroy"); throwIf(!ImVec2_destroy);
+		*(cast(void**)&ImVec2ih_ImVec2ih_Nil) = GetProcAddress(handle, "ImVec2ih_ImVec2ih_Nil"); throwIf(!ImVec2ih_ImVec2ih_Nil);
+		*(cast(void**)&ImVec2ih_ImVec2ih_Vec2) = GetProcAddress(handle, "ImVec2ih_ImVec2ih_Vec2"); throwIf(!ImVec2ih_ImVec2ih_Vec2);
+		*(cast(void**)&ImVec2ih_ImVec2ih_short) = GetProcAddress(handle, "ImVec2ih_ImVec2ih_short"); throwIf(!ImVec2ih_ImVec2ih_short);
+		*(cast(void**)&ImVec2ih_destroy) = GetProcAddress(handle, "ImVec2ih_destroy"); throwIf(!ImVec2ih_destroy);
+		*(cast(void**)&ImVec4_ImVec4_Float) = GetProcAddress(handle, "ImVec4_ImVec4_Float"); throwIf(!ImVec4_ImVec4_Float);
+		*(cast(void**)&ImVec4_ImVec4_Nil) = GetProcAddress(handle, "ImVec4_ImVec4_Nil"); throwIf(!ImVec4_ImVec4_Nil);
+		*(cast(void**)&ImVec4_destroy) = GetProcAddress(handle, "ImVec4_destroy"); throwIf(!ImVec4_destroy);
+		*(cast(void**)&ImVector_ImWchar_Init) = GetProcAddress(handle, "ImVector_ImWchar_Init"); throwIf(!ImVector_ImWchar_Init);
+		*(cast(void**)&ImVector_ImWchar_UnInit) = GetProcAddress(handle, "ImVector_ImWchar_UnInit"); throwIf(!ImVector_ImWchar_UnInit);
+		*(cast(void**)&ImVector_ImWchar_create) = GetProcAddress(handle, "ImVector_ImWchar_create"); throwIf(!ImVector_ImWchar_create);
+		*(cast(void**)&ImVector_ImWchar_destroy) = GetProcAddress(handle, "ImVector_ImWchar_destroy"); throwIf(!ImVector_ImWchar_destroy);
 		*(cast(void**)&igAcceptDragDropPayload) = GetProcAddress(handle, "igAcceptDragDropPayload"); throwIf(!igAcceptDragDropPayload);
 		*(cast(void**)&igActivateItem) = GetProcAddress(handle, "igActivateItem"); throwIf(!igActivateItem);
 		*(cast(void**)&igAddContextHook) = GetProcAddress(handle, "igAddContextHook"); throwIf(!igAddContextHook);
@@ -1081,6 +1288,41 @@ private struct _CImguiLoader {
 __gshared _CImguiLoader CImguiLoader;
 // End of CImguiLoader
 
+// ImVector template
+
+struct ImVector(T) {
+    import core.stdc.string : memcpy;
+    
+    int                 Size;
+    int                 Capacity;
+    T*                  Data;
+
+    void clear() { if (Data) { Size = Capacity = 0; igMemFree(Data); Data = null; } }
+    bool empty() { return Size == 0; }
+
+    void push_back(T* v) { if (Size == Capacity) reserve(_grow_capacity(Size + 1)); memcpy(&Data[Size], &v, v.sizeof); Size++; }
+
+    void reserve(int new_capacity) {
+        if (new_capacity <= Capacity) return; T* new_data = cast(T*)igMemAlloc(cast(size_t)new_capacity * T.sizeof); if (Data) { memcpy(new_data, Data, cast(size_t)Size * T.sizeof); igMemFree(Data); } Data = new_data; Capacity = new_capacity;
+    }
+
+    int _grow_capacity(int sz) { int new_capacity = Capacity ? (Capacity + Capacity / 2) : 8; return new_capacity > sz ? new_capacity : sz; }
+
+    void resize(int new_size) { if (new_size > Capacity) reserve(_grow_capacity(new_size)); Size = new_size; }
+}
+struct ImPool(T) {
+    ImVector!T      Buf;        // Contiguous data
+    ImGuiStorage    Map;        // ID->Index
+    ImPoolIdx       FreeIdx;    // Next free idx to use
+    ImPoolIdx       AliveCount; // Number of active/alive items (for display purpose)
+}
+struct ImChunkStream(T) {
+    ImVector!char  Buf;
+}
+struct ImSpan(T) {
+    T*                  Data;
+    T*                  DataEnd;
+}
 // Aliases
 alias ImBitArrayForNamedKeys = ImBitArray_ImGuiKey_NamedKey_COUNT__lessImGuiKey_NamedKey_BEGIN;
 alias ImDrawCallback = extern(C) void function(ImDrawList* parent_list, ImDrawCmd* cmd) nothrow;
@@ -3108,20 +3350,14 @@ struct ImBitArray_ImGuiKey_NamedKey_COUNT__lessImGuiKey_NamedKey_BEGIN {
 	ImU32[(ImGuiKey_NamedKey_COUNT + 31) >> 5] Storage;
 }
 struct ImBitVector {
-	ImVector_ImU32 Storage;
-}
-struct ImChunkStream_ImGuiTableSettings {
-	ImVector_char Buf;
-}
-struct ImChunkStream_ImGuiWindowSettings {
-	ImVector_char Buf;
+	ImVector!ImU32 Storage;
 }
 struct ImColor {
 	ImVec4 Value;
 }
 struct ImDrawChannel {
-	ImVector_ImDrawCmd _CmdBuffer;
-	ImVector_ImDrawIdx _IdxBuffer;
+	ImVector!ImDrawCmd _CmdBuffer;
+	ImVector!ImDrawIdx _IdxBuffer;
 }
 struct ImDrawCmd {
 	ImVec4 ClipRect;
@@ -3149,21 +3385,21 @@ struct ImDrawData {
 	ImGuiViewport* OwnerViewport;
 }
 struct ImDrawDataBuilder {
-	ImVector_ImDrawListPtr[2] Layers;
+	ImVector!(ImDrawList*)[2] Layers;
 }
 struct ImDrawList {
-	ImVector_ImDrawCmd CmdBuffer;
-	ImVector_ImDrawIdx IdxBuffer;
-	ImVector_ImDrawVert VtxBuffer;
+	ImVector!ImDrawCmd CmdBuffer;
+	ImVector!ImDrawIdx IdxBuffer;
+	ImVector!ImDrawVert VtxBuffer;
 	ImDrawListFlags Flags;
 	uint _VtxCurrentIdx;
 	ImDrawListSharedData* _Data;
 	immutable(char)* _OwnerName;
 	ImDrawVert* _VtxWritePtr;
 	ImDrawIdx* _IdxWritePtr;
-	ImVector_ImVec4 _ClipRectStack;
-	ImVector_ImTextureID _TextureIdStack;
-	ImVector_ImVec2 _Path;
+	ImVector!ImVec4 _ClipRectStack;
+	ImVector!ImTextureID _TextureIdStack;
+	ImVector!ImVec2 _Path;
 	ImDrawCmdHeader _CmdHeader;
 	ImDrawListSplitter _Splitter;
 	float _FringeScale;
@@ -3184,7 +3420,7 @@ struct ImDrawListSharedData {
 struct ImDrawListSplitter {
 	int _Current;
 	int _Count;
-	ImVector_ImDrawChannel _Channels;
+	ImVector!ImDrawChannel _Channels;
 }
 struct ImDrawVert {
 	ImVec2 pos;
@@ -3192,11 +3428,11 @@ struct ImDrawVert {
 	ImU32 col;
 }
 struct ImFont {
-	ImVector_float IndexAdvanceX;
+	ImVector!float IndexAdvanceX;
 	float FallbackAdvanceX;
 	float FontSize;
-	ImVector_ImWchar IndexLookup;
-	ImVector_ImFontGlyph Glyphs;
+	ImVector!ImWchar IndexLookup;
+	ImVector!ImFontGlyph Glyphs;
 	ImFontGlyph* FallbackGlyph;
 	ImFontAtlas* ContainerAtlas;
 	ImFontConfig* ConfigData;
@@ -3225,9 +3461,9 @@ struct ImFontAtlas {
 	int TexHeight;
 	ImVec2 TexUvScale;
 	ImVec2 TexUvWhitePixel;
-	ImVector_ImFontPtr Fonts;
-	ImVector_ImFontAtlasCustomRect CustomRects;
-	ImVector_ImFontConfig ConfigData;
+	ImVector!(ImFont*) Fonts;
+	ImVector!ImFontAtlasCustomRect CustomRects;
+	ImVector!ImFontConfig ConfigData;
 	ImVec4[(63) + 1] TexUvLines;
 	ImFontBuilderIO* FontBuilderIO;
 	uint FontBuilderFlags;
@@ -3245,7 +3481,7 @@ struct ImFontAtlasCustomRect {
 	ImFont* Font;
 }
 struct ImFontBuilderIO {
-	bool function(ImFontAtlas* atlas) nothrow FontBuilder_Build;
+	extern(C) bool function(ImFontAtlas* atlas) nothrow FontBuilder_Build;
 }
 struct ImFontConfig {
 	void* FontData;
@@ -3283,7 +3519,7 @@ struct ImFontGlyph {
 	float V1;
 }
 struct ImFontGlyphRangesBuilder {
-	ImVector_ImU32 UsedChars;
+	ImVector!ImU32 UsedChars;
 }
 struct ImGuiColorMod {
 	ImGuiCol Col;
@@ -3302,8 +3538,8 @@ struct ImGuiContext {
 	bool FontAtlasOwnedByContext;
 	ImGuiIO IO;
 	ImGuiPlatformIO PlatformIO;
-	ImVector_ImGuiInputEvent InputEventsQueue;
-	ImVector_ImGuiInputEvent InputEventsTrail;
+	ImVector!ImGuiInputEvent InputEventsQueue;
+	ImVector!ImGuiInputEvent InputEventsTrail;
 	ImGuiStyle Style;
 	ImGuiConfigFlags ConfigFlagsCurrFrame;
 	ImGuiConfigFlags ConfigFlagsLastFrame;
@@ -3322,10 +3558,10 @@ struct ImGuiContext {
 	bool GcCompactAll;
 	bool TestEngineHookItems;
 	void* TestEngine;
-	ImVector_ImGuiWindowPtr Windows;
-	ImVector_ImGuiWindowPtr WindowsFocusOrder;
-	ImVector_ImGuiWindowPtr WindowsTempSortBuffer;
-	ImVector_ImGuiWindowStackData CurrentWindowStack;
+	ImVector!(ImGuiWindow*) Windows;
+	ImVector!(ImGuiWindow*) WindowsFocusOrder;
+	ImVector!(ImGuiWindow*) WindowsTempSortBuffer;
+	ImVector!ImGuiWindowStackData CurrentWindowStack;
 	ImGuiStorage WindowsById;
 	int WindowsActiveCount;
 	ImVec2 WindowsHoverPadding;
@@ -3373,16 +3609,16 @@ struct ImGuiContext {
 	ImGuiNextItemData NextItemData;
 	ImGuiLastItemData LastItemData;
 	ImGuiNextWindowData NextWindowData;
-	ImVector_ImGuiColorMod ColorStack;
-	ImVector_ImGuiStyleMod StyleVarStack;
-	ImVector_ImFontPtr FontStack;
-	ImVector_ImGuiID FocusScopeStack;
-	ImVector_ImGuiItemFlags ItemFlagsStack;
-	ImVector_ImGuiGroupData GroupStack;
-	ImVector_ImGuiPopupData OpenPopupStack;
-	ImVector_ImGuiPopupData BeginPopupStack;
+	ImVector!ImGuiColorMod ColorStack;
+	ImVector!ImGuiStyleMod StyleVarStack;
+	ImVector!(ImFont*) FontStack;
+	ImVector!ImGuiID FocusScopeStack;
+	ImVector!ImGuiItemFlags ItemFlagsStack;
+	ImVector!ImGuiGroupData GroupStack;
+	ImVector!ImGuiPopupData OpenPopupStack;
+	ImVector!ImGuiPopupData BeginPopupStack;
 	int BeginMenuCount;
-	ImVector_ImGuiViewportPPtr Viewports;
+	ImVector!(ImGuiViewportP*) Viewports;
 	float CurrentDpiScale;
 	ImGuiViewportP* CurrentViewport;
 	ImGuiViewportP* MouseViewport;
@@ -3455,20 +3691,20 @@ struct ImGuiContext {
 	ImGuiID DragDropAcceptIdPrev;
 	int DragDropAcceptFrameCount;
 	ImGuiID DragDropHoldJustPressedId;
-	ImVector_unsigned_char DragDropPayloadBufHeap;
+	ImVector!ubyte DragDropPayloadBufHeap;
 	ubyte[16] DragDropPayloadBufLocal;
 	int ClipperTempDataStacked;
-	ImVector_ImGuiListClipperData ClipperTempData;
+	ImVector!ImGuiListClipperData ClipperTempData;
 	ImGuiTable* CurrentTable;
 	int TablesTempDataStacked;
-	ImVector_ImGuiTableTempData TablesTempData;
-	ImPool_ImGuiTable Tables;
-	ImVector_float TablesLastTimeActive;
-	ImVector_ImDrawChannel DrawChannelsTempMergeBuffer;
+	ImVector!ImGuiTableTempData TablesTempData;
+	ImPool!ImGuiTable Tables;
+	ImVector!float TablesLastTimeActive;
+	ImVector!ImDrawChannel DrawChannelsTempMergeBuffer;
 	ImGuiTabBar* CurrentTabBar;
-	ImPool_ImGuiTabBar TabBars;
-	ImVector_ImGuiPtrOrIndex CurrentTabBarStack;
-	ImVector_ImGuiShrinkWidthItem ShrinkWidthBuffer;
+	ImPool!ImGuiTabBar TabBars;
+	ImVector!ImGuiPtrOrIndex CurrentTabBarStack;
+	ImVector!ImGuiShrinkWidthItem ShrinkWidthBuffer;
 	ImVec2 MouseLastValidPos;
 	ImGuiInputTextState InputTextState;
 	ImFont InputTextPasswordFont;
@@ -3489,8 +3725,8 @@ struct ImGuiContext {
 	short DisabledStackSize;
 	short TooltipOverrideCount;
 	float TooltipSlowDelay;
-	ImVector_char ClipboardHandlerData;
-	ImVector_ImGuiID MenusIdSubmittedThisFrame;
+	ImVector!char ClipboardHandlerData;
+	ImVector!ImGuiID MenusIdSubmittedThisFrame;
 	ImGuiPlatformImeData PlatformImeData;
 	ImGuiPlatformImeData PlatformImeDataPrev;
 	ImGuiID PlatformImeViewport;
@@ -3499,10 +3735,10 @@ struct ImGuiContext {
 	bool SettingsLoaded;
 	float SettingsDirtyTimer;
 	ImGuiTextBuffer SettingsIniData;
-	ImVector_ImGuiSettingsHandler SettingsHandlers;
-	ImChunkStream_ImGuiWindowSettings SettingsWindows;
-	ImChunkStream_ImGuiTableSettings SettingsTables;
-	ImVector_ImGuiContextHook Hooks;
+	ImVector!ImGuiSettingsHandler SettingsHandlers;
+	ImChunkStream!ImGuiWindowSettings SettingsWindows;
+	ImChunkStream!ImGuiTableSettings SettingsTables;
+	ImVector!ImGuiContextHook Hooks;
 	ImGuiID HookIdNext;
 	bool LogEnabled;
 	ImGuiLogType LogType;
@@ -3546,8 +3782,8 @@ struct ImGuiDataTypeTempStorage {
 }
 struct ImGuiDockContext {
 	ImGuiStorage Nodes;
-	ImVector_ImGuiDockRequest Requests;
-	ImVector_ImGuiDockNodeSettings NodesSettings;
+	ImVector!ImGuiDockRequest Requests;
+	ImVector!ImGuiDockNodeSettings NodesSettings;
 	bool WantFullRebuild;
 }
 struct ImGuiDockNode {
@@ -3559,7 +3795,7 @@ struct ImGuiDockNode {
 	ImGuiDockNodeState State;
 	ImGuiDockNode* ParentNode;
 	ImGuiDockNode*[2] ChildNodes;
-	ImVector_ImGuiWindowPtr Windows;
+	ImVector!(ImGuiWindow*) Windows;
 	ImGuiTabBar* TabBar;
 	ImVec2 Pos;
 	ImVec2 Size;
@@ -3650,10 +3886,10 @@ struct ImGuiIO {
 	void* BackendPlatformUserData;
 	void* BackendRendererUserData;
 	void* BackendLanguageUserData;
-	immutable(char)* function(void* user_data) nothrow GetClipboardTextFn;
-	void function(void* user_data, immutable(char)* text) nothrow SetClipboardTextFn;
+	extern(C) immutable(char)* function(void* user_data) nothrow GetClipboardTextFn;
+	extern(C) void function(void* user_data, immutable(char)* text) nothrow SetClipboardTextFn;
 	void* ClipboardUserData;
-	void function(ImGuiViewport* viewport, ImGuiPlatformImeData* data) nothrow SetPlatformImeDataFn;
+	extern(C) void function(ImGuiViewport* viewport, ImGuiPlatformImeData* data) nothrow SetPlatformImeDataFn;
 	void* _UnusedPadding;
 	bool WantCaptureMouse;
 	bool WantCaptureKeyboard;
@@ -3706,7 +3942,7 @@ struct ImGuiIO {
 	ImS8 BackendUsingLegacyKeyArrays;
 	bool BackendUsingLegacyNavInputArray;
 	ImWchar16 InputQueueSurrogate;
-	ImVector_ImWchar InputQueueCharacters;
+	ImVector!ImWchar InputQueueCharacters;
 }
 struct ImGuiInputEvent {
 	ImGuiInputEventType Type;
@@ -3766,9 +4002,9 @@ struct ImGuiInputTextState {
 	ImGuiID ID;
 	int CurLenW;
 	int CurLenA;
-	ImVector_ImWchar TextW;
-	ImVector_char TextA;
-	ImVector_char InitialTextA;
+	ImVector!ImWchar TextW;
+	ImVector!char TextA;
+	ImVector!char InitialTextA;
 	bool TextAIsValid;
 	int BufCapacityA;
 	float ScrollX;
@@ -3806,7 +4042,7 @@ struct ImGuiListClipperData {
 	float LossynessOffset;
 	int StepNo;
 	int ItemsFrozen;
-	ImVector_ImGuiListClipperRange Ranges;
+	ImVector!ImGuiListClipperRange Ranges;
 }
 struct ImGuiListClipperRange {
 	int Min;
@@ -3897,7 +4133,7 @@ struct ImGuiOldColumns {
 	ImRect HostInitialClipRect;
 	ImRect HostBackupClipRect;
 	ImRect HostBackupParentWorkRect;
-	ImVector_ImGuiOldColumnData Columns;
+	ImVector!ImGuiOldColumnData Columns;
 	ImDrawListSplitter Splitter;
 }
 struct ImGuiOnceUponAFrame {
@@ -3914,31 +4150,31 @@ struct ImGuiPayload {
 	bool Delivery;
 }
 struct ImGuiPlatformIO {
-	void function(ImGuiViewport* vp) nothrow Platform_CreateWindow;
-	void function(ImGuiViewport* vp) nothrow Platform_DestroyWindow;
-	void function(ImGuiViewport* vp) nothrow Platform_ShowWindow;
-	void function(ImGuiViewport* vp, ImVec2 pos) nothrow Platform_SetWindowPos;
-	ImVec2 function(ImGuiViewport* vp) nothrow Platform_GetWindowPos;
-	void function(ImGuiViewport* vp, ImVec2 size) nothrow Platform_SetWindowSize;
-	ImVec2 function(ImGuiViewport* vp) nothrow Platform_GetWindowSize;
-	void function(ImGuiViewport* vp) nothrow Platform_SetWindowFocus;
-	bool function(ImGuiViewport* vp) nothrow Platform_GetWindowFocus;
-	bool function(ImGuiViewport* vp) nothrow Platform_GetWindowMinimized;
-	void function(ImGuiViewport* vp, immutable(char)* str) nothrow Platform_SetWindowTitle;
-	void function(ImGuiViewport* vp, float alpha) nothrow Platform_SetWindowAlpha;
-	void function(ImGuiViewport* vp) nothrow Platform_UpdateWindow;
-	void function(ImGuiViewport* vp, void* render_arg) nothrow Platform_RenderWindow;
-	void function(ImGuiViewport* vp, void* render_arg) nothrow Platform_SwapBuffers;
-	float function(ImGuiViewport* vp) nothrow Platform_GetWindowDpiScale;
-	void function(ImGuiViewport* vp) nothrow Platform_OnChangedViewport;
-	int function(ImGuiViewport* vp, ImU64 vk_inst, void* vk_allocators, ImU64* out_vk_surface) nothrow Platform_CreateVkSurface;
-	void function(ImGuiViewport* vp) nothrow Renderer_CreateWindow;
-	void function(ImGuiViewport* vp) nothrow Renderer_DestroyWindow;
-	void function(ImGuiViewport* vp, ImVec2 size) nothrow Renderer_SetWindowSize;
-	void function(ImGuiViewport* vp, void* render_arg) nothrow Renderer_RenderWindow;
-	void function(ImGuiViewport* vp, void* render_arg) nothrow Renderer_SwapBuffers;
-	ImVector_ImGuiPlatformMonitor Monitors;
-	ImVector_ImGuiViewportPtr Viewports;
+	extern(C) void function(ImGuiViewport* vp) nothrow Platform_CreateWindow;
+	extern(C) void function(ImGuiViewport* vp) nothrow Platform_DestroyWindow;
+	extern(C) void function(ImGuiViewport* vp) nothrow Platform_ShowWindow;
+	extern(C) void function(ImGuiViewport* vp, ImVec2 pos) nothrow Platform_SetWindowPos;
+	extern(C) ImVec2 function(ImGuiViewport* vp) nothrow Platform_GetWindowPos;
+	extern(C) void function(ImGuiViewport* vp, ImVec2 size) nothrow Platform_SetWindowSize;
+	extern(C) ImVec2 function(ImGuiViewport* vp) nothrow Platform_GetWindowSize;
+	extern(C) void function(ImGuiViewport* vp) nothrow Platform_SetWindowFocus;
+	extern(C) bool function(ImGuiViewport* vp) nothrow Platform_GetWindowFocus;
+	extern(C) bool function(ImGuiViewport* vp) nothrow Platform_GetWindowMinimized;
+	extern(C) void function(ImGuiViewport* vp, immutable(char)* str) nothrow Platform_SetWindowTitle;
+	extern(C) void function(ImGuiViewport* vp, float alpha) nothrow Platform_SetWindowAlpha;
+	extern(C) void function(ImGuiViewport* vp) nothrow Platform_UpdateWindow;
+	extern(C) void function(ImGuiViewport* vp, void* render_arg) nothrow Platform_RenderWindow;
+	extern(C) void function(ImGuiViewport* vp, void* render_arg) nothrow Platform_SwapBuffers;
+	extern(C) float function(ImGuiViewport* vp) nothrow Platform_GetWindowDpiScale;
+	extern(C) void function(ImGuiViewport* vp) nothrow Platform_OnChangedViewport;
+	extern(C) int function(ImGuiViewport* vp, ImU64 vk_inst, void* vk_allocators, ImU64* out_vk_surface) nothrow Platform_CreateVkSurface;
+	extern(C) void function(ImGuiViewport* vp) nothrow Renderer_CreateWindow;
+	extern(C) void function(ImGuiViewport* vp) nothrow Renderer_DestroyWindow;
+	extern(C) void function(ImGuiViewport* vp, ImVec2 size) nothrow Renderer_SetWindowSize;
+	extern(C) void function(ImGuiViewport* vp, void* render_arg) nothrow Renderer_RenderWindow;
+	extern(C) void function(ImGuiViewport* vp, void* render_arg) nothrow Renderer_SwapBuffers;
+	ImVector!ImGuiPlatformMonitor Monitors;
+	ImVector!(ImGuiViewport*) Viewports;
 }
 struct ImGuiPlatformImeData {
 	bool WantVisible;
@@ -3968,12 +4204,12 @@ struct ImGuiPtrOrIndex {
 struct ImGuiSettingsHandler {
 	immutable(char)* TypeName;
 	ImGuiID TypeHash;
-	void function(ImGuiContext* ctx, ImGuiSettingsHandler* handler) nothrow ClearAllFn;
-	void function(ImGuiContext* ctx, ImGuiSettingsHandler* handler) nothrow ReadInitFn;
-	void* function(ImGuiContext* ctx, ImGuiSettingsHandler* handler, immutable(char)* name) nothrow ReadOpenFn;
-	void function(ImGuiContext* ctx, ImGuiSettingsHandler* handler, void* entry, immutable(char)* line) nothrow ReadLineFn;
-	void function(ImGuiContext* ctx, ImGuiSettingsHandler* handler) nothrow ApplyAllFn;
-	void function(ImGuiContext* ctx, ImGuiSettingsHandler* handler, ImGuiTextBuffer* out_buf) nothrow WriteAllFn;
+	extern(C) void function(ImGuiContext* ctx, ImGuiSettingsHandler* handler) nothrow ClearAllFn;
+	extern(C) void function(ImGuiContext* ctx, ImGuiSettingsHandler* handler) nothrow ReadInitFn;
+	extern(C) void* function(ImGuiContext* ctx, ImGuiSettingsHandler* handler, immutable(char)* name) nothrow ReadOpenFn;
+	extern(C) void function(ImGuiContext* ctx, ImGuiSettingsHandler* handler, void* entry, immutable(char)* line) nothrow ReadLineFn;
+	extern(C) void function(ImGuiContext* ctx, ImGuiSettingsHandler* handler) nothrow ApplyAllFn;
+	extern(C) void function(ImGuiContext* ctx, ImGuiSettingsHandler* handler, ImGuiTextBuffer* out_buf) nothrow WriteAllFn;
 	void* UserData;
 }
 struct ImGuiShrinkWidthItem {
@@ -4007,10 +4243,10 @@ struct ImGuiStackTool {
 	int LastActiveFrame;
 	int StackLevel;
 	ImGuiID QueryId;
-	ImVector_ImGuiStackLevelInfo Results;
+	ImVector!ImGuiStackLevelInfo Results;
 }
 struct ImGuiStorage {
-	ImVector_ImGuiStoragePair Data;
+	ImVector!ImGuiStoragePair Data;
 }
 struct ImGuiStoragePair {
 }
@@ -4065,7 +4301,7 @@ struct ImGuiStyleMod {
 	}
  }
 struct ImGuiTabBar {
-	ImVector_ImGuiTabItem Tabs;
+	ImVector!ImGuiTabItem Tabs;
 	ImGuiTabBarFlags Flags;
 	ImGuiID ID;
 	ImGuiID SelectedTabId;
@@ -4116,9 +4352,9 @@ struct ImGuiTable {
 	ImGuiTableFlags Flags;
 	void* RawData;
 	ImGuiTableTempData* TempData;
-	ImSpan_ImGuiTableColumn Columns;
-	ImSpan_ImGuiTableColumnIdx DisplayOrderToIndex;
-	ImSpan_ImGuiTableCellData RowCellData;
+	ImSpan!ImGuiTableColumn Columns;
+	ImSpan!ImGuiTableColumnIdx DisplayOrderToIndex;
+	ImSpan!ImGuiTableCellData RowCellData;
 	ImU64 EnabledMaskByDisplayOrder;
 	ImU64 EnabledMaskByIndex;
 	ImU64 VisibleMaskByIndex;
@@ -4173,7 +4409,7 @@ struct ImGuiTable {
 	ImGuiTextBuffer ColumnsNames;
 	ImDrawListSplitter* DrawSplitter;
 	ImGuiTableColumnSortSpecs SortSpecsSingle;
-	ImVector_ImGuiTableColumnSortSpecs SortSpecsMulti;
+	ImVector!ImGuiTableColumnSortSpecs SortSpecsMulti;
 	ImGuiTableSortSpecs SortSpecs;
 	ImGuiTableColumnIdx SortSpecsCount;
 	ImGuiTableColumnIdx ColumnsEnabledCount;
@@ -4309,11 +4545,11 @@ struct ImGuiTableTempData {
 	int HostBackupItemWidthStackSize;
 }
 struct ImGuiTextBuffer {
-	ImVector_char Buf;
+	ImVector!char Buf;
 }
 struct ImGuiTextFilter {
 	char[256] InputBuf;
-	ImVector_ImGuiTextRange Filters;
+	ImVector!ImGuiTextRange Filters;
 	int CountGrep;
 }
 struct ImGuiTextRange {
@@ -4424,7 +4660,7 @@ struct ImGuiWindow {
 	ImGuiCond SetWindowDockAllowFlags;
 	ImVec2 SetWindowPosVal;
 	ImVec2 SetWindowPosPivot;
-	ImVector_ImGuiID IDStack;
+	ImVector!ImGuiID IDStack;
 	ImGuiWindowTempData DC;
 	ImRect OuterRectClipped;
 	ImRect InnerRect;
@@ -4440,7 +4676,7 @@ struct ImGuiWindow {
 	float LastTimeActive;
 	float ItemWidthDefault;
 	ImGuiStorage StateStorage;
-	ImVector_ImGuiOldColumns ColumnsStorage;
+	ImVector!ImGuiOldColumns ColumnsStorage;
 	float FontWindowScale;
 	float FontDpiScale;
 	int SettingsOffset;
@@ -4526,7 +4762,7 @@ struct ImGuiWindowTempData {
 	ImGuiMenuColumns MenuColumns;
 	int TreeDepth;
 	ImU32 TreeJumpToParentOnPopMask;
-	ImVector_ImGuiWindowPtr ChildWindows;
+	ImVector!(ImGuiWindow*) ChildWindows;
 	ImGuiStorage* StateStorage;
 	ImGuiOldColumns* CurrentColumns;
 	int CurrentTableIdx;
@@ -4534,36 +4770,12 @@ struct ImGuiWindowTempData {
 	ImGuiLayoutType ParentLayoutType;
 	float ItemWidth;
 	float TextWrapPos;
-	ImVector_float ItemWidthStack;
-	ImVector_float TextWrapPosStack;
-}
-struct ImPool_ImGuiTabBar {
-	ImVector_ImGuiTabBar Buf;
-	ImGuiStorage Map;
-	ImPoolIdx FreeIdx;
-	ImPoolIdx AliveCount;
-}
-struct ImPool_ImGuiTable {
-	ImVector_ImGuiTable Buf;
-	ImGuiStorage Map;
-	ImPoolIdx FreeIdx;
-	ImPoolIdx AliveCount;
+	ImVector!float ItemWidthStack;
+	ImVector!float TextWrapPosStack;
 }
 struct ImRect {
 	ImVec2 Min;
 	ImVec2 Max;
-}
-struct ImSpan_ImGuiTableCellData {
-	ImGuiTableCellData* Data;
-	ImGuiTableCellData* DataEnd;
-}
-struct ImSpan_ImGuiTableColumn {
-	ImGuiTableColumn* Data;
-	ImGuiTableColumn* DataEnd;
-}
-struct ImSpan_ImGuiTableColumnIdx {
-	ImGuiTableColumnIdx* Data;
-	ImGuiTableColumnIdx* DataEnd;
 }
 struct ImVec1 {
 	float x;
@@ -4581,246 +4793,6 @@ struct ImVec4 {
 	float y;
 	float z;
 	float w;
-}
-struct ImVector_ImDrawChannel {
-	int Size;
-	int Capacity;
-	ImDrawChannel* Data;
-}
-struct ImVector_ImDrawCmd {
-	int Size;
-	int Capacity;
-	ImDrawCmd* Data;
-}
-struct ImVector_ImDrawIdx {
-	int Size;
-	int Capacity;
-	ImDrawIdx* Data;
-}
-struct ImVector_ImDrawListPtr {
-	int Size;
-	int Capacity;
-	ImDrawList** Data;
-}
-struct ImVector_ImDrawVert {
-	int Size;
-	int Capacity;
-	ImDrawVert* Data;
-}
-struct ImVector_ImFontAtlasCustomRect {
-	int Size;
-	int Capacity;
-	ImFontAtlasCustomRect* Data;
-}
-struct ImVector_ImFontConfig {
-	int Size;
-	int Capacity;
-	ImFontConfig* Data;
-}
-struct ImVector_ImFontGlyph {
-	int Size;
-	int Capacity;
-	ImFontGlyph* Data;
-}
-struct ImVector_ImFontPtr {
-	int Size;
-	int Capacity;
-	ImFont** Data;
-}
-struct ImVector_ImGuiColorMod {
-	int Size;
-	int Capacity;
-	ImGuiColorMod* Data;
-}
-struct ImVector_ImGuiContextHook {
-	int Size;
-	int Capacity;
-	ImGuiContextHook* Data;
-}
-struct ImVector_ImGuiDockNodeSettings {
-	int Size;
-	int Capacity;
-	ImGuiDockNodeSettings* Data;
-}
-struct ImVector_ImGuiDockRequest {
-	int Size;
-	int Capacity;
-	ImGuiDockRequest* Data;
-}
-struct ImVector_ImGuiGroupData {
-	int Size;
-	int Capacity;
-	ImGuiGroupData* Data;
-}
-struct ImVector_ImGuiID {
-	int Size;
-	int Capacity;
-	ImGuiID* Data;
-}
-struct ImVector_ImGuiInputEvent {
-	int Size;
-	int Capacity;
-	ImGuiInputEvent* Data;
-}
-struct ImVector_ImGuiItemFlags {
-	int Size;
-	int Capacity;
-	ImGuiItemFlags* Data;
-}
-struct ImVector_ImGuiListClipperData {
-	int Size;
-	int Capacity;
-	ImGuiListClipperData* Data;
-}
-struct ImVector_ImGuiListClipperRange {
-	int Size;
-	int Capacity;
-	ImGuiListClipperRange* Data;
-}
-struct ImVector_ImGuiOldColumnData {
-	int Size;
-	int Capacity;
-	ImGuiOldColumnData* Data;
-}
-struct ImVector_ImGuiOldColumns {
-	int Size;
-	int Capacity;
-	ImGuiOldColumns* Data;
-}
-struct ImVector_ImGuiPlatformMonitor {
-	int Size;
-	int Capacity;
-	ImGuiPlatformMonitor* Data;
-}
-struct ImVector_ImGuiPopupData {
-	int Size;
-	int Capacity;
-	ImGuiPopupData* Data;
-}
-struct ImVector_ImGuiPtrOrIndex {
-	int Size;
-	int Capacity;
-	ImGuiPtrOrIndex* Data;
-}
-struct ImVector_ImGuiSettingsHandler {
-	int Size;
-	int Capacity;
-	ImGuiSettingsHandler* Data;
-}
-struct ImVector_ImGuiShrinkWidthItem {
-	int Size;
-	int Capacity;
-	ImGuiShrinkWidthItem* Data;
-}
-struct ImVector_ImGuiStackLevelInfo {
-	int Size;
-	int Capacity;
-	ImGuiStackLevelInfo* Data;
-}
-struct ImVector_ImGuiStoragePair {
-	int Size;
-	int Capacity;
-	ImGuiStoragePair* Data;
-}
-struct ImVector_ImGuiStyleMod {
-	int Size;
-	int Capacity;
-	ImGuiStyleMod* Data;
-}
-struct ImVector_ImGuiTabBar {
-	int Size;
-	int Capacity;
-	ImGuiTabBar* Data;
-}
-struct ImVector_ImGuiTabItem {
-	int Size;
-	int Capacity;
-	ImGuiTabItem* Data;
-}
-struct ImVector_ImGuiTable {
-	int Size;
-	int Capacity;
-	ImGuiTable* Data;
-}
-struct ImVector_ImGuiTableColumnSortSpecs {
-	int Size;
-	int Capacity;
-	ImGuiTableColumnSortSpecs* Data;
-}
-struct ImVector_ImGuiTableTempData {
-	int Size;
-	int Capacity;
-	ImGuiTableTempData* Data;
-}
-struct ImVector_ImGuiTextRange {
-	int Size;
-	int Capacity;
-	ImGuiTextRange* Data;
-}
-struct ImVector_ImGuiViewportPPtr {
-	int Size;
-	int Capacity;
-	ImGuiViewportP** Data;
-}
-struct ImVector_ImGuiViewportPtr {
-	int Size;
-	int Capacity;
-	ImGuiViewport** Data;
-}
-struct ImVector_ImGuiWindowPtr {
-	int Size;
-	int Capacity;
-	ImGuiWindow** Data;
-}
-struct ImVector_ImGuiWindowStackData {
-	int Size;
-	int Capacity;
-	ImGuiWindowStackData* Data;
-}
-struct ImVector_ImTextureID {
-	int Size;
-	int Capacity;
-	ImTextureID* Data;
-}
-struct ImVector_ImU32 {
-	int Size;
-	int Capacity;
-	ImU32* Data;
-}
-struct ImVector_ImVec2 {
-	int Size;
-	int Capacity;
-	ImVec2* Data;
-}
-struct ImVector_ImVec4 {
-	int Size;
-	int Capacity;
-	ImVec4* Data;
-}
-struct ImVector_ImWchar {
-	int Size;
-	int Capacity;
-	ImWchar* Data;
-}
-struct ImVector_char {
-	int Size;
-	int Capacity;
-	immutable(char)* Data;
-}
-struct ImVector_const_charPtr {
-	int Size;
-	int Capacity;
-	immutable(char)** Data;
-}
-struct ImVector_float {
-	int Size;
-	int Capacity;
-	float* Data;
-}
-struct ImVector_unsigned_char {
-	int Size;
-	int Capacity;
-	ubyte* Data;
 }
 struct STB_TexteditState {
 	int cursor;
@@ -4868,6 +4840,489 @@ extern(Windows) { nothrow __gshared {
 }} // extern(Windows), __gshared
 
 extern(C) { nothrow __gshared {
+
+void function(ImBitVector* self)
+	ImBitVector_Clear;
+
+void function(ImBitVector* self, int n)
+	ImBitVector_ClearBit;
+
+void function(ImBitVector* self, int sz)
+	ImBitVector_Create;
+
+void function(ImBitVector* self, int n)
+	ImBitVector_SetBit;
+
+bool function(ImBitVector* self, int n)
+	ImBitVector_TestBit;
+
+void function(ImColor* pOut, float h, float s, float v, float a)
+	ImColor_HSV;
+
+ImColor* function(float r, float g, float b, float a)
+	ImColor_ImColor_Float;
+
+ImColor* function(int r, int g, int b, int a)
+	ImColor_ImColor_Int;
+
+ImColor* function()
+	ImColor_ImColor_Nil;
+
+ImColor* function(ImU32 rgba)
+	ImColor_ImColor_U32;
+
+ImColor* function(ImVec4 col)
+	ImColor_ImColor_Vec4;
+
+void function(ImColor* self, float h, float s, float v, float a)
+	ImColor_SetHSV;
+
+void function(ImColor* self)
+	ImColor_destroy;
+
+ImTextureID function(ImDrawCmd* self)
+	ImDrawCmd_GetTexID;
+
+ImDrawCmd* function()
+	ImDrawCmd_ImDrawCmd;
+
+void function(ImDrawCmd* self)
+	ImDrawCmd_destroy;
+
+void function(ImDrawDataBuilder* self)
+	ImDrawDataBuilder_Clear;
+
+void function(ImDrawDataBuilder* self)
+	ImDrawDataBuilder_ClearFreeMemory;
+
+void function(ImDrawDataBuilder* self)
+	ImDrawDataBuilder_FlattenIntoSingleLayer;
+
+int function(ImDrawDataBuilder* self)
+	ImDrawDataBuilder_GetDrawListCount;
+
+void function(ImDrawData* self)
+	ImDrawData_Clear;
+
+void function(ImDrawData* self)
+	ImDrawData_DeIndexAllBuffers;
+
+ImDrawData* function()
+	ImDrawData_ImDrawData;
+
+void function(ImDrawData* self, ImVec2 fb_scale)
+	ImDrawData_ScaleClipRects;
+
+void function(ImDrawData* self)
+	ImDrawData_destroy;
+
+ImDrawListSharedData* function()
+	ImDrawListSharedData_ImDrawListSharedData;
+
+void function(ImDrawListSharedData* self, float max_error)
+	ImDrawListSharedData_SetCircleTessellationMaxError;
+
+void function(ImDrawListSharedData* self)
+	ImDrawListSharedData_destroy;
+
+void function(ImDrawListSplitter* self)
+	ImDrawListSplitter_Clear;
+
+void function(ImDrawListSplitter* self)
+	ImDrawListSplitter_ClearFreeMemory;
+
+ImDrawListSplitter* function()
+	ImDrawListSplitter_ImDrawListSplitter;
+
+void function(ImDrawListSplitter* self, ImDrawList* draw_list)
+	ImDrawListSplitter_Merge;
+
+void function(ImDrawListSplitter* self, ImDrawList* draw_list, int channel_idx)
+	ImDrawListSplitter_SetCurrentChannel;
+
+void function(ImDrawListSplitter* self, ImDrawList* draw_list, int count)
+	ImDrawListSplitter_Split;
+
+void function(ImDrawListSplitter* self)
+	ImDrawListSplitter_destroy;
+
+void function(ImDrawList* self, ImVec2 p1, ImVec2 p2, ImVec2 p3, ImVec2 p4, ImU32 col, float thickness, int num_segments)
+	ImDrawList_AddBezierCubic;
+
+void function(ImDrawList* self, ImVec2 p1, ImVec2 p2, ImVec2 p3, ImU32 col, float thickness, int num_segments)
+	ImDrawList_AddBezierQuadratic;
+
+void function(ImDrawList* self, ImDrawCallback callback, void* callback_data)
+	ImDrawList_AddCallback;
+
+void function(ImDrawList* self, ImVec2 center, float radius, ImU32 col, int num_segments, float thickness)
+	ImDrawList_AddCircle;
+
+void function(ImDrawList* self, ImVec2 center, float radius, ImU32 col, int num_segments)
+	ImDrawList_AddCircleFilled;
+
+void function(ImDrawList* self, ImVec2* points, int num_points, ImU32 col)
+	ImDrawList_AddConvexPolyFilled;
+
+void function(ImDrawList* self)
+	ImDrawList_AddDrawCmd;
+
+void function(ImDrawList* self, ImTextureID user_texture_id, ImVec2 p_min, ImVec2 p_max, ImVec2 uv_min, ImVec2 uv_max, ImU32 col)
+	ImDrawList_AddImage;
+
+void function(ImDrawList* self, ImTextureID user_texture_id, ImVec2 p1, ImVec2 p2, ImVec2 p3, ImVec2 p4, ImVec2 uv1, ImVec2 uv2, ImVec2 uv3, ImVec2 uv4, ImU32 col)
+	ImDrawList_AddImageQuad;
+
+void function(ImDrawList* self, ImTextureID user_texture_id, ImVec2 p_min, ImVec2 p_max, ImVec2 uv_min, ImVec2 uv_max, ImU32 col, float rounding, ImDrawFlags flags)
+	ImDrawList_AddImageRounded;
+
+void function(ImDrawList* self, ImVec2 p1, ImVec2 p2, ImU32 col, float thickness)
+	ImDrawList_AddLine;
+
+void function(ImDrawList* self, ImVec2 center, float radius, ImU32 col, int num_segments, float thickness)
+	ImDrawList_AddNgon;
+
+void function(ImDrawList* self, ImVec2 center, float radius, ImU32 col, int num_segments)
+	ImDrawList_AddNgonFilled;
+
+void function(ImDrawList* self, ImVec2* points, int num_points, ImU32 col, ImDrawFlags flags, float thickness)
+	ImDrawList_AddPolyline;
+
+void function(ImDrawList* self, ImVec2 p1, ImVec2 p2, ImVec2 p3, ImVec2 p4, ImU32 col, float thickness)
+	ImDrawList_AddQuad;
+
+void function(ImDrawList* self, ImVec2 p1, ImVec2 p2, ImVec2 p3, ImVec2 p4, ImU32 col)
+	ImDrawList_AddQuadFilled;
+
+void function(ImDrawList* self, ImVec2 p_min, ImVec2 p_max, ImU32 col, float rounding, ImDrawFlags flags, float thickness)
+	ImDrawList_AddRect;
+
+void function(ImDrawList* self, ImVec2 p_min, ImVec2 p_max, ImU32 col, float rounding, ImDrawFlags flags)
+	ImDrawList_AddRectFilled;
+
+void function(ImDrawList* self, ImVec2 p_min, ImVec2 p_max, ImU32 col_upr_left, ImU32 col_upr_right, ImU32 col_bot_right, ImU32 col_bot_left)
+	ImDrawList_AddRectFilledMultiColor;
+
+void function(ImDrawList* self, ImFont* font, float font_size, ImVec2 pos, ImU32 col, immutable(char)* text_begin, immutable(char)* text_end, float wrap_width, ImVec4* cpu_fine_clip_rect)
+	ImDrawList_AddText_FontPtr;
+
+void function(ImDrawList* self, ImVec2 pos, ImU32 col, immutable(char)* text_begin, immutable(char)* text_end)
+	ImDrawList_AddText_Vec2;
+
+void function(ImDrawList* self, ImVec2 p1, ImVec2 p2, ImVec2 p3, ImU32 col, float thickness)
+	ImDrawList_AddTriangle;
+
+void function(ImDrawList* self, ImVec2 p1, ImVec2 p2, ImVec2 p3, ImU32 col)
+	ImDrawList_AddTriangleFilled;
+
+void function(ImDrawList* self)
+	ImDrawList_ChannelsMerge;
+
+void function(ImDrawList* self, int n)
+	ImDrawList_ChannelsSetCurrent;
+
+void function(ImDrawList* self, int count)
+	ImDrawList_ChannelsSplit;
+
+ImDrawList* function(ImDrawList* self)
+	ImDrawList_CloneOutput;
+
+void function(ImVec2* pOut, ImDrawList* self)
+	ImDrawList_GetClipRectMax;
+
+void function(ImVec2* pOut, ImDrawList* self)
+	ImDrawList_GetClipRectMin;
+
+ImDrawList* function(ImDrawListSharedData* shared_data)
+	ImDrawList_ImDrawList;
+
+void function(ImDrawList* self, ImVec2 center, float radius, float a_min, float a_max, int num_segments)
+	ImDrawList_PathArcTo;
+
+void function(ImDrawList* self, ImVec2 center, float radius, int a_min_of_12, int a_max_of_12)
+	ImDrawList_PathArcToFast;
+
+void function(ImDrawList* self, ImVec2 p2, ImVec2 p3, ImVec2 p4, int num_segments)
+	ImDrawList_PathBezierCubicCurveTo;
+
+void function(ImDrawList* self, ImVec2 p2, ImVec2 p3, int num_segments)
+	ImDrawList_PathBezierQuadraticCurveTo;
+
+void function(ImDrawList* self)
+	ImDrawList_PathClear;
+
+void function(ImDrawList* self, ImU32 col)
+	ImDrawList_PathFillConvex;
+
+void function(ImDrawList* self, ImVec2 pos)
+	ImDrawList_PathLineTo;
+
+void function(ImDrawList* self, ImVec2 pos)
+	ImDrawList_PathLineToMergeDuplicate;
+
+void function(ImDrawList* self, ImVec2 rect_min, ImVec2 rect_max, float rounding, ImDrawFlags flags)
+	ImDrawList_PathRect;
+
+void function(ImDrawList* self, ImU32 col, ImDrawFlags flags, float thickness)
+	ImDrawList_PathStroke;
+
+void function(ImDrawList* self)
+	ImDrawList_PopClipRect;
+
+void function(ImDrawList* self)
+	ImDrawList_PopTextureID;
+
+void function(ImDrawList* self, ImVec2 a, ImVec2 b, ImVec2 c, ImVec2 d, ImVec2 uv_a, ImVec2 uv_b, ImVec2 uv_c, ImVec2 uv_d, ImU32 col)
+	ImDrawList_PrimQuadUV;
+
+void function(ImDrawList* self, ImVec2 a, ImVec2 b, ImU32 col)
+	ImDrawList_PrimRect;
+
+void function(ImDrawList* self, ImVec2 a, ImVec2 b, ImVec2 uv_a, ImVec2 uv_b, ImU32 col)
+	ImDrawList_PrimRectUV;
+
+void function(ImDrawList* self, int idx_count, int vtx_count)
+	ImDrawList_PrimReserve;
+
+void function(ImDrawList* self, int idx_count, int vtx_count)
+	ImDrawList_PrimUnreserve;
+
+void function(ImDrawList* self, ImVec2 pos, ImVec2 uv, ImU32 col)
+	ImDrawList_PrimVtx;
+
+void function(ImDrawList* self, ImDrawIdx idx)
+	ImDrawList_PrimWriteIdx;
+
+void function(ImDrawList* self, ImVec2 pos, ImVec2 uv, ImU32 col)
+	ImDrawList_PrimWriteVtx;
+
+void function(ImDrawList* self, ImVec2 clip_rect_min, ImVec2 clip_rect_max, bool intersect_with_current_clip_rect)
+	ImDrawList_PushClipRect;
+
+void function(ImDrawList* self)
+	ImDrawList_PushClipRectFullScreen;
+
+void function(ImDrawList* self, ImTextureID texture_id)
+	ImDrawList_PushTextureID;
+
+int function(ImDrawList* self, float radius)
+	ImDrawList__CalcCircleAutoSegmentCount;
+
+void function(ImDrawList* self)
+	ImDrawList__ClearFreeMemory;
+
+void function(ImDrawList* self)
+	ImDrawList__OnChangedClipRect;
+
+void function(ImDrawList* self)
+	ImDrawList__OnChangedTextureID;
+
+void function(ImDrawList* self)
+	ImDrawList__OnChangedVtxOffset;
+
+void function(ImDrawList* self, ImVec2 center, float radius, int a_min_sample, int a_max_sample, int a_step)
+	ImDrawList__PathArcToFastEx;
+
+void function(ImDrawList* self, ImVec2 center, float radius, float a_min, float a_max, int num_segments)
+	ImDrawList__PathArcToN;
+
+void function(ImDrawList* self)
+	ImDrawList__PopUnusedDrawCmd;
+
+void function(ImDrawList* self)
+	ImDrawList__ResetForNewFrame;
+
+void function(ImDrawList* self)
+	ImDrawList__TryMergeDrawCmds;
+
+void function(ImDrawList* self)
+	ImDrawList_destroy;
+
+ImFontAtlasCustomRect* function()
+	ImFontAtlasCustomRect_ImFontAtlasCustomRect;
+
+bool function(ImFontAtlasCustomRect* self)
+	ImFontAtlasCustomRect_IsPacked;
+
+void function(ImFontAtlasCustomRect* self)
+	ImFontAtlasCustomRect_destroy;
+
+int function(ImFontAtlas* self, ImFont* font, ImWchar id, int width, int height, float advance_x, ImVec2 offset)
+	ImFontAtlas_AddCustomRectFontGlyph;
+
+int function(ImFontAtlas* self, int width, int height)
+	ImFontAtlas_AddCustomRectRegular;
+
+ImFont* function(ImFontAtlas* self, ImFontConfig* font_cfg)
+	ImFontAtlas_AddFont;
+
+ImFont* function(ImFontAtlas* self, ImFontConfig* font_cfg)
+	ImFontAtlas_AddFontDefault;
+
+ImFont* function(ImFontAtlas* self, immutable(char)* filename, float size_pixels, ImFontConfig* font_cfg, ImWchar* glyph_ranges)
+	ImFontAtlas_AddFontFromFileTTF;
+
+ImFont* function(ImFontAtlas* self, immutable(char)* compressed_font_data_base85, float size_pixels, ImFontConfig* font_cfg, ImWchar* glyph_ranges)
+	ImFontAtlas_AddFontFromMemoryCompressedBase85TTF;
+
+ImFont* function(ImFontAtlas* self, void* compressed_font_data, int compressed_font_size, float size_pixels, ImFontConfig* font_cfg, ImWchar* glyph_ranges)
+	ImFontAtlas_AddFontFromMemoryCompressedTTF;
+
+ImFont* function(ImFontAtlas* self, void* font_data, int font_size, float size_pixels, ImFontConfig* font_cfg, ImWchar* glyph_ranges)
+	ImFontAtlas_AddFontFromMemoryTTF;
+
+bool function(ImFontAtlas* self)
+	ImFontAtlas_Build;
+
+void function(ImFontAtlas* self, ImFontAtlasCustomRect* rect, ImVec2* out_uv_min, ImVec2* out_uv_max)
+	ImFontAtlas_CalcCustomRectUV;
+
+void function(ImFontAtlas* self)
+	ImFontAtlas_Clear;
+
+void function(ImFontAtlas* self)
+	ImFontAtlas_ClearFonts;
+
+void function(ImFontAtlas* self)
+	ImFontAtlas_ClearInputData;
+
+void function(ImFontAtlas* self)
+	ImFontAtlas_ClearTexData;
+
+ImFontAtlasCustomRect* function(ImFontAtlas* self, int index)
+	ImFontAtlas_GetCustomRectByIndex;
+
+ImWchar* function(ImFontAtlas* self)
+	ImFontAtlas_GetGlyphRangesChineseFull;
+
+ImWchar* function(ImFontAtlas* self)
+	ImFontAtlas_GetGlyphRangesChineseSimplifiedCommon;
+
+ImWchar* function(ImFontAtlas* self)
+	ImFontAtlas_GetGlyphRangesCyrillic;
+
+ImWchar* function(ImFontAtlas* self)
+	ImFontAtlas_GetGlyphRangesDefault;
+
+ImWchar* function(ImFontAtlas* self)
+	ImFontAtlas_GetGlyphRangesJapanese;
+
+ImWchar* function(ImFontAtlas* self)
+	ImFontAtlas_GetGlyphRangesKorean;
+
+ImWchar* function(ImFontAtlas* self)
+	ImFontAtlas_GetGlyphRangesThai;
+
+ImWchar* function(ImFontAtlas* self)
+	ImFontAtlas_GetGlyphRangesVietnamese;
+
+bool function(ImFontAtlas* self, ImGuiMouseCursor cursor, ImVec2* out_offset, ImVec2* out_size, ImVec2[2] out_uv_border, ImVec2[2] out_uv_fill)
+	ImFontAtlas_GetMouseCursorTexData;
+
+void function(ImFontAtlas* self, ubyte** out_pixels, int* out_width, int* out_height, int* out_bytes_per_pixel)
+	ImFontAtlas_GetTexDataAsAlpha8;
+
+void function(ImFontAtlas* self, ubyte** out_pixels, int* out_width, int* out_height, int* out_bytes_per_pixel)
+	ImFontAtlas_GetTexDataAsRGBA32;
+
+ImFontAtlas* function()
+	ImFontAtlas_ImFontAtlas;
+
+bool function(ImFontAtlas* self)
+	ImFontAtlas_IsBuilt;
+
+void function(ImFontAtlas* self, ImTextureID id)
+	ImFontAtlas_SetTexID;
+
+void function(ImFontAtlas* self)
+	ImFontAtlas_destroy;
+
+ImFontConfig* function()
+	ImFontConfig_ImFontConfig;
+
+void function(ImFontConfig* self)
+	ImFontConfig_destroy;
+
+void function(ImFontGlyphRangesBuilder* self, ImWchar c)
+	ImFontGlyphRangesBuilder_AddChar;
+
+void function(ImFontGlyphRangesBuilder* self, ImWchar* ranges)
+	ImFontGlyphRangesBuilder_AddRanges;
+
+void function(ImFontGlyphRangesBuilder* self, immutable(char)* text, immutable(char)* text_end)
+	ImFontGlyphRangesBuilder_AddText;
+
+void function(ImFontGlyphRangesBuilder* self, ImVector!ImWchar* out_ranges)
+	ImFontGlyphRangesBuilder_BuildRanges;
+
+void function(ImFontGlyphRangesBuilder* self)
+	ImFontGlyphRangesBuilder_Clear;
+
+bool function(ImFontGlyphRangesBuilder* self, size_t n)
+	ImFontGlyphRangesBuilder_GetBit;
+
+ImFontGlyphRangesBuilder* function()
+	ImFontGlyphRangesBuilder_ImFontGlyphRangesBuilder;
+
+void function(ImFontGlyphRangesBuilder* self, size_t n)
+	ImFontGlyphRangesBuilder_SetBit;
+
+void function(ImFontGlyphRangesBuilder* self)
+	ImFontGlyphRangesBuilder_destroy;
+
+void function(ImFont* self, ImFontConfig* src_cfg, ImWchar c, float x0, float y0, float x1, float y1, float u0, float v0, float u1, float v1, float advance_x)
+	ImFont_AddGlyph;
+
+void function(ImFont* self, ImWchar dst, ImWchar src, bool overwrite_dst)
+	ImFont_AddRemapChar;
+
+void function(ImFont* self)
+	ImFont_BuildLookupTable;
+
+void function(ImVec2* pOut, ImFont* self, float size, float max_width, float wrap_width, immutable(char)* text_begin, immutable(char)* text_end, immutable(char)** remaining)
+	ImFont_CalcTextSizeA;
+
+immutable(char)* function(ImFont* self, float scale, immutable(char)* text, immutable(char)* text_end, float wrap_width)
+	ImFont_CalcWordWrapPositionA;
+
+void function(ImFont* self)
+	ImFont_ClearOutputData;
+
+ImFontGlyph* function(ImFont* self, ImWchar c)
+	ImFont_FindGlyph;
+
+ImFontGlyph* function(ImFont* self, ImWchar c)
+	ImFont_FindGlyphNoFallback;
+
+float function(ImFont* self, ImWchar c)
+	ImFont_GetCharAdvance;
+
+immutable(char)* function(ImFont* self)
+	ImFont_GetDebugName;
+
+void function(ImFont* self, int new_size)
+	ImFont_GrowIndex;
+
+ImFont* function()
+	ImFont_ImFont;
+
+bool function(ImFont* self, uint c_begin, uint c_last)
+	ImFont_IsGlyphRangeUnused;
+
+bool function(ImFont* self)
+	ImFont_IsLoaded;
+
+void function(ImFont* self, ImDrawList* draw_list, float size, ImVec2 pos, ImU32 col, ImWchar c)
+	ImFont_RenderChar;
+
+void function(ImFont* self, ImDrawList* draw_list, float size, ImVec2 pos, ImU32 col, ImVec4 clip_rect, immutable(char)* text_begin, immutable(char)* text_end, float wrap_width, bool cpu_fine_clip)
+	ImFont_RenderText;
+
+void function(ImFont* self, ImWchar c, bool visible)
+	ImFont_SetGlyphVisible;
+
+void function(ImFont* self)
+	ImFont_destroy;
 
 ImGuiComboPreviewData* function()
 	ImGuiComboPreviewData_ImGuiComboPreviewData;
@@ -5448,7 +5903,7 @@ void function(ImGuiTextRange* self)
 bool function(ImGuiTextRange* self)
 	ImGuiTextRange_empty;
 
-void function(ImGuiTextRange* self, char separator, ImVector_ImGuiTextRange* out_)
+void function(ImGuiTextRange* self, char separator, ImVector!ImGuiTextRange* out_)
 	ImGuiTextRange_split;
 
 void function(ImVec2* pOut, ImGuiViewportP* self, ImVec2 off_min)
@@ -5549,6 +6004,144 @@ void function(ImRect* pOut, ImGuiWindow* self)
 
 void function(ImGuiWindow* self)
 	ImGuiWindow_destroy;
+
+void function(ImRect* self, ImRect r)
+	ImRect_Add_Rect;
+
+void function(ImRect* self, ImVec2 p)
+	ImRect_Add_Vec2;
+
+void function(ImRect* self, ImRect r)
+	ImRect_ClipWith;
+
+void function(ImRect* self, ImRect r)
+	ImRect_ClipWithFull;
+
+bool function(ImRect* self, ImRect r)
+	ImRect_Contains_Rect;
+
+bool function(ImRect* self, ImVec2 p)
+	ImRect_Contains_Vec2;
+
+void function(ImRect* self, float amount)
+	ImRect_Expand_Float;
+
+void function(ImRect* self, ImVec2 amount)
+	ImRect_Expand_Vec2;
+
+void function(ImRect* self)
+	ImRect_Floor;
+
+float function(ImRect* self)
+	ImRect_GetArea;
+
+void function(ImVec2* pOut, ImRect* self)
+	ImRect_GetBL;
+
+void function(ImVec2* pOut, ImRect* self)
+	ImRect_GetBR;
+
+void function(ImVec2* pOut, ImRect* self)
+	ImRect_GetCenter;
+
+float function(ImRect* self)
+	ImRect_GetHeight;
+
+void function(ImVec2* pOut, ImRect* self)
+	ImRect_GetSize;
+
+void function(ImVec2* pOut, ImRect* self)
+	ImRect_GetTL;
+
+void function(ImVec2* pOut, ImRect* self)
+	ImRect_GetTR;
+
+float function(ImRect* self)
+	ImRect_GetWidth;
+
+ImRect* function(float x1, float y1, float x2, float y2)
+	ImRect_ImRect_Float;
+
+ImRect* function()
+	ImRect_ImRect_Nil;
+
+ImRect* function(ImVec2 min, ImVec2 max)
+	ImRect_ImRect_Vec2;
+
+ImRect* function(ImVec4 v)
+	ImRect_ImRect_Vec4;
+
+bool function(ImRect* self)
+	ImRect_IsInverted;
+
+bool function(ImRect* self, ImRect r)
+	ImRect_Overlaps;
+
+void function(ImVec4* pOut, ImRect* self)
+	ImRect_ToVec4;
+
+void function(ImRect* self, ImVec2 d)
+	ImRect_Translate;
+
+void function(ImRect* self, float dx)
+	ImRect_TranslateX;
+
+void function(ImRect* self, float dy)
+	ImRect_TranslateY;
+
+void function(ImRect* self)
+	ImRect_destroy;
+
+ImVec1* function(float _x)
+	ImVec1_ImVec1_Float;
+
+ImVec1* function()
+	ImVec1_ImVec1_Nil;
+
+void function(ImVec1* self)
+	ImVec1_destroy;
+
+ImVec2* function(float _x, float _y)
+	ImVec2_ImVec2_Float;
+
+ImVec2* function()
+	ImVec2_ImVec2_Nil;
+
+void function(ImVec2* self)
+	ImVec2_destroy;
+
+ImVec2ih* function()
+	ImVec2ih_ImVec2ih_Nil;
+
+ImVec2ih* function(ImVec2 rhs)
+	ImVec2ih_ImVec2ih_Vec2;
+
+ImVec2ih* function(short _x, short _y)
+	ImVec2ih_ImVec2ih_short;
+
+void function(ImVec2ih* self)
+	ImVec2ih_destroy;
+
+ImVec4* function(float _x, float _y, float _z, float _w)
+	ImVec4_ImVec4_Float;
+
+ImVec4* function()
+	ImVec4_ImVec4_Nil;
+
+void function(ImVec4* self)
+	ImVec4_destroy;
+
+void function(ImVector!ImWchar* p)
+	ImVector_ImWchar_Init;
+
+void function(ImVector!ImWchar* p)
+	ImVector_ImWchar_UnInit;
+
+ImVector!ImWchar* function()
+	ImVector_ImWchar_create;
+
+void function(ImVector!ImWchar* self)
+	ImVector_ImWchar_destroy;
 
 ImGuiPayload* function(immutable(char)* type, ImGuiDragDropFlags flags)
 	igAcceptDragDropPayload;
@@ -5901,7 +6494,7 @@ void function(ImGuiWindow* window, immutable(char)* label)
 void function(ImGuiWindowSettings* settings)
 	igDebugNodeWindowSettings;
 
-void function(ImVector_ImGuiWindowPtr* windows, immutable(char)* label)
+void function(ImVector!(ImGuiWindow*)* windows, immutable(char)* label)
 	igDebugNodeWindowsList;
 
 void function(ImGuiWindow** windows, int windows_size, ImGuiWindow* parent_in_begin_stack)
@@ -5925,10 +6518,10 @@ void function()
 ImGuiID function(ImGuiID node_id, ImGuiDockNodeFlags flags)
 	igDockBuilderAddNode;
 
-void function(ImGuiID src_dockspace_id, ImGuiID dst_dockspace_id, ImVector_const_charPtr* in_window_remap_pairs)
+void function(ImGuiID src_dockspace_id, ImGuiID dst_dockspace_id, ImVector!(char)* in_window_remap_pairs)
 	igDockBuilderCopyDockSpace;
 
-void function(ImGuiID src_node_id, ImGuiID dst_node_id, ImVector_ImGuiID* out_node_remap_pairs)
+void function(ImGuiID src_node_id, ImGuiID dst_node_id, ImVector!ImGuiID* out_node_remap_pairs)
 	igDockBuilderCopyNode;
 
 void function(immutable(char)* src_name, immutable(char)* dst_name)
@@ -6789,13 +7382,13 @@ bool function(ImVec2 a, ImVec2 b, ImVec2 c, ImVec2 p)
 int function(int v)
 	igImUpperPowerOfTwo;
 
-void function(ImVec2 size, ImVec2 uv0, ImVec2 uv1, ImVec4 tint_col, ImVec4 border_col)
+void function(ImTextureID user_texture_id, ImVec2 size, ImVec2 uv0, ImVec2 uv1, ImVec4 tint_col, ImVec4 border_col)
 	igImage;
 
-bool function(ImVec2 size, ImVec2 uv0, ImVec2 uv1, int frame_padding, ImVec4 bg_col, ImVec4 tint_col)
+bool function(ImTextureID user_texture_id, ImVec2 size, ImVec2 uv0, ImVec2 uv1, int frame_padding, ImVec4 bg_col, ImVec4 tint_col)
 	igImageButton;
 
-bool function(ImGuiID id, ImVec2 size, ImVec2 uv0, ImVec2 uv1, ImVec2 padding, ImVec4 bg_col, ImVec4 tint_col)
+bool function(ImGuiID id, ImTextureID texture_id, ImVec2 size, ImVec2 uv0, ImVec2 uv1, ImVec2 padding, ImVec4 bg_col, ImVec4 tint_col)
 	igImageButtonEx;
 
 void function(float indent_w)
@@ -8017,483 +8610,4 @@ void function(ImRect* pOut, ImGuiWindow* window, ImRect r)
 	igWindowRectRelToAbs;
 
 }} // extern(C), __gshared
-
-// UFCS camel case struct methods
-pragma(inline,true) {
-
-void destroy(ImGuiComboPreviewData* self) {
-	ImGuiComboPreviewData_destroy(self);
-}
-void destroy(ImGuiContextHook* self) {
-	ImGuiContextHook_destroy(self);
-}
-void destroy(ImGuiContext* self) {
-	ImGuiContext_destroy(self);
-}
-void destroy(ImGuiDockContext* self) {
-	ImGuiDockContext_destroy(self);
-}
-bool isCentralNode(ImGuiDockNode* self) {
-	return ImGuiDockNode_IsCentralNode(self);
-}
-bool isDockSpace(ImGuiDockNode* self) {
-	return ImGuiDockNode_IsDockSpace(self);
-}
-bool isEmpty(ImGuiDockNode* self) {
-	return ImGuiDockNode_IsEmpty(self);
-}
-bool isFloatingNode(ImGuiDockNode* self) {
-	return ImGuiDockNode_IsFloatingNode(self);
-}
-bool isHiddenTabBar(ImGuiDockNode* self) {
-	return ImGuiDockNode_IsHiddenTabBar(self);
-}
-bool isLeafNode(ImGuiDockNode* self) {
-	return ImGuiDockNode_IsLeafNode(self);
-}
-bool isNoTabBar(ImGuiDockNode* self) {
-	return ImGuiDockNode_IsNoTabBar(self);
-}
-bool isRootNode(ImGuiDockNode* self) {
-	return ImGuiDockNode_IsRootNode(self);
-}
-bool isSplitNode(ImGuiDockNode* self) {
-	return ImGuiDockNode_IsSplitNode(self);
-}
-void setLocalFlags(ImGuiDockNode* self, ImGuiDockNodeFlags flags) {
-	ImGuiDockNode_SetLocalFlags(self, flags);
-}
-void updateMergedFlags(ImGuiDockNode* self) {
-	ImGuiDockNode_UpdateMergedFlags(self);
-}
-void destroy(ImGuiDockNode* self) {
-	ImGuiDockNode_destroy(self);
-}
-void addFocusEvent(ImGuiIO* self, bool focused) {
-	ImGuiIO_AddFocusEvent(self, focused);
-}
-void addInputCharacter(ImGuiIO* self, uint c) {
-	ImGuiIO_AddInputCharacter(self, c);
-}
-void addInputCharacterUTF16(ImGuiIO* self, ImWchar16 c) {
-	ImGuiIO_AddInputCharacterUTF16(self, c);
-}
-void addInputCharactersUTF8(ImGuiIO* self, immutable(char)* str) {
-	ImGuiIO_AddInputCharactersUTF8(self, str);
-}
-void addKeyAnalogEvent(ImGuiIO* self, ImGuiKey key, bool down, float v) {
-	ImGuiIO_AddKeyAnalogEvent(self, key, down, v);
-}
-void addKeyEvent(ImGuiIO* self, ImGuiKey key, bool down) {
-	ImGuiIO_AddKeyEvent(self, key, down);
-}
-void addMouseButtonEvent(ImGuiIO* self, int button, bool down) {
-	ImGuiIO_AddMouseButtonEvent(self, button, down);
-}
-void addMousePosEvent(ImGuiIO* self, float x, float y) {
-	ImGuiIO_AddMousePosEvent(self, x, y);
-}
-void addMouseViewportEvent(ImGuiIO* self, ImGuiID id) {
-	ImGuiIO_AddMouseViewportEvent(self, id);
-}
-void addMouseWheelEvent(ImGuiIO* self, float wh_x, float wh_y) {
-	ImGuiIO_AddMouseWheelEvent(self, wh_x, wh_y);
-}
-void clearInputCharacters(ImGuiIO* self) {
-	ImGuiIO_ClearInputCharacters(self);
-}
-void clearInputKeys(ImGuiIO* self) {
-	ImGuiIO_ClearInputKeys(self);
-}
-void setKeyEventNativeData(ImGuiIO* self, ImGuiKey key, int native_keycode, int native_scancode, int native_legacy_index) {
-	ImGuiIO_SetKeyEventNativeData(self, key, native_keycode, native_scancode, native_legacy_index);
-}
-void destroy(ImGuiIO* self) {
-	ImGuiIO_destroy(self);
-}
-void destroy(ImGuiInputEvent* self) {
-	ImGuiInputEvent_destroy(self);
-}
-void clearSelection(ImGuiInputTextCallbackData* self) {
-	ImGuiInputTextCallbackData_ClearSelection(self);
-}
-void deleteChars(ImGuiInputTextCallbackData* self, int pos, int bytes_count) {
-	ImGuiInputTextCallbackData_DeleteChars(self, pos, bytes_count);
-}
-bool hasSelection(ImGuiInputTextCallbackData* self) {
-	return ImGuiInputTextCallbackData_HasSelection(self);
-}
-void insertChars(ImGuiInputTextCallbackData* self, int pos, immutable(char)* text, immutable(char)* text_end) {
-	ImGuiInputTextCallbackData_InsertChars(self, pos, text, text_end);
-}
-void selectAll(ImGuiInputTextCallbackData* self) {
-	ImGuiInputTextCallbackData_SelectAll(self);
-}
-void destroy(ImGuiInputTextCallbackData* self) {
-	ImGuiInputTextCallbackData_destroy(self);
-}
-void clearFreeMemory(ImGuiInputTextState* self) {
-	ImGuiInputTextState_ClearFreeMemory(self);
-}
-void clearSelection(ImGuiInputTextState* self) {
-	ImGuiInputTextState_ClearSelection(self);
-}
-void clearText(ImGuiInputTextState* self) {
-	ImGuiInputTextState_ClearText(self);
-}
-void cursorAnimReset(ImGuiInputTextState* self) {
-	ImGuiInputTextState_CursorAnimReset(self);
-}
-void cursorClamp(ImGuiInputTextState* self) {
-	ImGuiInputTextState_CursorClamp(self);
-}
-int getCursorPos(ImGuiInputTextState* self) {
-	return ImGuiInputTextState_GetCursorPos(self);
-}
-int getRedoAvailCount(ImGuiInputTextState* self) {
-	return ImGuiInputTextState_GetRedoAvailCount(self);
-}
-int getSelectionEnd(ImGuiInputTextState* self) {
-	return ImGuiInputTextState_GetSelectionEnd(self);
-}
-int getSelectionStart(ImGuiInputTextState* self) {
-	return ImGuiInputTextState_GetSelectionStart(self);
-}
-int getUndoAvailCount(ImGuiInputTextState* self) {
-	return ImGuiInputTextState_GetUndoAvailCount(self);
-}
-bool hasSelection(ImGuiInputTextState* self) {
-	return ImGuiInputTextState_HasSelection(self);
-}
-void onKeyPressed(ImGuiInputTextState* self, int key) {
-	ImGuiInputTextState_OnKeyPressed(self, key);
-}
-void selectAll(ImGuiInputTextState* self) {
-	ImGuiInputTextState_SelectAll(self);
-}
-void destroy(ImGuiInputTextState* self) {
-	ImGuiInputTextState_destroy(self);
-}
-void destroy(ImGuiLastItemData* self) {
-	ImGuiLastItemData_destroy(self);
-}
-void reset(ImGuiListClipperData* self, ImGuiListClipper* clipper) {
-	ImGuiListClipperData_Reset(self, clipper);
-}
-void destroy(ImGuiListClipperData* self) {
-	ImGuiListClipperData_destroy(self);
-}
-void begin(ImGuiListClipper* self, int items_count, float items_height) {
-	ImGuiListClipper_Begin(self, items_count, items_height);
-}
-void end(ImGuiListClipper* self) {
-	ImGuiListClipper_End(self);
-}
-void forceDisplayRangeByIndices(ImGuiListClipper* self, int item_min, int item_max) {
-	ImGuiListClipper_ForceDisplayRangeByIndices(self, item_min, item_max);
-}
-bool step(ImGuiListClipper* self) {
-	return ImGuiListClipper_Step(self);
-}
-void destroy(ImGuiListClipper* self) {
-	ImGuiListClipper_destroy(self);
-}
-void calcNextTotalWidth(ImGuiMenuColumns* self, bool update_offsets) {
-	ImGuiMenuColumns_CalcNextTotalWidth(self, update_offsets);
-}
-float declColumns(ImGuiMenuColumns* self, float w_icon, float w_label, float w_shortcut, float w_mark) {
-	return ImGuiMenuColumns_DeclColumns(self, w_icon, w_label, w_shortcut, w_mark);
-}
-void update(ImGuiMenuColumns* self, float spacing, bool window_reappearing) {
-	ImGuiMenuColumns_Update(self, spacing, window_reappearing);
-}
-void destroy(ImGuiMenuColumns* self) {
-	ImGuiMenuColumns_destroy(self);
-}
-void destroy(ImGuiMetricsConfig* self) {
-	ImGuiMetricsConfig_destroy(self);
-}
-void clear(ImGuiNavItemData* self) {
-	ImGuiNavItemData_Clear(self);
-}
-void destroy(ImGuiNavItemData* self) {
-	ImGuiNavItemData_destroy(self);
-}
-void clearFlags(ImGuiNextItemData* self) {
-	ImGuiNextItemData_ClearFlags(self);
-}
-void destroy(ImGuiNextItemData* self) {
-	ImGuiNextItemData_destroy(self);
-}
-void clearFlags(ImGuiNextWindowData* self) {
-	ImGuiNextWindowData_ClearFlags(self);
-}
-void destroy(ImGuiNextWindowData* self) {
-	ImGuiNextWindowData_destroy(self);
-}
-void destroy(ImGuiOldColumnData* self) {
-	ImGuiOldColumnData_destroy(self);
-}
-void destroy(ImGuiOldColumns* self) {
-	ImGuiOldColumns_destroy(self);
-}
-void destroy(ImGuiOnceUponAFrame* self) {
-	ImGuiOnceUponAFrame_destroy(self);
-}
-void clear(ImGuiPayload* self) {
-	ImGuiPayload_Clear(self);
-}
-bool isDataType(ImGuiPayload* self, immutable(char)* type) {
-	return ImGuiPayload_IsDataType(self, type);
-}
-bool isDelivery(ImGuiPayload* self) {
-	return ImGuiPayload_IsDelivery(self);
-}
-bool isPreview(ImGuiPayload* self) {
-	return ImGuiPayload_IsPreview(self);
-}
-void destroy(ImGuiPayload* self) {
-	ImGuiPayload_destroy(self);
-}
-void destroy(ImGuiPlatformIO* self) {
-	ImGuiPlatformIO_destroy(self);
-}
-void destroy(ImGuiPlatformImeData* self) {
-	ImGuiPlatformImeData_destroy(self);
-}
-void destroy(ImGuiPlatformMonitor* self) {
-	ImGuiPlatformMonitor_destroy(self);
-}
-void destroy(ImGuiPopupData* self) {
-	ImGuiPopupData_destroy(self);
-}
-void destroy(ImGuiPtrOrIndex* self) {
-	ImGuiPtrOrIndex_destroy(self);
-}
-void destroy(ImGuiSettingsHandler* self) {
-	ImGuiSettingsHandler_destroy(self);
-}
-void destroy(ImGuiStackLevelInfo* self) {
-	ImGuiStackLevelInfo_destroy(self);
-}
-void compareWithCurrentState(ImGuiStackSizes* self) {
-	ImGuiStackSizes_CompareWithCurrentState(self);
-}
-void setToCurrentState(ImGuiStackSizes* self) {
-	ImGuiStackSizes_SetToCurrentState(self);
-}
-void destroy(ImGuiStackSizes* self) {
-	ImGuiStackSizes_destroy(self);
-}
-void destroy(ImGuiStackTool* self) {
-	ImGuiStackTool_destroy(self);
-}
-void destroy(ImGuiStoragePair* self) {
-	ImGuiStoragePair_destroy(self);
-}
-void buildSortByKey(ImGuiStorage* self) {
-	ImGuiStorage_BuildSortByKey(self);
-}
-void clear(ImGuiStorage* self) {
-	ImGuiStorage_Clear(self);
-}
-bool getBool(ImGuiStorage* self, ImGuiID key, bool default_val) {
-	return ImGuiStorage_GetBool(self, key, default_val);
-}
-bool* getBoolRef(ImGuiStorage* self, ImGuiID key, bool default_val) {
-	return ImGuiStorage_GetBoolRef(self, key, default_val);
-}
-float getFloat(ImGuiStorage* self, ImGuiID key, float default_val) {
-	return ImGuiStorage_GetFloat(self, key, default_val);
-}
-float* getFloatRef(ImGuiStorage* self, ImGuiID key, float default_val) {
-	return ImGuiStorage_GetFloatRef(self, key, default_val);
-}
-int getInt(ImGuiStorage* self, ImGuiID key, int default_val) {
-	return ImGuiStorage_GetInt(self, key, default_val);
-}
-int* getIntRef(ImGuiStorage* self, ImGuiID key, int default_val) {
-	return ImGuiStorage_GetIntRef(self, key, default_val);
-}
-void* getVoidPtr(ImGuiStorage* self, ImGuiID key) {
-	return ImGuiStorage_GetVoidPtr(self, key);
-}
-void** getVoidPtrRef(ImGuiStorage* self, ImGuiID key, void* default_val) {
-	return ImGuiStorage_GetVoidPtrRef(self, key, default_val);
-}
-void setAllInt(ImGuiStorage* self, int val) {
-	ImGuiStorage_SetAllInt(self, val);
-}
-void setBool(ImGuiStorage* self, ImGuiID key, bool val) {
-	ImGuiStorage_SetBool(self, key, val);
-}
-void setFloat(ImGuiStorage* self, ImGuiID key, float val) {
-	ImGuiStorage_SetFloat(self, key, val);
-}
-void setInt(ImGuiStorage* self, ImGuiID key, int val) {
-	ImGuiStorage_SetInt(self, key, val);
-}
-void setVoidPtr(ImGuiStorage* self, ImGuiID key, void* val) {
-	ImGuiStorage_SetVoidPtr(self, key, val);
-}
-void destroy(ImGuiStyleMod* self) {
-	ImGuiStyleMod_destroy(self);
-}
-void scaleAllSizes(ImGuiStyle* self, float scale_factor) {
-	ImGuiStyle_ScaleAllSizes(self, scale_factor);
-}
-void destroy(ImGuiStyle* self) {
-	ImGuiStyle_destroy(self);
-}
-immutable(char)* getTabName(ImGuiTabBar* self, ImGuiTabItem* tab) {
-	return ImGuiTabBar_GetTabName(self, tab);
-}
-int getTabOrder(ImGuiTabBar* self, ImGuiTabItem* tab) {
-	return ImGuiTabBar_GetTabOrder(self, tab);
-}
-void destroy(ImGuiTabBar* self) {
-	ImGuiTabBar_destroy(self);
-}
-void destroy(ImGuiTabItem* self) {
-	ImGuiTabItem_destroy(self);
-}
-void destroy(ImGuiTableColumnSettings* self) {
-	ImGuiTableColumnSettings_destroy(self);
-}
-void destroy(ImGuiTableColumnSortSpecs* self) {
-	ImGuiTableColumnSortSpecs_destroy(self);
-}
-void destroy(ImGuiTableColumn* self) {
-	ImGuiTableColumn_destroy(self);
-}
-ImGuiTableColumnSettings* getColumnSettings(ImGuiTableSettings* self) {
-	return ImGuiTableSettings_GetColumnSettings(self);
-}
-void destroy(ImGuiTableSettings* self) {
-	ImGuiTableSettings_destroy(self);
-}
-void destroy(ImGuiTableSortSpecs* self) {
-	ImGuiTableSortSpecs_destroy(self);
-}
-void destroy(ImGuiTableTempData* self) {
-	ImGuiTableTempData_destroy(self);
-}
-void destroy(ImGuiTable* self) {
-	ImGuiTable_destroy(self);
-}
-void append(ImGuiTextBuffer* self, immutable(char)* str, immutable(char)* str_end) {
-	ImGuiTextBuffer_append(self, str, str_end);
-}
-void appendf(ImGuiTextBuffer* buffer, immutable(char)* fmt, ...) {
-	ImGuiTextBuffer_appendf(buffer, fmt);
-}
-void appendfv(ImGuiTextBuffer* self, immutable(char)* fmt, va_list args) {
-	ImGuiTextBuffer_appendfv(self, fmt, args);
-}
-immutable(char)* begin(ImGuiTextBuffer* self) {
-	return ImGuiTextBuffer_begin(self);
-}
-immutable(char)* c_str(ImGuiTextBuffer* self) {
-	return ImGuiTextBuffer_c_str(self);
-}
-void clear(ImGuiTextBuffer* self) {
-	ImGuiTextBuffer_clear(self);
-}
-void destroy(ImGuiTextBuffer* self) {
-	ImGuiTextBuffer_destroy(self);
-}
-bool empty(ImGuiTextBuffer* self) {
-	return ImGuiTextBuffer_empty(self);
-}
-immutable(char)* end(ImGuiTextBuffer* self) {
-	return ImGuiTextBuffer_end(self);
-}
-void reserve(ImGuiTextBuffer* self, int capacity) {
-	ImGuiTextBuffer_reserve(self, capacity);
-}
-int size(ImGuiTextBuffer* self) {
-	return ImGuiTextBuffer_size(self);
-}
-void build(ImGuiTextFilter* self) {
-	ImGuiTextFilter_Build(self);
-}
-void clear(ImGuiTextFilter* self) {
-	ImGuiTextFilter_Clear(self);
-}
-bool draw(ImGuiTextFilter* self, immutable(char)* label, float width) {
-	return ImGuiTextFilter_Draw(self, label, width);
-}
-bool isActive(ImGuiTextFilter* self) {
-	return ImGuiTextFilter_IsActive(self);
-}
-bool passFilter(ImGuiTextFilter* self, immutable(char)* text, immutable(char)* text_end) {
-	return ImGuiTextFilter_PassFilter(self, text, text_end);
-}
-void destroy(ImGuiTextFilter* self) {
-	ImGuiTextFilter_destroy(self);
-}
-void destroy(ImGuiTextRange* self) {
-	ImGuiTextRange_destroy(self);
-}
-bool empty(ImGuiTextRange* self) {
-	return ImGuiTextRange_empty(self);
-}
-void split(ImGuiTextRange* self, char separator, ImVector_ImGuiTextRange* out_) {
-	ImGuiTextRange_split(self, separator, out_);
-}
-void clearRequestFlags(ImGuiViewportP* self) {
-	ImGuiViewportP_ClearRequestFlags(self);
-}
-void updateWorkRect(ImGuiViewportP* self) {
-	ImGuiViewportP_UpdateWorkRect(self);
-}
-void destroy(ImGuiViewportP* self) {
-	ImGuiViewportP_destroy(self);
-}
-void destroy(ImGuiViewport* self) {
-	ImGuiViewport_destroy(self);
-}
-void destroy(ImGuiWindowClass* self) {
-	ImGuiWindowClass_destroy(self);
-}
-immutable(char)* getName(ImGuiWindowSettings* self) {
-	return ImGuiWindowSettings_GetName(self);
-}
-void destroy(ImGuiWindowSettings* self) {
-	ImGuiWindowSettings_destroy(self);
-}
-float calcFontSize(ImGuiWindow* self) {
-	return ImGuiWindow_CalcFontSize(self);
-}
-ImGuiID getIDFromRectangle(ImGuiWindow* self, ImRect r_abs) {
-	return ImGuiWindow_GetIDFromRectangle(self, r_abs);
-}
-ImGuiID getIDNoKeepAlive_Int(ImGuiWindow* self, int n) {
-	return ImGuiWindow_GetIDNoKeepAlive_Int(self, n);
-}
-ImGuiID getIDNoKeepAlive_Ptr(ImGuiWindow* self, void* ptr) {
-	return ImGuiWindow_GetIDNoKeepAlive_Ptr(self, ptr);
-}
-ImGuiID getIDNoKeepAlive_Str(ImGuiWindow* self, immutable(char)* str, immutable(char)* str_end) {
-	return ImGuiWindow_GetIDNoKeepAlive_Str(self, str, str_end);
-}
-ImGuiID getID_Int(ImGuiWindow* self, int n) {
-	return ImGuiWindow_GetID_Int(self, n);
-}
-ImGuiID getID_Ptr(ImGuiWindow* self, void* ptr) {
-	return ImGuiWindow_GetID_Ptr(self, ptr);
-}
-ImGuiID getID_Str(ImGuiWindow* self, immutable(char)* str, immutable(char)* str_end) {
-	return ImGuiWindow_GetID_Str(self, str, str_end);
-}
-float menuBarHeight(ImGuiWindow* self) {
-	return ImGuiWindow_MenuBarHeight(self);
-}
-float titleBarHeight(ImGuiWindow* self) {
-	return ImGuiWindow_TitleBarHeight(self);
-}
-void destroy(ImGuiWindow* self) {
-	ImGuiWindow_destroy(self);
-}
-} // pragma
 

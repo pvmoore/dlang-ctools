@@ -201,8 +201,6 @@ private:
         foreach(Var v; fd.parameterVars()) {
             include(v);
         }
-
-        // collect body statements
     }
     void include(StructDef sd) {
         throwIf(sd.name is null);

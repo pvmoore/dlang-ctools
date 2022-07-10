@@ -4,7 +4,7 @@ import ctools.all;
 import extractor;
 import core.sys.windows.windows;
 
-final class EmitDLLLoader : Emitter.Plugin {
+final class EmitDLLLoader : Emitter.AppenderPlugin {
 private:
     string className;
     string libraryName;
@@ -19,27 +19,27 @@ public:
         this.functionNames ~= names;
         return this;
     }
-    override void emit(File file) {
-        file.writefln("// %s", className);
-        file.writefln("private struct _%s {", className);
-        file.writefln("\timport core.sys.windows.windows;");
-        file.writefln("\timport common : throwIf;");
-        file.writefln("\tHANDLE handle;");
-        file.writefln("\tvoid load() {");
-        file.writefln("\t\tthis.handle = LoadLibraryA(\"%s\");", libraryName);
-        file.writefln("\t\tif(!handle) throw new Exception(\"Unable to load '%s'\");", libraryName);
-        file.writefln("\t\t");
+    override void emit(StringBuffer buf) {
+        buf.add("// %s\n", className);
+        buf.add("private struct _%s {\n", className);
+        buf.add("\timport core.sys.windows.windows;\n");
+        buf.add("\timport common : throwIf;\n");
+        buf.add("\tHANDLE handle;\n");
+        buf.add("\tvoid load() {\n");
+        buf.add("\t\tthis.handle = LoadLibraryA(\"%s\");\n", libraryName);
+        buf.add("\t\tif(!handle) throw new Exception(\"Unable to load '%s'\");\n", libraryName);
+        buf.add("\t\t\n");
         foreach(n; functionNames) {
-            file.writef("\t\t*(cast(void**)&%s) = GetProcAddress(handle, \"%s\");", n,n);
-            file.writefln(" throwIf(!%s);", n);
+            buf.add("\t\t*(cast(void**)&%s) = GetProcAddress(handle, \"%s\");", n,n);
+            buf.add(" throwIf(!%s);\n", n);
         }
 
-        file.writefln("\t}");
-        file.writefln("\tvoid unload() {");
-        file.writefln("\t\tif(handle) FreeLibrary(handle);");
-        file.writefln("\t}");
-        file.writefln("}");
-        file.writefln("__gshared _%s %s;", className, className);
-        file.writefln("// End of %s\n", className);
+        buf.add("\t}\n");
+        buf.add("\tvoid unload() {\n");
+        buf.add("\t\tif(handle) FreeLibrary(handle);\n");
+        buf.add("\t}\n");
+        buf.add("}\n");
+        buf.add("__gshared _%s %s;\n", className, className);
+        buf.add("// End of %s\n\n", className);
     }
 }

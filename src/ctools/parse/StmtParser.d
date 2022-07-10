@@ -108,7 +108,8 @@ public:
                             if(isFuncDef) {
                                 parseFuncDef(parent, type.as!FuncDecl, isExtern, isStatic);
                             } else if(type.isA!FuncDecl) {
-                                parent.add(type);
+                                auto decl = type.as!FuncDecl;
+                                parent.add(decl);
                             } else if(!tan.hasName() && !parentIsAStruct) {
                                 if(type.isA!StructDef) {
                                     typeParser.addStructDef(type.as!StructDef);
@@ -395,6 +396,7 @@ private:
     void parseFuncDef(Node parent, FuncDecl decl, bool isExtern, bool isStatic) {
         this.log("parseFuncDef decl = %s", decl);
         throwIf(nav.kind()!=TK.LBRACE);
+
 
         decl.isDefinition = true;
         decl.isStatic = decl.isStatic | isStatic;

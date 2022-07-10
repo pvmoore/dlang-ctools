@@ -20,6 +20,7 @@ public:
 }
 
 bool isVoidValue(Type t) {
+    if(auto tr = t.as!TypeRef) return isVoidValue(tr.type);
     return t.kind == TKind.VOID && !t.isA!PtrType;
 }
 

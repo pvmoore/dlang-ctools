@@ -352,6 +352,8 @@ private:
     TypeAndName parseFuncPtr(Node parent, Type returnType, bool isStatic) {
         this.log("\tparseFuncPtr returnType = %s (value:'%s' kind:%s)", returnType, nav.value(), nav.kind());
 
+        // ImFontAtlas_SetTexID ( ImFontAtlas * self , ImTextureID id ) ;
+
         // void* __stdcall name()
         //       ^^^^^
 

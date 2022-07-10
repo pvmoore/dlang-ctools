@@ -8,7 +8,7 @@ import extractor;
  *
  * Assume it is a char unless the name matches one of the supplied bytesRegexes.
  */
-final class CharByteEvalImpl : Emitter.CharByteEval {
+final class CharByteEval : Emitter.CharBytePlugin {
 private:
     //enum Regex!char bytesPattern = regex(r"[Bb]ytes");
         //regex(r"^.*([Nn]ame|[Ss]tr]|[Pp]refix|[Mm]essage|[Mm]sg|[Dd]esc|[Tt]itle).*$");

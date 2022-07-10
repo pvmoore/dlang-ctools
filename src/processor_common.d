@@ -59,22 +59,26 @@ protected:
     }
 }
 
-final class Comment : Emitter.Plugin {
+//══════════════════════════════════════════════════════════════════════════════════════════════════
+
+final class Comment : Emitter.AppenderPlugin {
 private:
     string[] lines;
 public:
     this(string[] lines) {
         this.lines = lines;
     }
-    override void emit(File file) {
+    override void emit(StringBuffer buf) {
         foreach(line; lines) {
-            file.writefln("// %s", line);
+            buf.add("// %s\n", line);
         }
-        file.writeln();
+        buf.add("\n");
     }
 }
 
-final class DefineEmitter : Emitter.Plugin {
+//──────────────────────────────────────────────────────────────────────────────────────────────────
+
+final class DefineEmitter : Emitter.AppenderPlugin {
 private:
     Map!(string,PPDef) definitions;
     Regex!char[] includes;
@@ -83,7 +87,7 @@ public:
         this.definitions = definitions;
         this.includes = includes;
     }
-    override void emit(File file) {
+    override void emit(StringBuffer buf) {
         string[] keys;
 
         foreach(e; definitions.byKeyValue()) {
@@ -97,12 +101,12 @@ public:
         import std.algorithm.sorting : sort;
         keys.sort();
 
-        file.writefln("// Definitions");
+        buf.add("// Definitions\n");
 
         foreach(k; keys) {
-            file.writefln("enum %s = %s;", k, *definitions[k]);
+            buf.add("enum %s = %s;\n", k, *definitions[k]);
         }
-        file.writefln("// End Definitions\n");
+        buf.add("// End Definitions\n\n");
     }
 private:
     bool accept(string key) {
@@ -111,5 +115,19 @@ private:
             if(!c.empty) return true;
         }
         return false;
+    }
+}
+
+//──────────────────────────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Emit some code into the output
+ */
+final class CodeEmitter : Emitter.AppenderPlugin {
+private:
+
+public:
+    override void emit(StringBuffer buf) {
+
     }
 }

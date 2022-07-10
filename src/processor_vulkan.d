@@ -100,7 +100,7 @@ private __gshared string[] GLOBAL_CMD_FUNCS = [
     "vkCreateInstance",
 ];
 
-class LoadGlobalCommandFunctions : Emitter.Plugin {
+class LoadGlobalCommandFunctions : Emitter.AppenderPlugin {
 protected:
     FuncDecl[] funcDecls;
 public:
@@ -110,27 +110,27 @@ public:
     bool accept(FuncDecl fd) {
         return fd.name.isOneOf(GLOBAL_CMD_FUNCS);
     }
-    override void emit(File file) {
-        prolog(file);
+    override void emit(StringBuffer buf) {
+        prolog(buf);
         foreach(fd; funcDecls) {
             if(accept(fd)) {
-                load(file, fd);
+                load(buf, fd);
             }
         }
-        epilog(file);
+        epilog(buf);
     }
-    void prolog(File file) {
-        file.writefln("// Load Global Command Functions");
-        file.writefln("void vkLoadGlobalCommandFunctions() {");
-        file.writefln("\timport std.string : toStringz;");
-        file.writefln("\timport common : throwIf;");
+    void prolog(StringBuffer buf) {
+        buf.add("// Load Global Command Functions\n");
+        buf.add("void vkLoadGlobalCommandFunctions() {\n");
+        buf.add("\timport std.string : toStringz;\n");
+        buf.add("\timport common : throwIf;\n");
     }
-    void epilog(File file) {
-        file.writefln("}");
+    void epilog(StringBuffer buf) {
+        buf.add("}\n");
     }
-    void load(File file, FuncDecl fd) {
-        file.writef("\t*(cast(void**)&%s) = vkGetInstanceProcAddr(null, toStringz(\"%s\"));", fd.name, fd.name);
-        file.writefln(" throwIf(!%s);", fd.name);
+    void load(StringBuffer buf, FuncDecl fd) {
+        buf.add("\t*(cast(void**)&%s) = vkGetInstanceProcAddr(null, toStringz(\"%s\"));", fd.name, fd.name);
+        buf.add(" throwIf(!%s);\n", fd.name);
     }
 }
 
@@ -146,13 +146,13 @@ public:
             !fd.name.startsWith("PFN_");
     }
 protected:
-    override void prolog(File file) {
-        file.writefln("// Load Instance Functions");
-        file.writefln("void vkLoadInstanceFunctions(VkInstance instance) {");
-        file.writefln("\timport std.string : toStringz;");
-        file.writefln("\timport common : throwIf;");
+    override void prolog(StringBuffer buf) {
+        buf.add("// Load Instance Functions\n");
+        buf.add("void vkLoadInstanceFunctions(VkInstance instance) {\n");
+        buf.add("\timport std.string : toStringz;\n");
+        buf.add("\timport common : throwIf;\n");
     }
-    override void load(File file, FuncDecl fd) {
-        file.writef("\t*(cast(void**)&%s) = vkGetInstanceProcAddr(instance, toStringz(\"%s\"));", fd.name, fd.name);
+    override void load(StringBuffer buf, FuncDecl fd) {
+        buf.add("\t*(cast(void**)&%s) = vkGetInstanceProcAddr(instance, toStringz(\"%s\"));", fd.name, fd.name);
     }
 }
