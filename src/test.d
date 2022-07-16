@@ -49,7 +49,7 @@ void main(string[] args) {
     }
 
     // Extract Vulkan
-    if(false) {
+    if(true) {
         auto vulkanProcessor = new VulkanProcessor();
         vulkanProcessor.process();
     }
@@ -59,7 +59,7 @@ void main(string[] args) {
         glfwProcessor.process();
     }
     // Extract CImgui
-    if(true) {
+    if(false) {
         auto cimguiProcessor = new CImguiProcessor();
         cimguiProcessor.process();
     }
