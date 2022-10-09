@@ -294,6 +294,7 @@ public:
             case ADDRESSOF:
             case DEREF:
             case IF:
+            case FOR:
             case RETURN:
             case SCOPE:
             case TYPEDEF:

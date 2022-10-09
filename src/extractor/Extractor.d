@@ -103,6 +103,7 @@ private:
             case FUNCDEF: break;
             case IDENTIFIER: break;
             case IF: break;
+            case FOR: break;
             case INDEX: break;
             case MEMBER: break;
             case NUMBER: break;

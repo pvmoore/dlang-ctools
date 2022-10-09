@@ -105,6 +105,9 @@ public:
                         // }
                         PPMacroExpander.expandOrSkip(state, file, "");
                         break;
+                    case TK.BSLASH:
+                        file.removeNext(1);
+                        break;
                     default:
                         file.skip(1);
                         break;

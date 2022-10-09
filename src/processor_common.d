@@ -52,6 +52,8 @@ protected:
             tokens ~= parseState.preProcess(path);
         }
 
+        writefln("Parsing...");
+
         this.parent = parseState.parse(tokens);
 
         writefln("Preprocess time %s seconds", parseState.preprocessTime.peek().total!"nsecs"/1_000_000_000.0);

@@ -31,7 +31,7 @@ public:
     }
     Node process() {
         Node parent = new Scope(true);
-        int count = 0;
+        //int count = 0;
 
         try{
             while(!nav.isEof()) {
@@ -46,7 +46,8 @@ public:
             this.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             auto lastChild = parent.last();
             lastChild.dump();
-            writefln("count = %s", count);
+            //writefln("count = %s", count);
+
             throw e;
         }
 
@@ -87,6 +88,9 @@ public:
                         return;
                     case "if":
                         parseIf(parent);
+                        return;
+                    case "for":
+                        parseFor(parent);
                         return;
                     case "return":
                         parseReturn(parent);
@@ -320,6 +324,61 @@ private:
         nav.skip(TK.RBRACKET);
     }
     /**
+     *  FOR    ::= 'for' '(' INITS ';' COND ';' PEXPRS ')' BODY
+     *  INITS  ::= [ Var { ',' Var } ]
+     *  COND   ::= [ Expr ]
+     *  PEXPRS ::= [ Expr { ',' Expr } ]
+     *  BODY   ::= [ '{' ] { Stmt } [ '}' ]
+     */
+    void parseFor(Node parent) {
+        auto f = new For();
+        parent.add(f);
+
+        nav.skip("for");
+
+        // (
+        nav.skip(TK.LBRACKET);
+
+        // INITS
+        if(!nav.isKind(TK.SEMICOLON)) {
+            while(!nav.isKind(TK.COMMA) && !nav.isKind(TK.SEMICOLON)) {
+                parse(f);
+            }
+        }
+        nav.skip(TK.SEMICOLON);
+
+        // COND
+        f.condOffset = f.numChildren();
+        if(!nav.isKind(TK.SEMICOLON)) {
+            exprParser.parse(f);
+        }
+        nav.skip(TK.SEMICOLON);
+
+        // PEXPRS
+        f.pexprsOffset = f.numChildren();
+        while(!nav.isKind(TK.COMMA) && !nav.isKind(TK.RBRACKET)) {
+            exprParser.parse(f);
+        }
+
+        // )
+        nav.skip(TK.RBRACKET);
+
+        // BODY
+        f.bodyOffset = f.numChildren();
+        if(nav.isKind(TK.LBRACE)) {
+            nav.skip(TK.LBRACE);
+            while(!nav.isKind(TK.RBRACE)) {
+                parse(f);
+            }
+            nav.skip(TK.RBRACE);
+        } else {
+            parse(f);
+        }
+
+        //f.dump();
+        //throwIf(f !is null, "");
+    }
+    /**
      *  IF   ::= 'if' COND THEN [ ELSE ]
      *  COND ::= '(' Expr ')'
      *  THEN ::= ( '{' { Stmt } '}' | Stmt )
@@ -331,7 +390,7 @@ private:
 
         nav.skip("if");
 
-        // condiftion
+        // condition
         nav.skip(TK.LBRACKET);
         exprParser.parse(if_);
         nav.skip(TK.RBRACKET);

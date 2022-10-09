@@ -85,7 +85,9 @@ private:
                 parseIdentifier(parent);
                 break;
             default:
-                throwIf(true, "Unexpected Expression %s", nav.kind());
+
+                throwIf(true, "lhs: Unexpected Expression file: %s, line: %s, kind: %s ",
+                    nav.peek(0).file, nav.line(), nav.kind());
         }
     }
     void rhs(Node parent) {
