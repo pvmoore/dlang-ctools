@@ -72,6 +72,7 @@ private:
             "VK_REMAINING_ARRAY_LAYERS" : "(~0U)",
             "VK_SUBPASS_EXTERNAL" : "(~0U)",
             "VK_WHOLE_SIZE" : "(~0UL)",
+            "VK_SHADER_UNUSED_KHR" : "(~0U)"
         ];
 
         auto funcDecls = getOrderedValues(extractor.funcDecls);

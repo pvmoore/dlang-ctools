@@ -777,6 +777,7 @@ enum VK_REMAINING_MIP_LEVELS = (~0U);
 enum VK_SUBPASS_EXTERNAL = (~0U);
 enum VK_WHOLE_SIZE = (~0UL);
 enum VK_NULL_HANDLE = null;
+enum VK_SHADER_UNUSED_KHR = (~0U);
 enum VK_QUEUE_FAMILY_IGNORED = (~0U);
 
 enum VkAccelerationStructureBuildTypeKHR {
