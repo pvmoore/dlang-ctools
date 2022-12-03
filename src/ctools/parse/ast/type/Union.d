@@ -15,6 +15,10 @@ public:
 
     Var[] vars() { return children.as!(Var[]); }
 
+    bool hasVariable(string name) {
+        return !vars().filter!(it=>it.name==name).empty();
+    }
+
     this() {
         super(TKind.UNION);
         this.nid = Nid.UNION;

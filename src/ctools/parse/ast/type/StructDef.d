@@ -13,6 +13,11 @@ public:
     bool hasName() { return name !is null; }
     bool hasBody() { return hasChildren(); }
     Stmt[] statements() { return children.as!(Stmt[]); }
+    Var[] variables() { return children.filter!(it=>it.isA!Var).map!(it=>it.as!Var).array; }
+
+    bool hasVariable(string name) {
+        return !variables().filter!(it=>it.name==name).empty();
+    }
 
     override string getName() { return name ? name : ""; }
 

@@ -94,8 +94,9 @@ private:
         emitter.emitTo("generated/vulkan_api.d");
     }
 }
+private:
 
-private __gshared string[] GLOBAL_CMD_FUNCS = [
+__gshared string[] GLOBAL_CMD_FUNCS = [
     "vkEnumerateInstanceVersion",
     "vkEnumerateInstanceExtensionProperties",
     "vkEnumerateInstanceLayerProperties",
@@ -155,6 +156,6 @@ protected:
         buf.add("\timport common : throwIf;\n");
     }
     override void load(StringBuffer buf, FuncDecl fd) {
-        buf.add("\t*(cast(void**)&%s) = vkGetInstanceProcAddr(instance, toStringz(\"%s\"));", fd.name, fd.name);
+        buf.add("\t*(cast(void**)&%s) = vkGetInstanceProcAddr(instance, toStringz(\"%s\"));\n", fd.name, fd.name);
     }
 }

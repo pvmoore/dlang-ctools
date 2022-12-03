@@ -14,6 +14,7 @@ import test_parse;
 import test_preprocess;
 import processor_cimgui;
 import processor_vulkan;
+import processor_vulkan_to_java;
 import processor_glfw;
 
 ///
@@ -49,7 +50,7 @@ void main(string[] args) {
     }
 
     // Extract Vulkan
-    if(true) {
+    if(false) {
         auto vulkanProcessor = new VulkanProcessor();
         vulkanProcessor.process();
     }
@@ -70,6 +71,10 @@ void main(string[] args) {
         foreach(e; a.byKeyValue()) {
             writefln("\t%s = %s", e.key, e.value);
         }
+    }
+    if(true) {
+        auto vulkanProcessor = new VulkanToJavaProcessor();
+        vulkanProcessor.process();
     }
 }
 

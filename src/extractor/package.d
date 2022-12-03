@@ -6,11 +6,13 @@ import std.stdio    : File;
 import std.regex    : Regex, regex, matchFirst;
 import std.process  : environment;
 
+import extractor.BaseEmitter;
 import extractor.CharByteEval;
 import extractor.EConfig;
 import extractor.EmitDLLLoader;
 import extractor.Emitter;
 import extractor.Extractor;
+import extractor.JavaEmitter;
 
 T[] getOrderedValues(T)(T[string] map) {
     import std : sort,array;

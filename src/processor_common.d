@@ -5,7 +5,7 @@ public:
 import ctools;
 import extractor;
 
-import std.stdio    : writefln;
+import std.stdio    : writeln, writefln;
 import std.format   : format;
 
 abstract class Processor {
