@@ -12,6 +12,8 @@ public:
     string name;
 
     override string getName() { return name ? name : ""; }
+    override int alignment() { return 4; }
+    override int size() { return 4; }
 
     Identifier[] getIdentifiers() {
         return children.as!(Identifier[]);

@@ -42,6 +42,7 @@ private:
         config.requiredFunctionRegexes ~= regex(r"^glfw.*");
 
         config.excludeRegexes ~= regex(r"^(Vk|vk).*");
+        config.excludeRegexes ~= regex(r"HWND");
 
         this.extractor = new Extractor(config);
         extractor.process(parent);
@@ -64,7 +65,8 @@ private:
             [regex(r"^GLFW_.*")]
         );
         enum string[] INCLUDES = [
-            "vulkan_api"
+            "vulkan_api",
+            "core.sys.windows.windows : HWND"
         ];
         import std : map, array;
         auto loader = new EmitDLLLoader("GLFWLoader", dllName)

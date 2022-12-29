@@ -12,6 +12,8 @@ public:
     override bool isPtr() { return type.isPtr(); }
     override bool isArray() { return type.isArray(); }
     override string getName() { return name; }
+    override int alignment() { return type.alignment(); }
+    override int size() { return type.size(); }
 
     this(Type type, string name = null) {
         super(type.kind);

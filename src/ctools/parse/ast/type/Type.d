@@ -14,6 +14,9 @@ public:
     bool isArray() { return false; }
     string getName() { return ""; }
 
+    abstract int alignment();
+    abstract int size();
+
     this(TKind kind) {
         this.kind = kind;
     }
@@ -80,46 +83,4 @@ Type createTypeRefStripPtrAndArray(Type t) {
         return createTypeRefStripPtrAndArray(t.as!ArrayType.type());
     }
     return new TypeRef(t);
-}
-
-int size(Type t) {
-    if(t.isA!PtrType) return 8;
-    if(auto tr = t.as!TypeRef) return size(tr.type);
-
-    if(auto array = t.as!ArrayType) {
-        int s = size(array.type());
-        // multiply by dimensions
-        foreach(d; array.dimensions()) {
-            if(Number n = d.as!Number) {
-                import std;
-                s *= n.stringValue.toLower().replace("u", "").to!int;
-            } else throwIf(true, "Unsupported dimension type %s", d.nid);
-        }
-        return s;
-    }
-
-    final switch(t.kind) with(TKind) {
-        case BOOL:
-        case CHAR:
-            return 1;
-        case SHORT:
-            return 2;
-        case INT:
-        case LONG:
-        case FLOAT:
-            return 4;
-        case LONG_LONG:
-        case DOUBLE:
-            return 8;
-        case FUNC:
-        case FP:
-        case ENUM:
-            return 4;
-        case UNION:
-            return t.as!Union.vars().map!(it=>size(it.type)).maxElement();
-        case STRUCT:
-            return t.as!StructDef.variables().map!(it=>size(it.type)).sum();
-        case VOID:
-            throwIf(true, "Cannot size a void"); return 0;
-    }
 }

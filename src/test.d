@@ -50,7 +50,7 @@ void main(string[] args) {
     }
 
     // Extract Vulkan
-    if(false) {
+    if(true) {
         auto vulkanProcessor = new VulkanProcessor();
         vulkanProcessor.process();
     }
@@ -72,7 +72,7 @@ void main(string[] args) {
             writefln("\t%s = %s", e.key, e.value);
         }
     }
-    if(true) {
+    if(false) {
         auto vulkanProcessor = new VulkanToJavaProcessor();
         vulkanProcessor.process();
     }

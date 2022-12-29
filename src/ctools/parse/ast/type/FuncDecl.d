@@ -19,6 +19,8 @@ public:
     int numParameters;
 
     override string getName() { return name; }
+    override int alignment() { return 4; }
+    override int size() { return 4; }
 
     Type returnType() {
         return first().as!Type;

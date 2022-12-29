@@ -15,6 +15,8 @@ public:
     override bool isPtr() { return true; }
     override bool isArray() { return type().isArray(); }
     override string getName() { return type().getName(); }
+    override int alignment() { return 8; }
+    override int size() { return 8; }
 
     Type type() { return first().as!Type; }
 

@@ -16,6 +16,18 @@ public:
     override bool isPtr() { return type().isPtr(); }
     override bool isArray() { return true; }
     override string getName() { return type().getName(); }
+    override int alignment() { return type().alignment(); }
+    override int size() {
+        int s = type().size();
+        // multiply by dimensions
+        foreach(d; dimensions()) {
+            if(Number n = d.as!Number) {
+                import std;
+                s *= n.stringValue.toLower().replace("u", "").to!int;
+            } else throwIf(true, "Unsupported dimension type %s", d.nid);
+        }
+        return s;
+    }
 
     this(TKind kind) {
         super(kind);

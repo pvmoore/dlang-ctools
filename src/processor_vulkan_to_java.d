@@ -74,18 +74,6 @@ private:
         emitter.withCallback(new VulkanToJavaCallback(emitter, vulkanVersion));
 
         emitter.emit();
-
-        //     .extraDefinitions(extraDefs);
-
-        // emitter.add(new Comment(COMMENTS));
-
-        // emitter.add(new EmitDLLLoader("VulkanLoader", "vulkan-1.dll")
-        //                 .loadFunctions("vkGetInstanceProcAddr"));
-
-        // emitter.add(new LoadGlobalCommandFunctions(funcDecls));
-        // emitter.add(new LoadInstanceFunctions(funcDecls));
-
-        // emitter.emitTo("generated/vulkan_api.d");
     }
 }
 //══════════════════════════════════════════════════════════════════════════════════════════════════
@@ -97,107 +85,94 @@ __gshared string[] GLOBAL_CMD_FUNCS = [
     "vkEnumerateInstanceLayerProperties",
     "vkCreateInstance",
 ];
-//──────────────────────────────────────────────────────────────────────────────────────────────────
-class LoadGlobalCommandFunctions : Emitter.AppenderPlugin {
-protected:
-    string packageName;
-    FuncDecl[] funcDecls;
-public:
-    this(string packageName, FuncDecl[] funcDecls) {
-        this.packageName = packageName;
-        this.funcDecls = funcDecls;
-    }
-    bool accept(FuncDecl fd) {
-        return fd.name.isOneOf(GLOBAL_CMD_FUNCS);
-    }
-    override void emit(StringBuffer buf) {
-        prolog(buf);
-        foreach(fd; funcDecls) {
-            if(accept(fd)) {
-                load(buf, fd);
-            }
-        }
-        epilog(buf);
-    }
-    void prolog(StringBuffer buf) {
-        buf.add("package %s", packageName);
-        buf.add("public final class FunctionLoader {\n");
-        buf.add("\tpublic void vkLoadGlobalCommandFunctions() {\n");
-        buf.add("");
-    }
-    void epilog(StringBuffer buf) {
-        buf.add("}\n");
-    }
-    void load(StringBuffer buf, FuncDecl fd) {
-        buf.add("\t*(cast(void**)&%s) = vkGetInstanceProcAddr(null, toStringz(\"%s\"));", fd.name, fd.name);
-        buf.add(" throwIf(!%s);\n", fd.name);
-    }
-}
-//──────────────────────────────────────────────────────────────────────────────────────────────────
-final class LoadInstanceFunctions : Emitter.AppenderPlugin {
-private:
-    string packageName;
-    FuncDecl[] funcDecls;
-public:
-    this(string packageName, FuncDecl[] funcDecls) {
-        this.packageName = packageName;
-        this.funcDecls = funcDecls;
-    }
-    bool accept(FuncDecl fd) {
-        return !fd.name.isOneOf(GLOBAL_CMD_FUNCS) &&
-            fd.name!="vkGetInstanceProcAddr" &&
-            !fd.name.startsWith("PFN_");
-    }
-    override void emit(StringBuffer buf) {
-        prolog(buf);
-        foreach(fd; funcDecls) {
-            if(accept(fd)) {
-                load(buf, fd);
-            }
-        }
-        epilog(buf);
-    }
-protected:
-    void prolog(StringBuffer buf) {
-        buf.add("package %s", packageName);
-        buf.add("public final class FunctionLoader {\n");
-        buf.add("\tpublic void vkLoadInstanceFunctions(VkInstance instance) {\n");
-    }
-    void load(StringBuffer buf, FuncDecl fd) {
-        //buf.add("\t*(cast(void**)&%s) = vkGetInstanceProcAddr(instance, toStringz(\"%s\"));", fd.name, fd.name);
-        buf.add("\t// load %s\n", fd.name);
-    }
-    void epilog(StringBuffer buf) {
-        buf.add("}\n");
-    }
-}
+__gshared string[] OPAQUE_HANDLES = [
+    "VkDevice",
+    "VkPhysicalDevice"
+];
 //══════════════════════════════════════════════════════════════════════════════════════════════════
 final class VulkanToJavaCallback : JavaEmitter.Callback {
 private:
     JavaEmitter emitter;
     string vulkanVersion;
-    StringBuffer buf;
+    StringBuffer enumsBuf, loaderBuf, loaderHandles;
+    StringBuffer[string] opaqueHandleBuffers;
+
+    enum LOADER_PREFIX_1 =
+        "package pvmoore.jvulkan.func;\n\n" ~
+        "import lombok.extern.slf4j.Slf4j;\n" ~
+        "import java.lang.foreign.*;\n" ~
+        "import java.lang.invoke.MethodHandle;\n" ~
+        "import pvmoore.jvulkan.opaque.*;\n" ~
+        "import static pvmoore.jvulkan.misc.Util.isNULL;\n" ~
+        "import static java.lang.foreign.ValueLayout.*;\n" ~
+        //"import static java.lang.foreign.MemoryAddress.NULL;\n\n" ~
+        "\n" ~
+        "@Slf4j\n" ~
+        "public final class Functions {\n";
+    enum LOADER_PREFIX_2 =
+        "\n" ~
+        "\tpublic static void vkLoadInstanceFunctions(MethodHandle vkGetInstanceProcAddr, VkInstance instance) {\n" ~
+        "\t\tLinker linker = Linker.nativeLinker();\n" ~
+        "\t\tMemorySession session = MemorySession.global();\n" ~
+        "\t\ttry{\n";
+    enum LOADER_SUFFIX =
+        "\t\t} catch(Throwable t) {\n" ~
+        "\t\t\tthrow new RuntimeException(t);\n" ~
+        "\t\t}\n" ~
+        "\t}\n" ~
+        "}\n";
+    enum OPAQUE_PREFIX =
+        "package pvmoore.jvulkan.opaque;\n\n" ~
+        "import lombok.extern.slf4j.Slf4j;\n" ~
+        "import pvmoore.jvulkan.func.Functions;\n" ~
+        "import java.lang.foreign.*;\n" ~
+        "\n";
+    enum OPAQUE_SUFFIX =
+        "}\n";
 public:
     this(JavaEmitter emitter, string vulkanVersion) {
         this.emitter = emitter;
         this.vulkanVersion = vulkanVersion;
-        this.buf = new StringBuffer();
+        this.enumsBuf = new StringBuffer();
+        this.loaderBuf = new StringBuffer();
+        this.loaderHandles = new StringBuffer();
     }
     void begin() {
-        buf.add("package pvmoore.jvulkan;\n\n");
-        buf.add("/**\n");
-        buf.add(" * This file was generated from Vulkan SDK version %s\n", vulkanVersion);
-        buf.add(" */\n");
-        buf.add("public final class Enums {\n");
+        enumsBuf.add("package pvmoore.jvulkan;\n\n");
+        enumsBuf.add("/**\n");
+        enumsBuf.add(" * This file was generated from Vulkan SDK version %s\n", vulkanVersion);
+        enumsBuf.add(" */\n");
+        enumsBuf.add("public final class Enums {\n");
     }
     void end() {
-        buf.add("}\n");
+        enumsBuf.add("}\n");
 
         auto file = File("C:/pvmoore/JVM/libs/jVulkan/src/main/java/pvmoore/jvulkan/Enums.java", "wb");
-        file.writef(buf.toString());
+        file.write(enumsBuf.toString());
         file.close();
 
-        writefln("counter = %s", counter);
+        file = File("C:/pvmoore/JVM/libs/jVulkan/src/main/java/pvmoore/jvulkan/func/Functions.java", "wb");
+        file.write(LOADER_PREFIX_1);
+        file.write(loaderHandles.toString());
+        file.write(LOADER_PREFIX_2);
+        file.write(loaderBuf.toString());
+        file.write(LOADER_SUFFIX);
+        file.close();
+
+        foreach(e; opaqueHandleBuffers.byKeyValue()) {
+            string name = e.key;
+            auto buf = e.value;
+            file = File("C:/pvmoore/JVM/libs/jVulkan/src/main/java/pvmoore/jvulkan/opaque/%s.java".format(name), "wb");
+
+            file.write(OPAQUE_PREFIX);
+            file.writefln("public final class %s extends OpaqueHandle {", name);
+            file.writefln("\tpublic %s(Addressable addr) {", name);
+            file.writefln("\t\tsuper(addr);");
+            file.writefln("\t}");
+            file.write(buf.toString());
+            file.write(OPAQUE_SUFFIX);
+            file.close();
+        }
     }
     void structDef(StructDef sd) {
         commonStructOrUnion(sd, null);
@@ -210,7 +185,14 @@ public:
             return;
         }
 
-        // TODO - write the function loaders here
+        auto firstParamType = fd.numParameters > 0 ? fd.firstParameterType() : null;
+        auto firstParamName = firstParamType && firstParamType.isA!TypeRef ? firstParamType.as!TypeRef.name : "";
+
+        if(isOpaque(firstParamType)) {
+            handleFuncDeclOpaque(fd, firstParamName);
+        }
+
+        handleFuncDecl(fd);
     }
     void enum_(Enum e) {
         foreach(id; e.getIdentifiers()) {
@@ -218,12 +200,12 @@ public:
 
             if(id.first().isA!Identifier) continue;
 
-            buf.add("\tpublic static final int %s = ", id.name);
-            emitter.emit(id.first(), buf);
+            enumsBuf.add("\tpublic static final int %s = ", id.name);
+            emitter.emit(id.first(), enumsBuf);
 
-            buf.add(";\n");
+            enumsBuf.add(";\n");
         }
-        buf.add("\n");
+        enumsBuf.add("\n");
     }
 private:
     void commonStructOrUnion(StructDef sdef, Union un) {
@@ -243,6 +225,10 @@ private:
             vars = un.vars();
         }
 
+        if(name.endsWith("_T")) {
+            getOpaqueBuffer(name[0..$-2]);
+            return;
+        }
         if(name.isOneOf("_SECURITY_ATTRIBUTES", "HINSTANCE__", "HMONITOR__", "HWND__")) return;
 
         auto buf = new StringBuffer();
@@ -252,50 +238,16 @@ private:
         buf.add("import static pvmoore.jvulkan.Enums.*;\n");
         buf.add("import java.lang.foreign.*;\n");
         buf.add("import static java.lang.foreign.ValueLayout.*;\n");
-        //buf.add("import pvmoore.jvulkan.structs.Struct;\n");
+        buf.add("import static pvmoore.jvulkan.Constants.*;\n");
         buf.add("import static pvmoore.jvulkan.misc.Util.throwIf;\n\n");
 
         if(isUnion) {
-            buf.add("// This Struct is actually a Union\n");
+            buf.add("// This is actually a Union\n");
         }
 
         buf.add("public final class %s extends Struct {\n", name);
 
-        // Write the member variables as a comment
-        int offset = 0;
-        foreach(v; vars) {
-            auto n = v.name;
-            auto t = v.type();
-
-            buf.add("\t// [%0.2s] ", offset);
-            emitter.emit(t, buf);
-            buf.add(" %s\n", n);
-
-            if(!isUnion) {
-                offset += size(t);
-            }
-        }
-
-        // LAYOUT
-        if(isUnion) {
-            buf.add("\tpublic static final MemoryLayout LAYOUT = MemoryLayout.unionLayout(");
-        } else {
-            buf.add("\tpublic static final MemoryLayout LAYOUT = MemoryLayout.structLayout(");
-        }
-        if(vars.length > 0) {
-            buf.add("\n");
-        }
-        foreach(i, v; vars) {
-            auto n = v.name;
-            auto t = v.type();
-
-            buf.add("\t\t" ~ getJavaLayout(t));
-
-            if(i < vars.length-1) {
-                buf.add(",\n");
-            }
-        }
-        buf.add(");\n\n");
+        buf.add(createLayout(sdef, un, emitter));
 
         // Constructor
         buf.add("\tprivate %s(MemorySegment mem, int count) {\n", name);
@@ -304,19 +256,22 @@ private:
 
         // Alloc
         buf.add("\tpublic static %s alloc(MemorySession session, int count) {\n", name);
-        if(hassTypeAndpNext) {
-            buf.add("\t\tvar mem = count == 1 ? session.allocate(LAYOUT) : session.allocateArray(LAYOUT, count);\n");
-            buf.add("\t\tvar obj = wrap(mem, count);\n");
-            auto e = getStructureType(name);
+        buf.add("\t\tvar mem = count == 1 ? session.allocate(LAYOUT) : session.allocateArray(LAYOUT, count);\n");
 
+        if(hassTypeAndpNext) {
+            auto e = getStructureType(name);
+            // buf.add("\t\tvar mem = count == 1 ? MemorySegment.allocateNative(LAYOUT, session)\n");
+            // buf.add("\t\t\t : MemorySegment.allocateNative(MemoryLayout.sequenceLayout(count, LAYOUT), session);\n");
+
+            buf.add("\t\tvar obj = wrap(mem, count);\n");
             buf.add("\t\tfor(int i=0; i<count; i++) {\n");
             buf.add("\t\t\tStruct.set(mem, i*LAYOUT.byteSize(), %s);\n", e);
-            buf.add("\t\t\tStruct.setNull(mem, 4 + i*LAYOUT.byteSize());\n");
+            buf.add("\t\t\tStruct.setNull(mem, 8 + i*LAYOUT.byteSize());\n");
             buf.add("\t\t}\n");
 
             buf.add("\t\treturn obj;\n");
         } else {
-            buf.add("\t\treturn wrap(session.allocateArray(LAYOUT, count), count);\n");
+            buf.add("\t\treturn wrap(mem, count);\n");
         }
         buf.add("\t}\n");
 
@@ -330,8 +285,8 @@ private:
         buf.add("\t\treturn new %s(mem, count);\n", name);
         buf.add("\t}\n");
 
-        // getArrayElement
-        buf.add("\tpublic %s getArrayElement(int i) {\n", name);
+        // getStruct
+        buf.add("\tpublic %s getStruct(int i) {\n", name);
         buf.add("\t\tthrowIf(i>=count, String.format(\"%s >= %s\", i, count));\n");
         buf.add("\t\tthis.mem = startMem.asSlice(LAYOUT.byteSize()*i);\n");
         buf.add("\t\treturn this;\n");
@@ -342,45 +297,189 @@ private:
         buf.add("\t@Override public MemoryLayout getLayout() {\n");
         buf.add("\t\treturn LAYOUT;\n");
         buf.add("\t}\n");
-        offset = 0;
-        foreach(v; vars) {
-            buf.add(createGetter(name, offset, v));
 
-            if(!isUnion) {
-                offset += size(v.type());
-            }
+        foreach(i, v; vars) {
+            auto offset = isUnion ? 0 : sdef.offsetOfMember(i.as!int);
+            buf.add(createGetter(name, offset, v));
         }
         buf.add("\n");
 
         // Setters
         buf.add("\t// Setters\n");
-        offset = 0;
-        foreach(v; vars) {
+        foreach(i, v; vars) {
+            auto offset = isUnion ? 0 : sdef.offsetOfMember(i.as!int);
             buf.add(createSetter(name, offset, v));
-
-            if(!isUnion) {
-                offset += size(v.type());
-            }
         }
 
+        buf.add("\n");
         if(!isUnion) {
-            buf.add("\n");
-            buf.add(createToString(name, vars));
+            buf.add(createToString(sdef));
+        } else {
+            buf.add(createToString(un));
         }
 
         buf.add("}\n");
 
-        writeln(buf.toString());
+        //writeln(buf.toString());
 
         auto file = File("C:/pvmoore/JVM/libs/jVulkan/src/main/java/pvmoore/jvulkan/structs/" ~ name ~ ".java", "wb");
         file.writeln(buf.toString());
         file.close();
     }
+    void handleFuncDecl(FuncDecl fd) {
+        loaderBuf.add("\t\t\tvar %sAddr = (MemoryAddress)vkGetInstanceProcAddr\n", fd.name);
+        loaderBuf.add("\t\t\t\t.invoke(instance.dereference(), session.allocateUtf8String(\"%s\"));\n", fd.name);
+
+        string funcDesc = generateFunctionDescriptor(fd);
+
+        bool vkResult = isVkResult(fd.returnType());
+        bool isVoid = !vkResult && isVoidValue(fd.returnType());
+
+        loaderBuf.add("\t\t\tif(!isNULL(%sAddr)) {\n", fd.name);
+
+        if(vkResult) {
+            loaderHandles.add("\tpublic static VkResultFunction %s;\n", fd.name);
+            loaderBuf.add("\t\t\t\t%s = new VkResultFunction(linker.downcallHandle(%sAddr, %s));\n", fd.name, fd.name, funcDesc);
+        } else if(isVoid) {
+            loaderHandles.add("\tpublic static VoidFunction %s;\n", fd.name);
+            loaderBuf.add("\t\t\t\t%s = new VoidFunction(linker.downcallHandle(%sAddr, %s));\n", fd.name, fd.name, funcDesc);
+        } else {
+            loaderHandles.add("\tpublic static ReturningFunction %s;\n", fd.name);
+            loaderBuf.add("\t\t\t\t%s = new ReturningFunction(linker.downcallHandle(%sAddr, %s));\n", fd.name, fd.name, funcDesc);
+        }
+
+        loaderBuf.add("\t\t\t} else {\n");
+        loaderBuf.add("\t\t\t\tlog.debug(\"Function '%s' not found\");\n", fd.name);
+        loaderBuf.add("\t\t\t}\n");
+    }
+    StringBuffer getOpaqueBuffer(string name) {
+        auto ptr = name in opaqueHandleBuffers;
+        if(!ptr) {
+            opaqueHandleBuffers[name] = new StringBuffer();
+            return getOpaqueBuffer(name);
+        }
+        return *ptr;
+    }
+    /**
+     * class VkDevice extends OpaqueHandle {
+     *    public VkDevice(Addressable addressable) {
+     *        super(addressable);
+     *    }
+     *
+     *    //VkResult vkGetPipelineCacheData(VkDevice device, VkPipelineCache pipelineCache, size_t* pDataSize, void* pData)
+     *    public void vkGetPipelineCacheData(VkPipelineCache pipelineCache, Addressable pDataSize, Addressable pData) {
+     *      // This is a VkResultFunction
+     *      Functions.vkGetPipelineCacheData.call(addressable.dereference(), pipelineCache.dereference(), pDataSize, pData);
+     *    }
+     *
+     *    // void vkGetPrivateData(VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t* pData)
+     *    public void vkGetPrivateData(int objectType, long objectHandle, VkPrivateDataSlot privateDataSlot, Addressable pData) {
+     *       Functions.vkGetPrivateData.invoke(device.dereference(), objectType, objectHandle, privateDataSlot.dereference(), pData);
+     *    }
+     * }
+     */
+    void handleFuncDeclOpaque(FuncDecl fd, string name) {
+        // This function has at least one parameter and it is one of the opaque handles:
+        // - VkCommandBuffer
+        // - VkQueue
+        // - VkInstance
+        // - VkDevice
+        // - VkPhysicalDevice
+
+        auto buf = getOpaqueBuffer(name);
+        auto vars = fd.parameterVars();
+        assert(vars.length > 0);
+
+
+        bool vkResult = isVkResult(fd.returnType());
+        bool returnsVoid = vkResult || isVoidValue(fd.returnType());
+
+        string returnStr = returnsVoid ? "void" : getJavaType(fd.returnType(), true);
+        string params;
+        string args = "dereference()";
+        auto origParams = new StringBuffer();
+        origParams.add("%s %s", name, vars[0].name);
+
+        foreach(i, p; vars[1..$]) {
+            Type t = p.type();
+            bool opaque = isOpaque(t);
+            if(i>0) {
+                params ~= ", ";
+            }
+            origParams.add(", ");
+            args ~= ", ";
+
+            emitter.emit(t, origParams);
+            origParams.add(" ").add(p.name);
+
+            auto jt = opaque ? t.getName() : getJavaType(t, true);
+            params ~= "%s %s".format(jt, p.name);
+            if(opaque) {
+                args ~= p.name ~ ".dereference()";
+            } else {
+                args ~= p.name;
+            }
+        }
+
+        buf.add("\t/**\n");
+        buf.add("\t * %s(%s)\n", fd.name, origParams.toString());
+        buf.add("\t */\n");
+        buf.add("\tpublic %s %s(%s) {\n", returnStr, fd.name, params);
+
+        if(!returnsVoid) {
+            buf.add("\t\treturn ");
+        } else {
+            buf.add("\t\t");
+        }
+
+        buf.add("Functions.%s.call(%s);\n", fd.name, args);
+
+        buf.add("\t}\n");
+    }
 }
 //──────────────────────────────────────────────────────────────────────────────────────────────────
-string getJavaLayout(Type t) {
+bool isOpaque(Type t) {
+    if(t is null) return false;
+
+    if(auto tr = t.as!TypeRef) {
+        if(auto ptr = tr.type.as!PtrType) {
+            if(auto tr2 = ptr.type().as!TypeRef) {
+                if(auto sd = tr2.type.as!StructDef) {
+                    if(sd.name.endsWith("_T")) return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+bool isVkResult(Type t) {
+    return t !is null && t.isA!TypeRef && "VkResult"==t.as!TypeRef.name;
+}
+//──────────────────────────────────────────────────────────────────────────────────────────────────
+string generateFunctionDescriptor(FuncDecl fd) {
+    string returnType = getJavaLayout(fd.returnType(), true);
+    string funcDesc;
+    if(returnType) {
+        funcDesc = "FunctionDescriptor.of(" ~ returnType;
+    } else {
+        funcDesc = "FunctionDescriptor.ofVoid(";
+    }
+
+    foreach(i, t; fd.parameterTypes()) {
+        if(i>0 || returnType !is null) {
+            funcDesc ~= ", ";
+        }
+        funcDesc ~= getJavaLayout(t, true);
+    }
+    funcDesc ~= ")";
+    return funcDesc;
+}
+//──────────────────────────────────────────────────────────────────────────────────────────────────
+string getJavaLayout(Type t, bool arrayAsStruct = false) {
     if(t.isPtr()) {
         return "ADDRESS";
+    } else if(t.kind == TKind.VOID) {
+        return null;
     } else if(t.isA!Enum) {
         return("JAVA_INT");
     } else if(t.isA!PrimitiveType) {
@@ -410,6 +509,17 @@ string getJavaLayout(Type t) {
                     .map!(it=>it.as!Number)
                     .map!(it=>it.stringValue.toLower().replace("u", "").to!int)
                     .reduce!((a,b)=>a*b);
+
+        if(arrayAsStruct) {
+            assert(s < 8);
+            string l;
+            string ly = getJavaLayout(ar.type());
+            foreach(i; 0..s) {
+                if(i>0) l ~= ",";
+                l ~= ly;
+            }
+            return "MemoryLayout.structLayout(%s)".format(l);
+        }
 
         return "MemoryLayout.sequenceLayout(%s, ".format(s) ~ getJavaLayout(ar.type()) ~ ")";
 
@@ -483,44 +593,33 @@ string createGetter(string structName, int offset, Var v) {
     bool isPrimitiveArray = isArray && !array.type().isA!PtrType &&
         (isBuiltin(array.type()) || isEnum(array.type()));
 
+    if(isPrimitiveArray && array.type().kind == TKind.CHAR && isPossibleString(v.name)) {
+        returnJavaType = "String";
+        javaType = "BytesAsString";
+        isArray = false;
+    }
+
     if(isArray) {
-        javaType = javaType[0..$-2];
+        javaType = "ArrayOf" ~ javaType[0..$-2];
 
         if(!isPrimitiveArray && "Addressable[]"!=returnJavaType) {
             returnJavaType = returnJavaType[0..$-2];
         }
     }
 
-    if(isArray) {
-        javaType = "ArrayOf" ~ javaType;
-    }
-
-    // if("Addressable"==javaType && isPossibleString(v.name)) {
-    //     auto ptr = getPtrType(v.type());
-    //     throwIf(!ptr, "type = %s", v.type());
-
-    //     if(ptr.ptrDepth == 1) {
-    //         javaType = "String";
-    //         returnJavaType = "String";
-    //     } else if(ptr.ptrDepth == 2) {
-    //         javaType = "ArrayOfString";
-    //         returnJavaType = "String[]";
-    //     }
-    // }
-
     s ~= "\tpublic %s %s() {\n".format(returnJavaType, v.name);
     s ~= "\t\treturn get%s(mem, %s".format(javaType, offset);
 
 
     if("ArrayOfStruct"==javaType) {
-        auto arraySize = size(array);
-        auto elementSize = size(array.type());
+        auto arraySize = array.size();
+        auto elementSize = array.type().size();
         s ~= ", %s, %s.class)".format(arraySize / elementSize, returnJavaType);
     } else if("Struct"==javaType) {
         s ~= ", %s.class)".format(returnJavaType);
     } else if(isArray) {
-        auto arraySize = size(array);
-        auto elementSize = size(array.type());
+        auto arraySize = array.size();
+        auto elementSize = array.type().size();
         s ~= ", %s)".format(arraySize / elementSize);
     } else {
         s ~= ")";
@@ -530,6 +629,7 @@ string createGetter(string structName, int offset, Var v) {
 
     return s;
 }
+//──────────────────────────────────────────────────────────────────────────────────────────────────
 string createSetter(string structName, int offset, Var v) {
     string s;
     auto javaType = getJavaType(v.type(), true);
@@ -545,7 +645,7 @@ string createSetter(string structName, int offset, Var v) {
 
     if(isPrimitiveArray && array.type().kind == TKind.CHAR && isPossibleString(v.name)) {
         s ~= "\tpublic %s %s(String s) {\n".format(structName, v.name);
-        s ~= "\t\tset(mem, %s, s.getBytes(), %s);\n".format(offset, size(v.type()));
+        s ~= "\t\tset(mem, %s, s.getBytes(), %s);\n".format(offset, v.type().size());
         s ~= "\t\treturn this;\n";
         s ~= "\t}\n";
     }
@@ -578,8 +678,8 @@ string createSetter(string structName, int offset, Var v) {
     s ~= "\tpublic %s %s(%s v) {\n".format(structName, v.name, javaType);
 
     if(isPrimitiveArray) {
-        auto arraySize = size(array);
-        auto elementSize = size(array.type());
+        auto arraySize = array.size();
+        auto elementSize = array.type().size();
         auto numElements = arraySize / elementSize;
         s ~= "\t\tset(mem, %s, v, %s);\n".format(offset, numElements);
     } else {
@@ -590,20 +690,24 @@ string createSetter(string structName, int offset, Var v) {
 
     return s;
 }
-int counter = 0;
-string createToString(string name, Var[] vars) {
+//──────────────────────────────────────────────────────────────────────────────────────────────────
+string createToString(Union un) {
+    string s = "\t@Override public String toString() {\n";
+    s ~= "\t\treturn \"%s{...}\";\n".format(un.name);
+    s ~= "\t}\n";
+    return s;
+}
+string createToString(StructDef sd) {
 
     const pattern = regex(r"pp(.*)Names");
 
     int _getCountVarOffset(string capture) {
         import std;
         auto findme = capture.toLower() ~ "count";
-        int offset = 0;
-        foreach(v; vars) {
+        foreach(i, v; sd.variables()) {
             if(v.name.toLower()==findme) {
-                return offset;
+                return sd.offsetOfMember(i.as!int);
             }
-            offset += size(v.type());
         }
         return -1;
     }
@@ -611,9 +715,8 @@ string createToString(string name, Var[] vars) {
     string _toString() {
         string names;
         string values;
-        int offset = 0;
 
-        foreach(i, v; vars) {
+        foreach(i, v; sd.variables()) {
             auto javaType = capitalised(getJavaType(v.type(), false));
             auto array = v.type().as!ArrayType;
             bool isArray = array !is null;
@@ -626,8 +729,12 @@ string createToString(string name, Var[] vars) {
             }
 
             if(isPrimitiveArray && array.type().kind == TKind.CHAR && isPossibleString(v.name)) {
-                javaType = "String";
+                javaType = "BytesAsString";
                 isArray = false;
+                quoted = true;
+            }
+            if("Addressable" == javaType && isPossibleString(v.name)) {
+                javaType = "AddressableAsString";
                 quoted = true;
             }
 
@@ -639,16 +746,25 @@ string createToString(string name, Var[] vars) {
                 if(auto countVar = _getCountVarOffset(capture[1])) {
                     javaType = "ArrayOfString";
                     countOffset = countVar;
-                    counter++;
                 }
             }
 
+            int offset = sd.offsetOfMember(i.as!int);
+
+            bool stringOf = "Addressable" == javaType ||
+                          "ArrayOfString" == javaType;
+
             names ~= "\t\t\t\t\t\"%s=".format(v.name) ~ (quoted ? "'%s'" : "%s");
-            values ~= "\t\t\t\tget%s(startMem, offset + %s".format(javaType, offset);
+
+            if(stringOf) {
+                values ~= "\t\t\t\tstringOf(get%s(startMem, offset + %s".format(javaType, offset);
+            } else {
+                values ~= "\t\t\t\tget%s(startMem, offset + %s".format(javaType, offset);
+            }
 
             if("ArrayOfStruct"==javaType) {
-                auto arraySize = size(array);
-                auto elementSize = size(array.type());
+                auto arraySize = array.size();
+                auto elementSize = array.type().size();
                 auto realJavaType = getJavaType(v.type(), true)[0..$-2];
                 values ~= ", %s, %s.class)".format(arraySize / elementSize, realJavaType);
 
@@ -660,16 +776,19 @@ string createToString(string name, Var[] vars) {
                 values ~= ", getInt(startMem, offset + %s))".format(countOffset);
 
             } else if(isArray) {
-                auto arraySize = size(array);
-                auto elementSize = size(array.type());
+                auto arraySize = array.size();
+                auto elementSize = array.type().size();
                 values ~= ", %s)".format(arraySize / elementSize);
 
             } else {
                 values ~= ")";
             }
+            if(stringOf) {
+                values ~= ")";
+            }
 
-            offset += size(v.type());
-            if(i < vars.length-1) {
+            offset += v.type().size();
+            if(i < sd.numMembers()-1) {
                 names ~= ", \" +\n";
                 values ~= ",\n";
             } else {
@@ -682,10 +801,10 @@ string createToString(string name, Var[] vars) {
 
     string _getString() {
         string s;
-        if(vars.length==0) {
-            s ~= "\"%s{}\"".format(name);
+        if(sd.numMembers()==0) {
+            s ~= "\"%s{}\"".format(sd.name);
         } else {
-            s ~= "String.format(\"%s{\" +\n%s".format(name, _toString());
+            s ~= "String.format(\"%s{\" +\n%s".format(sd.name, _toString());
         }
         return s;
     }
@@ -707,6 +826,85 @@ string createToString(string name, Var[] vars) {
     s ~= "\t\treturn s.toString();\n";
     return s ~ "\t}\n";
 }
+//──────────────────────────────────────────────────────────────────────────────────────────────────
+string createLayout(StructDef sdef, Union un, JavaEmitter emitter) {
+    StringBuffer buf = new StringBuffer();
+    bool isUnion = un !is null;
+    auto vars = isUnion ? un.vars() : sdef.variables();
+
+    if(isUnion) {
+        buf.add("\tpublic static final MemoryLayout LAYOUT = MemoryLayout.unionLayout(");
+    } else {
+        buf.add("\tpublic static final MemoryLayout LAYOUT = MemoryLayout.structLayout(");
+    }
+    if(vars.length > 0) {
+        buf.add("\n");
+    }
+    int offset = 0;
+    int finalPad;
+    int totalSize;
+
+    if(isUnion) {
+        totalSize = un.size();
+        auto largestMemberSize = un.largestMember().type().size();
+        finalPad = totalSize - largestMemberSize;
+    } else {
+        totalSize = sdef.size();
+        if(totalSize > 0) {
+            auto lastMember = sdef.variables()[sdef.numMembers()-1];
+            auto lastMemberOffset = sdef.offsetOfMember(sdef.numMembers()-1);
+            auto lastMemberSize = lastMember.type().size();
+            finalPad = totalSize - (lastMemberOffset + lastMemberSize);
+        }
+    }
+
+    foreach(i, v; vars) {
+        auto n = v.name;
+        auto t = v.type();
+        auto a = t.alignment();
+        auto size = t.size();
+
+        buf.add("");
+
+        if(!isUnion) {
+            auto rem = offset & (a>>>1);
+            if(rem != 0) {
+                offset += rem;
+                string pad = "PAD%s".format(rem);
+                buf.add("% 36s,\n", pad);
+            }
+        }
+
+        buf.add("% 36s", getJavaLayout(t));
+
+        if(finalPad > 0 || i < vars.length-1) {
+            buf.add(",");
+        } else {
+            buf.add(" ");
+        }
+
+        buf.add(" // [%0.2s] ", offset);
+        emitter.emit(t, buf);
+        buf.add(" %s", n);
+
+        if(!isUnion) {
+            offset += size;
+        }
+
+        buf.add("\t\n");
+    }
+
+    if(finalPad > 0) {
+        buf.add("% 36s\n", "PAD%s".format(finalPad));
+    }
+
+    buf.add("\t\t// (%s bytes total)\n", totalSize);
+
+    buf.add("\t);\n\n");
+
+    return buf.toString();
+}
+//──────────────────────────────────────────────────────────────────────────────────────────────────
 string getStructureType(string name) {
     import std;
 
