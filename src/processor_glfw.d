@@ -7,9 +7,9 @@ private:
     EConfig config;
     Extractor extractor;
     Emitter emitter;
-    enum glfwVersion = "3.3.7";
-    enum glfwPath = "C:/work/glfw-3.3.7.bin.WIN64/";
-    enum dllName = "glfw3.3.7.dll";
+    enum glfwVersion = "3.3.8";
+    enum glfwPath = "C:/work/glfw-3.3.8.bin.WIN64/";
+    enum dllName = "glfw3.3.8.dll";
 public:
     void process() {
         prepare();

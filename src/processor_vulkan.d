@@ -7,7 +7,7 @@ private:
     EConfig config;
     Extractor extractor;
     Emitter emitter;
-    enum vulkanVersion = "1.3.236.0";
+    enum vulkanVersion = "1.3.239.0";
 public:
     void process() {
         prepare();
@@ -24,7 +24,8 @@ protected:
         defines["VK_USE_PLATFORM_WIN32_KHR"] = "1";
     }
     override void adjustIncludes(ref string[] includeDirs) {
-
+        string vulkanSdk = environment.get("VULKAN_SDK");
+        includeDirs ~= vulkanSdk ~ "/Include";
     }
 private:
     void extract() {
