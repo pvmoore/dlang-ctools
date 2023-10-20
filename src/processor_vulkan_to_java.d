@@ -8,7 +8,7 @@ private:
     EConfig config;
     Extractor extractor;
     JavaEmitter emitter;
-    enum vulkanVersion = "1.3.231.1";
+    enum vulkanVersion = "1.3.261.1";
 public:
     void process() {
         prepare();
@@ -25,7 +25,8 @@ protected:
         defines["VK_USE_PLATFORM_WIN32_KHR"] = "1";
     }
     override void adjustIncludes(ref string[] includeDirs) {
-
+        string vulkanSdk = environment.get("VULKAN_SDK");
+        includeDirs ~= vulkanSdk ~ "/Include";
     }
 private:
     void extract() {
@@ -66,10 +67,7 @@ private:
 
         auto funcDecls = getOrderedValues(extractor.funcDecls);
 
-        this.emitter = new JavaEmitter(extractor,
-            "pvmoore.jvulkan",
-            "C:/pvmoore/JVM/libs/jVulkan/src/main/java/pvmoore/jvulkan/",
-            "C:/pvmoore/JVM/libs/jVulkan/src/main/java/pvmoore/jvulkan/structstemp/");
+        this.emitter = new JavaEmitter(extractor, "pvmoore.jvulkan");
 
         emitter.withCallback(new VulkanToJavaCallback(emitter, vulkanVersion));
 
@@ -105,7 +103,7 @@ private:
         "import pvmoore.jvulkan.opaque.*;\n" ~
         "import static pvmoore.jvulkan.misc.Util.isNULL;\n" ~
         "import static java.lang.foreign.ValueLayout.*;\n" ~
-        //"import static java.lang.foreign.MemoryAddress.NULL;\n\n" ~
+        //"import static java.lang.foreign.MemorySegment.NULL;\n\n" ~
         "\n" ~
         "@Slf4j\n" ~
         "public final class Functions {\n";
@@ -113,7 +111,7 @@ private:
         "\n" ~
         "\tpublic static void vkLoadInstanceFunctions(MethodHandle vkGetInstanceProcAddr, VkInstance instance) {\n" ~
         "\t\tLinker linker = Linker.nativeLinker();\n" ~
-        "\t\tMemorySession session = MemorySession.global();\n" ~
+        "\t\tArena session = Arena.global();\n" ~
         "\t\ttry{\n";
     enum LOADER_SUFFIX =
         "\t\t} catch(Throwable t) {\n" ~
@@ -166,7 +164,7 @@ public:
 
             file.write(OPAQUE_PREFIX);
             file.writefln("public final class %s extends OpaqueHandle {", name);
-            file.writefln("\tpublic %s(Addressable addr) {", name);
+            file.writefln("\tpublic %s(MemorySegment addr) {", name);
             file.writefln("\t\tsuper(addr);");
             file.writefln("\t}");
             file.write(buf.toString());
@@ -255,7 +253,7 @@ private:
         buf.add("\t}\n\n");
 
         // Alloc
-        buf.add("\tpublic static %s alloc(MemorySession session, int count) {\n", name);
+        buf.add("\tpublic static %s alloc(SegmentAllocator session, int count) {\n", name);
         buf.add("\t\tvar mem = count == 1 ? session.allocate(LAYOUT) : session.allocateArray(LAYOUT, count);\n");
 
         if(hassTypeAndpNext) {
@@ -276,7 +274,7 @@ private:
         buf.add("\t}\n");
 
         // Alloc
-        buf.add("\tpublic static %s alloc(MemorySession session) {\n", name);
+        buf.add("\tpublic static %s alloc(SegmentAllocator session) {\n", name);
         buf.add("\t\treturn alloc(session, 1);\n");
         buf.add("\t}\n");
 
@@ -327,7 +325,7 @@ private:
         file.close();
     }
     void handleFuncDecl(FuncDecl fd) {
-        loaderBuf.add("\t\t\tvar %sAddr = (MemoryAddress)vkGetInstanceProcAddr\n", fd.name);
+        loaderBuf.add("\t\t\tvar %sAddr = (MemorySegment)vkGetInstanceProcAddr\n", fd.name);
         loaderBuf.add("\t\t\t\t.invoke(instance.dereference(), session.allocateUtf8String(\"%s\"));\n", fd.name);
 
         string funcDesc = generateFunctionDescriptor(fd);
@@ -534,7 +532,7 @@ string getJavaLayout(Type t, bool arrayAsStruct = false) {
 //──────────────────────────────────────────────────────────────────────────────────────────────────
 string getJavaType(Type t, bool useRealStructName) {
     if(t.isA!PtrType) {
-        return "Addressable";
+        return "MemorySegment";
     }
     if(t.isA!Enum) {
         return "int";
@@ -602,7 +600,7 @@ string createGetter(string structName, int offset, Var v) {
     if(isArray) {
         javaType = "ArrayOf" ~ javaType[0..$-2];
 
-        if(!isPrimitiveArray && "Addressable[]"!=returnJavaType) {
+        if(!isPrimitiveArray && "MemorySegment[]"!=returnJavaType) {
             returnJavaType = returnJavaType[0..$-2];
         }
     }
@@ -649,7 +647,7 @@ string createSetter(string structName, int offset, Var v) {
         s ~= "\t\treturn this;\n";
         s ~= "\t}\n";
     }
-    if("Addressable"==javaType && isPossibleString(v.name)) {
+    if("MemorySegment"==javaType && isPossibleString(v.name)) {
         // If we get here then v.type() must be a PtrType
         auto ptr = getPtrType(v.type());
         throwIf(!ptr, "type = %s", v.type());
@@ -666,12 +664,12 @@ string createSetter(string structName, int offset, Var v) {
             s ~= "\t}\n";
         }
     }
-    if(isArray && !isPrimitiveArray && "Addressable"!=javaType) {
+    if(isArray && !isPrimitiveArray && "MemorySegment"!=javaType) {
         // Remove the [] at the end so that it is a single Struct type
         javaType = javaType[0..$-2];
     }
 
-    if(isArray && !isPrimitiveArray && "Addressable"==javaType) {
+    if(isArray && !isPrimitiveArray && "MemorySegment"==javaType) {
         javaType ~= "[]";
     }
 
@@ -733,8 +731,8 @@ string createToString(StructDef sd) {
                 isArray = false;
                 quoted = true;
             }
-            if("Addressable" == javaType && isPossibleString(v.name)) {
-                javaType = "AddressableAsString";
+            if("MemorySegment" == javaType && isPossibleString(v.name)) {
+                javaType = "MemorySegmentAsString";
                 quoted = true;
             }
 
@@ -751,7 +749,7 @@ string createToString(StructDef sd) {
 
             int offset = sd.offsetOfMember(i.as!int);
 
-            bool stringOf = "Addressable" == javaType ||
+            bool stringOf = "MemorySegment" == javaType ||
                           "ArrayOfString" == javaType;
 
             names ~= "\t\t\t\t\t\"%s=".format(v.name) ~ (quoted ? "'%s'" : "%s");
@@ -915,7 +913,7 @@ string getStructureType(string name) {
 
     const keywordsAZ = [
         "ASTC", "HDR", "D3D12", "Win32", "AABB", "Uint8",
-        "Int8", "Float16", "Int64", "RGBA10X6"
+        "Int8", "Float16", "Int64", "RGBA10X6", "H264", "H265"
     ];
     const keywords09 = ["2D", "3D", "8Bit", "16Bit"];
 

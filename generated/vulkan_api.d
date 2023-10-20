@@ -15394,8 +15394,7 @@ struct VkTraceRaysIndirectCommandKHR {
 	uint32_t depth;
 }
 struct VkTransformMatrixKHR {
-	//float[3][4] matrix;
-	float[4][3] matrix;
+	float[3][4] matrix;
 }
 struct VkValidationCacheCreateInfoEXT {
 	VkStructureType sType;

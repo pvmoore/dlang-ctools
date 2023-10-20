@@ -7,8 +7,6 @@ final class JavaEmitter {
 private:
     Extractor extractor;
     string packageName;
-    string enumsDirectory;
-    string structsDirectory;
 
     Callback callback;
 public:
@@ -21,11 +19,9 @@ public:
         void end();
     }
 
-    this(Extractor extractor, string packageName, string enumsDirectory, string structsDirectory) {
+    this(Extractor extractor, string packageName) {
         this.extractor = extractor;
         this.packageName = packageName;
-        this.enumsDirectory = enumsDirectory;
-        this.structsDirectory = structsDirectory;
     }
     auto withCallback(Callback c) {
         this.callback = c;
