@@ -101,6 +101,7 @@ private:
         "import java.lang.foreign.*;\n" ~
         "import java.lang.invoke.MethodHandle;\n" ~
         "import pvmoore.jvulkan.opaque.*;\n" ~
+        "import static pvmoore.jvulkan.misc.NativeMemory.*;\n" ~
         "import static pvmoore.jvulkan.misc.Util.isNULL;\n" ~
         "import static java.lang.foreign.ValueLayout.*;\n" ~
         //"import static java.lang.foreign.MemorySegment.NULL;\n\n" ~
@@ -110,9 +111,10 @@ private:
     enum LOADER_PREFIX_2 =
         "\n" ~
         "\tpublic static void vkLoadInstanceFunctions(MethodHandle vkGetInstanceProcAddr, VkInstance instance) {\n" ~
-        "\t\tLinker linker = Linker.nativeLinker();\n" ~
-        "\t\tArena session = Arena.global();\n" ~
-        "\t\ttry{\n";
+        "\t\ttry{\n" ~
+        "\n" ~
+        "\t\t\tLinker linker = Linker.nativeLinker();\n";
+
     enum LOADER_SUFFIX =
         "\t\t} catch(Throwable t) {\n" ~
         "\t\t\tthrow new RuntimeException(t);\n" ~
@@ -164,9 +166,20 @@ public:
 
             file.write(OPAQUE_PREFIX);
             file.writefln("public final class %s extends OpaqueHandle {", name);
-            file.writefln("\tpublic %s(MemorySegment addr) {", name);
-            file.writefln("\t\tsuper(addr);");
+
+            file.writefln("\tpublic %s() {", name);
+            file.writefln("\t\tsuper();");
             file.writefln("\t}");
+
+            file.writefln("\tpublic %s(SegmentAllocator allocator) {", name);
+            file.writefln("\t\tsuper(allocator);");
+            file.writefln("\t}");
+
+            file.writefln("\tpublic %s(MemorySegment memory) {", name);
+            file.writefln("\t\tsuper(memory);");
+            file.writefln("\t}");
+
+
             file.write(buf.toString());
             file.write(OPAQUE_SUFFIX);
             file.close();
@@ -237,6 +250,7 @@ private:
         buf.add("import java.lang.foreign.*;\n");
         buf.add("import static java.lang.foreign.ValueLayout.*;\n");
         buf.add("import static pvmoore.jvulkan.Constants.*;\n");
+        buf.add("import static pvmoore.jvulkan.misc.NativeMemory.*;\n");
         buf.add("import static pvmoore.jvulkan.misc.Util.throwIf;\n\n");
 
         if(isUnion) {
@@ -252,7 +266,7 @@ private:
         buf.add("\t\tsuper(mem, count);\n");
         buf.add("\t}\n\n");
 
-        // Alloc
+        // Alloc(SegmentAllocator, int)
         buf.add("\tpublic static %s alloc(SegmentAllocator session, int count) {\n", name);
         buf.add("\t\tvar mem = count == 1 ? session.allocate(LAYOUT) : session.allocateArray(LAYOUT, count);\n");
 
@@ -273,9 +287,14 @@ private:
         }
         buf.add("\t}\n");
 
-        // Alloc
+        // Alloc(SegmentAllocator)
         buf.add("\tpublic static %s alloc(SegmentAllocator session) {\n", name);
         buf.add("\t\treturn alloc(session, 1);\n");
+        buf.add("\t}\n");
+
+        // Alloc()
+        buf.add("\tpublic static %s alloc() {\n", name);
+        buf.add("\t\treturn alloc(GLOBAL_ARENA, 1);\n");
         buf.add("\t}\n");
 
         // Wrap
@@ -326,24 +345,25 @@ private:
     }
     void handleFuncDecl(FuncDecl fd) {
         loaderBuf.add("\t\t\tvar %sAddr = (MemorySegment)vkGetInstanceProcAddr\n", fd.name);
-        loaderBuf.add("\t\t\t\t.invoke(instance.dereference(), session.allocateUtf8String(\"%s\"));\n", fd.name);
+        loaderBuf.add("\t\t\t\t.invoke(instance.dereference(), nativeStringOf(\"%s\"));\n", fd.name);
 
         string funcDesc = generateFunctionDescriptor(fd);
 
-        bool vkResult = isVkResult(fd.returnType());
+        bool vkResult = false; //isVkResult(fd.returnType());
         bool isVoid = !vkResult && isVoidValue(fd.returnType());
 
         loaderBuf.add("\t\t\tif(!isNULL(%sAddr)) {\n", fd.name);
 
-        if(vkResult) {
-            loaderHandles.add("\tpublic static VkResultFunction %s;\n", fd.name);
-            loaderBuf.add("\t\t\t\t%s = new VkResultFunction(linker.downcallHandle(%sAddr, %s));\n", fd.name, fd.name, funcDesc);
-        } else if(isVoid) {
+        // if(vkResult) {
+        //     loaderHandles.add("\tpublic static VkResultFunction %s;\n", fd.name);
+        //     loaderBuf.add("\t\t\t\t%s = new VkResultFunction(linker.downcallHandle(%sAddr, %s));\n", fd.name, fd.name, funcDesc);
+        // } else 
+        if(isVoid) {
             loaderHandles.add("\tpublic static VoidFunction %s;\n", fd.name);
             loaderBuf.add("\t\t\t\t%s = new VoidFunction(linker.downcallHandle(%sAddr, %s));\n", fd.name, fd.name, funcDesc);
         } else {
-            loaderHandles.add("\tpublic static ReturningFunction %s;\n", fd.name);
-            loaderBuf.add("\t\t\t\t%s = new ReturningFunction(linker.downcallHandle(%sAddr, %s));\n", fd.name, fd.name, funcDesc);
+            loaderHandles.add("\tpublic static RetFunction %s;\n", fd.name);
+            loaderBuf.add("\t\t\t\t%s = new RetFunction(linker.downcallHandle(%sAddr, %s));\n", fd.name, fd.name, funcDesc);
         }
 
         loaderBuf.add("\t\t\t} else {\n");
@@ -390,7 +410,7 @@ private:
 
 
         bool vkResult = isVkResult(fd.returnType());
-        bool returnsVoid = vkResult || isVoidValue(fd.returnType());
+        bool returnsVoid = /*vkResult ||*/ isVoidValue(fd.returnType());
 
         string returnStr = returnsVoid ? "void" : getJavaType(fd.returnType(), true);
         string params;
@@ -420,7 +440,7 @@ private:
         }
 
         buf.add("\t/**\n");
-        buf.add("\t * %s(%s)\n", fd.name, origParams.toString());
+        buf.add("\t * %s %s(%s)\n", returnsVoid ? "void" : fd.returnType().getName(), fd.name, origParams.toString());
         buf.add("\t */\n");
         buf.add("\tpublic %s %s(%s) {\n", returnStr, fd.name, params);
 
