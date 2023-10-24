@@ -123,9 +123,12 @@ private:
         "}\n";
     enum OPAQUE_PREFIX =
         "package pvmoore.jvulkan.opaque;\n\n" ~
-        "import lombok.extern.slf4j.Slf4j;\n" ~
+        //"import lombok.extern.slf4j.Slf4j;\n" ~
         "import pvmoore.jvulkan.func.Functions;\n" ~
+        "import pvmoore.jvulkan.misc.Pointer;\n" ~
+        "import pvmoore.jvulkan.structs.*;\n" ~
         "import java.lang.foreign.*;\n" ~
+        "import static java.lang.foreign.MemorySegment.NULL;\n" ~
         "\n";
     enum OPAQUE_SUFFIX =
         "}\n";
@@ -167,13 +170,13 @@ public:
             file.write(OPAQUE_PREFIX);
             file.writefln("public final class %s extends OpaqueHandle {", name);
 
-            file.writefln("\tpublic %s() {", name);
-            file.writefln("\t\tsuper();");
-            file.writefln("\t}");
+            // file.writefln("\tpublic %s() {", name);
+            // file.writefln("\t\tsuper();");
+            // file.writefln("\t}");
 
-            file.writefln("\tpublic %s(SegmentAllocator allocator) {", name);
-            file.writefln("\t\tsuper(allocator);");
-            file.writefln("\t}");
+            // file.writefln("\tpublic %s(SegmentAllocator allocator) {", name);
+            // file.writefln("\t\tsuper(allocator);");
+            // file.writefln("\t}");
 
             file.writefln("\tpublic %s(MemorySegment memory) {", name);
             file.writefln("\t\tsuper(memory);");
@@ -345,7 +348,7 @@ private:
     }
     void handleFuncDecl(FuncDecl fd) {
         loaderBuf.add("\t\t\tvar %sAddr = (MemorySegment)vkGetInstanceProcAddr\n", fd.name);
-        loaderBuf.add("\t\t\t\t.invoke(instance.dereference(), nativeStringOf(\"%s\"));\n", fd.name);
+        loaderBuf.add("\t\t\t\t.invoke(instance.getAddress(), nativeStringOf(\"%s\"));\n", fd.name);
 
         string funcDesc = generateFunctionDescriptor(fd);
 
@@ -379,21 +382,9 @@ private:
         return *ptr;
     }
     /**
-     * class VkDevice extends OpaqueHandle {
-     *    public VkDevice(Addressable addressable) {
-     *        super(addressable);
-     *    }
-     *
-     *    //VkResult vkGetPipelineCacheData(VkDevice device, VkPipelineCache pipelineCache, size_t* pDataSize, void* pData)
-     *    public void vkGetPipelineCacheData(VkPipelineCache pipelineCache, Addressable pDataSize, Addressable pData) {
-     *      // This is a VkResultFunction
-     *      Functions.vkGetPipelineCacheData.call(addressable.dereference(), pipelineCache.dereference(), pDataSize, pData);
-     *    }
-     *
-     *    // void vkGetPrivateData(VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t* pData)
-     *    public void vkGetPrivateData(int objectType, long objectHandle, VkPrivateDataSlot privateDataSlot, Addressable pData) {
-     *       Functions.vkGetPrivateData.invoke(device.dereference(), objectType, objectHandle, privateDataSlot.dereference(), pData);
-     *    }
+     * // void vkGetPrivateData(VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t* pData)
+     * public void vkGetPrivateData(int objectType, long objectHandle, VkPrivateDataSlot privateDataSlot, MemorySegment pData) {
+     *    Functions.vkGetPrivateData.invoke(device.getAddress(), objectType, objectHandle, privateDataSlot.getAddress(), pData);
      * }
      */
     void handleFuncDeclOpaque(FuncDecl fd, string name) {
@@ -414,13 +405,16 @@ private:
 
         string returnStr = returnsVoid ? "void" : getJavaType(fd.returnType(), true);
         string params;
-        string args = "dereference()";
+        string args = "getAddress()";
         auto origParams = new StringBuffer();
         origParams.add("%s %s", name, vars[0].name);
 
         foreach(i, p; vars[1..$]) {
             Type t = p.type();
             bool opaque = isOpaque(t);
+            bool ptrToOpaque = isPtrToOpaque(t);
+            bool structPtr = isStructPtr(t); 
+
             if(i>0) {
                 params ~= ", ";
             }
@@ -429,11 +423,20 @@ private:
 
             emitter.emit(t, origParams);
             origParams.add(" ").add(p.name);
+            //if(structPtr) origParams.add(" (structPtr) ");
 
-            auto jt = opaque ? t.getName() : getJavaType(t, true);
+            auto jt = ptrToOpaque ? "Pointer<%s>".format(t.getName()) 
+                                  : structPtr ? t.getName()
+                                  : opaque ? t.getName() 
+                                  : getJavaType(t, true);
+
             params ~= "%s %s".format(jt, p.name);
-            if(opaque) {
-                args ~= p.name ~ ".dereference()";
+            if(structPtr) {
+                args ~= "%s == null ? NULL : %s.getAddress()".format(p.name, p.name);
+            } else if(ptrToOpaque) {
+                args ~= p.name ~ ".getAddress()";
+            } else if(opaque) {
+                args ~= p.name ~ ".getAddress()";
             } else {
                 args ~= p.name;
             }
@@ -465,6 +468,23 @@ bool isOpaque(Type t) {
                 if(auto sd = tr2.type.as!StructDef) {
                     if(sd.name.endsWith("_T")) return true;
                 }
+            }
+        }
+    }
+    return false;
+}
+bool isPtrToOpaque(Type t) {
+    if(t is null) return false;
+    if(auto ptr = t.as!PtrType) {
+        return isOpaque(ptr.type());
+    }
+    return false;
+}
+bool isStructPtr(Type t) {
+    if(auto ptr = t.as!PtrType) {
+        if(auto tr = ptr.type().as!TypeRef) {
+            if(auto sd = tr.type.as!StructDef) {
+                if(!sd.name.endsWith("_T")) return true;
             }
         }
     }
