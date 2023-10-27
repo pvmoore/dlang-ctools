@@ -227,6 +227,7 @@ private:
         Var[] vars;
         bool hassTypeAndpNext;
         bool isUnion;
+        bool isDeviceFeatures;
 
         if(sdef) {
             name = sdef.name;
@@ -243,6 +244,7 @@ private:
             getOpaqueBuffer(name[0..$-2]);
             return;
         }
+
         if(name.isOneOf("_SECURITY_ATTRIBUTES", "HINSTANCE__", "HMONITOR__", "HWND__")) return;
 
         auto buf = new StringBuffer();
@@ -251,16 +253,24 @@ private:
 
         buf.add("import static pvmoore.jvulkan.Enums.*;\n");
         buf.add("import java.lang.foreign.*;\n");
+        buf.add("import pvmoore.jvulkan.misc.IDeviceFeatures;\n");
+        buf.add("import pvmoore.jvulkan.misc.NativeMemory;\n");
         buf.add("import static java.lang.foreign.ValueLayout.*;\n");
         buf.add("import static pvmoore.jvulkan.Constants.*;\n");
         buf.add("import static pvmoore.jvulkan.misc.NativeMemory.*;\n");
+        buf.add("import static pvmoore.jvulkan.misc.Util.stringOf;\n");
         buf.add("import static pvmoore.jvulkan.misc.Util.throwIf;\n\n");
 
         if(isUnion) {
             buf.add("// This is actually a Union\n");
         }
+        isDeviceFeatures = name.startsWith("VkPhysicalDevice") && 
+                           name.contains("Features") &&
+                           name != "VkPhysicalDeviceFeatures";
 
-        buf.add("public final class %s extends Struct {\n", name);
+        string implements = isDeviceFeatures ? "implements IDeviceFeatures " : "";
+
+        buf.add("public final class %s extends Struct %s{\n", name, implements);
 
         buf.add(createLayout(sdef, un, emitter));
 
@@ -280,8 +290,8 @@ private:
 
             buf.add("\t\tvar obj = wrap(mem, count);\n");
             buf.add("\t\tfor(int i=0; i<count; i++) {\n");
-            buf.add("\t\t\tStruct.set(mem, i*LAYOUT.byteSize(), %s);\n", e);
-            buf.add("\t\t\tStruct.setNull(mem, 8 + i*LAYOUT.byteSize());\n");
+            buf.add("\t\t\tNativeMemory.set(mem, i*LAYOUT.byteSize(), %s);\n", e);
+            buf.add("\t\t\tNativeMemory.setNull(mem, 8 + i*LAYOUT.byteSize());\n");
             buf.add("\t\t}\n");
 
             buf.add("\t\treturn obj;\n");
@@ -646,7 +656,7 @@ string createGetter(string structName, int offset, Var v) {
     }
 
     s ~= "\tpublic %s %s() {\n".format(returnJavaType, v.name);
-    s ~= "\t\treturn get%s(mem, %s".format(javaType, offset);
+    s ~= "\t\treturn NativeMemory.get%s(mem, %s".format(javaType, offset);
 
 
     if("ArrayOfStruct"==javaType) {
@@ -683,7 +693,7 @@ string createSetter(string structName, int offset, Var v) {
 
     if(isPrimitiveArray && array.type().kind == TKind.CHAR && isPossibleString(v.name)) {
         s ~= "\tpublic %s %s(String s) {\n".format(structName, v.name);
-        s ~= "\t\tset(mem, %s, s.getBytes(), %s);\n".format(offset, v.type().size());
+        s ~= "\t\tNativeMemory.set(mem, %s, s.getBytes(), %s);\n".format(offset, v.type().size());
         s ~= "\t\treturn this;\n";
         s ~= "\t}\n";
     }
@@ -694,12 +704,12 @@ string createSetter(string structName, int offset, Var v) {
 
         if(ptr.ptrDepth == 1) {
             s ~= "\tpublic %s %s(String s) {\n".format(structName, v.name);
-            s ~= "\t\tset(mem, %s, s);\n".format(offset);
+            s ~= "\t\tNativeMemory.set(mem, %s, s);\n".format(offset);
             s ~= "\t\treturn this;\n";
             s ~= "\t}\n";
         } else if(ptr.ptrDepth == 2) {
             s ~= "\tpublic %s %s(String[] s) {\n".format(structName, v.name);
-            s ~= "\t\tset(mem, %s, s);\n".format(offset);
+            s ~= "\t\tNativeMemory.set(mem, %s, s);\n".format(offset);
             s ~= "\t\treturn this;\n";
             s ~= "\t}\n";
         }
@@ -719,9 +729,9 @@ string createSetter(string structName, int offset, Var v) {
         auto arraySize = array.size();
         auto elementSize = array.type().size();
         auto numElements = arraySize / elementSize;
-        s ~= "\t\tset(mem, %s, v, %s);\n".format(offset, numElements);
+        s ~= "\t\tNativeMemory.set(mem, %s, v, %s);\n".format(offset, numElements);
     } else {
-        s ~= "\t\tset(mem, %s, v);\n".format(offset);
+        s ~= "\t\tNativeMemory.set(mem, %s, v);\n".format(offset);
     }
     s ~= "\t\treturn this;\n";
     s ~= "\t}\n";
@@ -797,7 +807,7 @@ string createToString(StructDef sd) {
             if(stringOf) {
                 values ~= "\t\t\t\tstringOf(get%s(startMem, offset + %s".format(javaType, offset);
             } else {
-                values ~= "\t\t\t\tget%s(startMem, offset + %s".format(javaType, offset);
+                values ~= "\t\t\t\tNativeMemory.get%s(startMem, offset + %s".format(javaType, offset);
             }
 
             if("ArrayOfStruct"==javaType) {
@@ -811,7 +821,7 @@ string createToString(StructDef sd) {
                 values ~= ", %s.class)".format(realJavaType);
 
             } else if("ArrayOfString"==javaType) {
-                values ~= ", getInt(startMem, offset + %s))".format(countOffset);
+                values ~= ", NativeMemory.getInt(startMem, offset + %s))".format(countOffset);
 
             } else if(isArray) {
                 auto arraySize = array.size();
