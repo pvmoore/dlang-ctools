@@ -140,7 +140,12 @@ public:
     }
     void emit(ArrayType at) {
         emit(at.type());
-        foreach(dim; at.dimensions()) {
+
+        // Note:
+        //  Multidimensional arrays are reversed eg.
+        //  float matrix[3][4] becomes float matrix[4][3]
+
+        foreach_reverse(dim; at.dimensions()) {
             buf.add("[");
             Number n = dim.as!Number ;
             if(n && n.stringValue=="-1") {
