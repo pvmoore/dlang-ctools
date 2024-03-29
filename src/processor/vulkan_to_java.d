@@ -1,7 +1,6 @@
-module processor_vulkan_to_java;
+module processor.vulkan_to_java;
 
-
-import processor_common;
+import processor.common;
 
 final class VulkanToJavaProcessor : Processor {
 private:
@@ -10,7 +9,7 @@ private:
     JavaEmitter emitter;
     enum vulkanVersion = "1.3.275.0";
 public:
-    void process() {
+    override void process() {
         prepare();
 
         string vulkanSdk = environment.get("VULKAN_SDK");

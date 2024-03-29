@@ -8,11 +8,11 @@ import core.sys.windows.windows : HWND;
 public:
 
 // GLFW 3.3.8 Include files converted to D (This is a generated file)
-//
+// 
 // Usage:
 //   ** Start program
 //   GLFWLoader.load();
-//   **
+//   ** 
 //   GLFWLoader.unload();
 //   ** Exit program
 
@@ -24,7 +24,7 @@ private struct _GLFWLoader {
 	void load() {
 		this.handle = LoadLibraryA("glfw3.3.8.dll");
 		if(!handle) throw new Exception("Unable to load 'glfw3.3.8.dll'");
-
+		
 		*(cast(void**)&glfwCreateCursor) = GetProcAddress(handle, "glfwCreateCursor"); throwIf(!glfwCreateCursor);
 		*(cast(void**)&glfwCreateStandardCursor) = GetProcAddress(handle, "glfwCreateStandardCursor"); throwIf(!glfwCreateStandardCursor);
 		*(cast(void**)&glfwCreateWindow) = GetProcAddress(handle, "glfwCreateWindow"); throwIf(!glfwCreateWindow);
@@ -226,7 +226,7 @@ enum GLFW_GAMEPAD_BUTTON_START = 7;
 enum GLFW_GAMEPAD_BUTTON_TRIANGLE = GLFW_GAMEPAD_BUTTON_Y;
 enum GLFW_GAMEPAD_BUTTON_X = 2;
 enum GLFW_GAMEPAD_BUTTON_Y = 3;
-enum GLFW_GLAPIENTRY_DEFINED = 1;
+enum GLFW_GLAPIENTRY_DEFINED = ;
 enum GLFW_GREEN_BITS = 0x00021002;
 enum GLFW_HAND_CURSOR = 0x00036004;
 enum GLFW_HAT_CENTERED = 0;

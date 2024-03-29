@@ -1,6 +1,6 @@
-module processor_glfw;
+module processor.glfw;
 
-import processor_common;
+import processor.common;
 
 final class GLFWProcessor : Processor {
 private:
@@ -11,7 +11,7 @@ private:
     enum glfwPath = "C:/work/glfw-3.3.8.bin.WIN64/";
     enum dllName = "glfw3.3.8.dll";
 public:
-    void process() {
+    override void process() {
         prepare();
 
         parseState.dumpIncludeTokens = true;

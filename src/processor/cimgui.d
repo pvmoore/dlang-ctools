@@ -1,6 +1,6 @@
-module processor_cimgui;
+module processor.cimgui;
 
-import processor_common;
+import processor.common;
 
 final class CImguiProcessor : Processor {
 private:
@@ -8,7 +8,7 @@ private:
     Extractor extractor;
     Emitter emitter;
 public:
-    void process() {
+    override void process() {
         prepare();
 
         parseState.dumpIncludeTokens = true;

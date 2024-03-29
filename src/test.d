@@ -12,10 +12,11 @@ import ctools;
 import extractor;
 import test_parse;
 import test_preprocess;
-import processor_cimgui;
-import processor_vulkan;
-import processor_vulkan_to_java;
-import processor_glfw;
+import processor.common;
+import processor.cimgui;
+import processor.vulkan;
+import processor.vulkan_to_java;
+import processor.glfw;
 
 ///
 /// Show GC stats after program exits
@@ -24,59 +25,36 @@ import processor_glfw;
 //     "gcopt=profile:1"
 // ];
 
-void foo(const char*[] poo) {
-
-}
-
 void main(string[] args) {
 
-    // C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\ucrt
-    // C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um
-    // C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\shared
-    // C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.31.31103\include
-
-    //string file = "C:/pvmoore/cpp/cimgui/cimgui.h";
-
-    // if(true) {
-    //     parseSingleFile();
-    //     float aa = 0; if(aa < 1) return;
-    // }
-
-
-    if(true) {
-        testPreProcessor();
-    }
-    if(true) {
-        testParser();
+    enum {
+        D_VULKAN, D_GLFW, D_CIMGUI,
+        J_VULKAN, 
+        TESTS, 
+        ENV
     }
 
-    // Extract Vulkan
-    if(false) {
-        auto vulkanProcessor = new VulkanProcessor();
-        vulkanProcessor.process();
-    }
-    // Extract GLFW
-    if(false) {
-        auto glfwProcessor = new GLFWProcessor();
-        glfwProcessor.process();
-    }
-    // Extract CImgui
-    if(false) {
-        auto cimguiProcessor = new CImguiProcessor();
-        cimguiProcessor.process();
+    Processor processor; 
+
+    final switch(D_CIMGUI) {
+        case D_VULKAN: processor = new VulkanProcessor(); break;
+        case D_GLFW: processor = new GLFWProcessor(); break;
+        case D_CIMGUI: processor = new CImguiProcessor(); break;
+        case J_VULKAN: processor = new VulkanToJavaProcessor(); break;
+        case TESTS:
+            testPreProcessor();
+            testParser();
+            break;
+        case ENV:
+            auto a = environment.toAA();
+            writefln("Environment:");
+            foreach(e; a.byKeyValue()) {
+                writefln("\t%s = %s", e.key, e.value);
+            }
+            break;
     }
 
-    if(false) {
-        auto a = environment.toAA();
-        writefln("Environment:");
-        foreach(e; a.byKeyValue()) {
-            writefln("\t%s = %s", e.key, e.value);
-        }
-    }
-    if(true) {
-        auto vulkanProcessor = new VulkanToJavaProcessor();
-        vulkanProcessor.process();
-    }
+    if(processor) processor.process();
 }
 
 void parseSingleFile() {

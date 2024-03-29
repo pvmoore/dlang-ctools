@@ -1,4 +1,4 @@
-module processor_common;
+module processor.common;
 
 public:
 
@@ -14,6 +14,8 @@ protected:
     ParseState parseState;
     Node parent;
 public:
+    abstract void process();
+    
     void prepare() {
         auto defines = WIN64_DEFINES.dup;
         adjustDefines(defines);
