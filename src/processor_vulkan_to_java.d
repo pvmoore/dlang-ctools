@@ -8,7 +8,7 @@ private:
     EConfig config;
     Extractor extractor;
     JavaEmitter emitter;
-    enum vulkanVersion = "1.3.261.1";
+    enum vulkanVersion = "1.3.275.0";
 public:
     void process() {
         prepare();
@@ -83,10 +83,10 @@ __gshared string[] GLOBAL_CMD_FUNCS = [
     "vkEnumerateInstanceLayerProperties",
     "vkCreateInstance",
 ];
-__gshared string[] OPAQUE_HANDLES = [
-    "VkDevice",
-    "VkPhysicalDevice"
-];
+// __gshared string[] OPAQUE_HANDLES = [
+//     "VkDevice",
+//     "VkPhysicalDevice"
+// ];
 //══════════════════════════════════════════════════════════════════════════════════════════════════
 final class VulkanToJavaCallback : JavaEmitter.Callback {
 private:
@@ -95,7 +95,7 @@ private:
     StringBuffer enumsBuf, loaderBuf, loaderHandles;
     StringBuffer[string] opaqueHandleBuffers;
 
-    enum LOADER_PREFIX_1 =
+    enum FUNCTIONS_PREFIX_1 =
         "package pvmoore.jvulkan.func;\n\n" ~
         "import lombok.extern.slf4j.Slf4j;\n" ~
         "import java.lang.foreign.*;\n" ~
@@ -108,14 +108,14 @@ private:
         "\n" ~
         "@Slf4j\n" ~
         "public final class Functions {\n";
-    enum LOADER_PREFIX_2 =
+    enum FUNCTIONS_PREFIX_2 =
         "\n" ~
         "\tpublic static void vkLoadInstanceFunctions(MethodHandle vkGetInstanceProcAddr, VkInstance instance) {\n" ~
         "\t\ttry{\n" ~
         "\n" ~
         "\t\t\tLinker linker = Linker.nativeLinker();\n";
 
-    enum LOADER_SUFFIX =
+    enum FUNCTIONS_SUFFIX =
         "\t\t} catch(Throwable t) {\n" ~
         "\t\t\tthrow new RuntimeException(t);\n" ~
         "\t\t}\n" ~
@@ -140,14 +140,14 @@ public:
         this.loaderBuf = new StringBuffer();
         this.loaderHandles = new StringBuffer();
     }
-    void begin() {
+    override void begin() {
         enumsBuf.add("package pvmoore.jvulkan;\n\n");
         enumsBuf.add("/**\n");
         enumsBuf.add(" * This file was generated from Vulkan SDK version %s\n", vulkanVersion);
         enumsBuf.add(" */\n");
         enumsBuf.add("public final class Enums {\n");
     }
-    void end() {
+    override void end() {
         enumsBuf.add("}\n");
 
         auto file = File("C:/pvmoore/JVM/libs/jVulkan/src/main/java/pvmoore/jvulkan/Enums.java", "wb");
@@ -155,11 +155,11 @@ public:
         file.close();
 
         file = File("C:/pvmoore/JVM/libs/jVulkan/src/main/java/pvmoore/jvulkan/func/Functions.java", "wb");
-        file.write(LOADER_PREFIX_1);
+        file.write(FUNCTIONS_PREFIX_1);
         file.write(loaderHandles.toString());
-        file.write(LOADER_PREFIX_2);
+        file.write(FUNCTIONS_PREFIX_2);        
         file.write(loaderBuf.toString());
-        file.write(LOADER_SUFFIX);
+        file.write(FUNCTIONS_SUFFIX);
         file.close();
 
         foreach(e; opaqueHandleBuffers.byKeyValue()) {
@@ -188,13 +188,13 @@ public:
             file.close();
         }
     }
-    void structDef(StructDef sd) {
+    override void structDef(StructDef sd) {
         commonStructOrUnion(sd, null);
     }
-    void union_(Union u) {
+    override void union_(Union u) {
         commonStructOrUnion(null, u);
     }
-    void func(FuncDecl fd) {
+    override void func(FuncDecl fd) {
         if(fd.name.isOneOf(GLOBAL_CMD_FUNCS) || fd.name=="vkGetInstanceProcAddr" || fd.name.startsWith("PFN_")) {
             return;
         }
@@ -208,7 +208,7 @@ public:
 
         handleFuncDecl(fd);
     }
-    void enum_(Enum e) {
+    override void enum_(Enum e) {
         foreach(id; e.getIdentifiers()) {
             assert(id.hasChildren());
 
@@ -281,7 +281,7 @@ private:
 
         // Alloc(SegmentAllocator, int)
         buf.add("\tpublic static %s alloc(SegmentAllocator session, int count) {\n", name);
-        buf.add("\t\tvar mem = count == 1 ? session.allocate(LAYOUT) : session.allocateArray(LAYOUT, count);\n");
+        buf.add("\t\tvar mem = count == 1 ? session.allocate(LAYOUT) : session.allocate(LAYOUT, count);\n");
 
         if(hassTypeAndpNext) {
             auto e = getStructureType(name);
@@ -410,7 +410,7 @@ private:
         assert(vars.length > 0);
 
 
-        bool vkResult = isVkResult(fd.returnType());
+        //bool vkResult = isVkResult(fd.returnType());
         bool returnsVoid = /*vkResult ||*/ isVoidValue(fd.returnType());
 
         string returnStr = returnsVoid ? "void" : getJavaType(fd.returnType(), true);
