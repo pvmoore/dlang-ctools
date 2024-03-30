@@ -1,4 +1,4 @@
-module processor.common;
+module processor.base;
 
 public:
 

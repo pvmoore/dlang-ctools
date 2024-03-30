@@ -1,6 +1,6 @@
 module processor.vulkan;
 
-import processor.common;
+import processor.base;
 
 final class VulkanProcessor : Processor {
 private:

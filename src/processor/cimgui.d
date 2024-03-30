@@ -1,6 +1,6 @@
 module processor.cimgui;
 
-import processor.common;
+import processor.base;
 
 final class CImguiProcessor : Processor {
 private:

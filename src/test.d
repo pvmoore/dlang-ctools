@@ -12,7 +12,7 @@ import ctools;
 import extractor;
 import test_parse;
 import test_preprocess;
-import processor.common;
+import processor.base;
 import processor.cimgui;
 import processor.vulkan;
 import processor.vulkan_to_java;
@@ -27,16 +27,18 @@ import processor.glfw;
 
 void main(string[] args) {
 
-    enum {
+    enum : int {
         D_VULKAN, D_GLFW, D_CIMGUI,
         J_VULKAN, 
         TESTS, 
         ENV
     }
 
+    int p = J_VULKAN;
+
     Processor processor; 
 
-    final switch(D_CIMGUI) {
+    final switch(p) {
         case D_VULKAN: processor = new VulkanProcessor(); break;
         case D_GLFW: processor = new GLFWProcessor(); break;
         case D_CIMGUI: processor = new CImguiProcessor(); break;
@@ -55,6 +57,8 @@ void main(string[] args) {
     }
 
     if(processor) processor.process();
+
+    writefln("Done");
 }
 
 void parseSingleFile() {

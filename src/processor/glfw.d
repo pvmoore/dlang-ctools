@@ -1,6 +1,6 @@
 module processor.glfw;
 
-import processor.common;
+import processor.base;
 
 final class GLFWProcessor : Processor {
 private:
@@ -60,14 +60,16 @@ private:
             "  ** Exit program"
         ];
 
-        auto de = new DefineEmitter(
-            parseState.definitions,
-            [regex(r"^GLFW_.*")]
-        );
         enum string[] INCLUDES = [
             "vulkan_api",
             "core.sys.windows.windows : HWND"
         ];
+
+        auto de = new DefineEmitter(
+            parseState.definitions,
+            [regex(r"^GLFW_.*")]
+        );
+        
         import std : map, array;
         auto loader = new EmitDLLLoader("GLFWLoader", dllName)
             .loadFunctions(getOrderedValues(extractor.funcDecls)
