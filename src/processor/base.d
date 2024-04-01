@@ -5,8 +5,11 @@ public:
 import ctools;
 import extractor;
 
-import std.stdio    : writeln, writefln;
-import std.format   : format;
+import std.stdio             : writeln, writefln;
+import std.format            : format;
+import std.array             : replace;
+import std.algorithm.sorting : sort;
+import std.typecons          : Tuple, tuple;
 
 abstract class Processor {
 private:
@@ -102,7 +105,6 @@ public:
 
         if(!keys) return;
 
-        import std.algorithm.sorting : sort;
         keys.sort();
 
         buf.add("// Definitions\n");

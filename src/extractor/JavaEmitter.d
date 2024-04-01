@@ -6,7 +6,6 @@ import extractor;
 final class JavaEmitter {
 private:
     Extractor extractor;
-    string packageName;
 
     Callback callback;
 public:
@@ -19,9 +18,8 @@ public:
         void end();
     }
 
-    this(Extractor extractor, string packageName) {
+    this(Extractor extractor) {
         this.extractor = extractor;
-        this.packageName = packageName;
     }
     auto withCallback(Callback c) {
         this.callback = c;
@@ -45,6 +43,14 @@ public:
 
         foreach(fd; extractor.funcDecls) {
             emit(fd);
+        }
+
+        foreach(e; getOrderedValues(extractor.enums)) {
+            writefln("DEF %s", e);
+        }
+
+        foreach(e; getOrderedValues(extractor.aliases)) {
+            //writefln("ALIAS %s", e);
         }
 
         callback.end();
