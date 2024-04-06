@@ -37,7 +37,8 @@ void main(string[] args) {
     }
 
     //int p = J_VULKAN;
-    int p = J_GLFW;
+    //int p = J_GLFW;
+    int p = D_GLFW;
 
     Processor processor; 
 

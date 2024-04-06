@@ -185,8 +185,13 @@ private:
         auto r = regex(r"^GLFW_.*");
         string[] keys;
         foreach(e; definitions.byKeyValue()) {
-            if(!e.value.isEmpty() && !matchFirst(e.key, r).empty) {
-                keys ~= e.key;
+            if(!matchFirst(e.key, r).empty) {
+                if(e.value.isEmpty()) {
+                    // Ignore this one
+                    //definitions[e.key].tokens ~= Token(TK.ID, "true");
+                } else {
+                    keys ~= e.key;
+                }
             }
         }
         keys.sort();

@@ -451,3 +451,10 @@ string createToString(StructDef sd) {
     s ~= "\t\treturn s.toString();\n";
     return s ~ "\t}\n";
 }
+/** 
+ * TODO:
+ * https://docs.oracle.com/en/java/javase/21/core/upcalls-passing-java-code-function-pointer-foreign-function.html#GUID-908061BA-DC97-4524-A390-8FCEF7C5978F
+ */
+string createFunctionPtr(FuncDecl f) {
+    return null;
+}

@@ -50,7 +50,11 @@ public:
         }
 
         foreach(e; getOrderedValues(extractor.aliases)) {
-            //writefln("ALIAS %s", e);
+            // TODO - function ptrs
+            if(e.type.isFuncPtr()) {
+                FuncDecl f = getFuncDecl(e, true);
+                writefln("ALIAS func (%s) %s %s", f.returnType(), f, f.parameterTypes());
+            }
         }
 
         callback.end();

@@ -110,7 +110,11 @@ public:
         buf.add("// Definitions\n");
 
         foreach(k; keys) {
-            buf.add("enum %s = %s;\n", k, *definitions[k]);
+            if(definitions[k].isEmpty()) {
+                buf.add("enum %s = 1;\n", k);
+            } else {
+                buf.add("enum %s = %s;\n", k, *definitions[k]);
+            }
         }
         buf.add("// End Definitions\n\n");
     }
