@@ -8,9 +8,9 @@ private:
     EConfig config;
     Extractor extractor;
     JavaEmitter emitter;
-    enum glfwVersion = "3.3.8";
-    enum glfwPath = "C:/work/glfw-3.3.8.bin.WIN64/";
-    enum dllName = "glfw3.3.8.dll";
+    enum glfwVersion = "3.4";
+    enum glfwPath = "C:/work/glfw-3.4.bin.WIN64/";
+    enum dllName = "glfw3.4.dll";
     enum rootPackage = "pvmoore.glfw";
     enum targetModuleRoot = "C:/pvmoore/JVM/libs/native/glfw/src/main/java/";
 public:

@@ -1,15 +1,21 @@
 module processor.glfw;
 
 import processor.base;
-
+/** 
+ * Updating:
+ *
+ * 1) Download latest windows package -> https://www.glfw.org/download.html
+ * 2) Copy glfw.dll to location accessible in %PATH%
+ * 3) Update enums below.
+ */
 final class GLFWProcessor : Processor {
 private:
     EConfig config;
     Extractor extractor;
     Emitter emitter;
-    enum glfwVersion = "3.3.8";
-    enum glfwPath = "C:/work/glfw-3.3.8.bin.WIN64/";
-    enum dllName = "glfw3.3.8.dll";
+    enum glfwVersion = "3.4";
+    enum glfwPath = "C:/work/glfw-3.4.bin.WIN64/";
+    enum dllName = "glfw3.4.dll";
 public:
     override void process() {
         prepare();
