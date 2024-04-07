@@ -53,7 +53,7 @@ private:
 
         this.emitter = new JavaEmitter(extractor);
 
-        auto targetModuleRoot = "C:/pvmoore/JVM/libs/native/vulkan/src/main/java/";
+        auto targetModuleRoot = "C:/pvmoore/JVM/libs/ffi/vulkan/src/main/java/";
 
         emitter.withCallback(new VulkanToJavaCallback(emitter, vulkanVersion, targetModuleRoot));
 
@@ -86,10 +86,10 @@ private:
         "import lombok.extern.slf4j.Slf4j;\n" ~
         "import java.lang.foreign.*;\n" ~
         "import java.lang.invoke.MethodHandle;\n" ~
-        "import pvmoore.vulkan.opaque.*;\n" ~
-        "import pvmoore.common.*;\n" ~
-        "import static pvmoore.common.NativeMemory.*;\n" ~
-        "import static pvmoore.common.Utils.isNULL;\n" ~
+        "import pvmoore.ffi.vulkan.opaque.*;\n" ~
+        "import pvmoore.ffi.common.*;\n" ~
+        "import static pvmoore.ffi.common.NativeMemory.*;\n" ~
+        "import static pvmoore.ffi.common.Utils.isNULL;\n" ~
         "import static java.lang.foreign.ValueLayout.*;\n" ~
         //"import static java.lang.foreign.MemorySegment.NULL;\n\n" ~
         "\n";
@@ -111,9 +111,9 @@ private:
         "}\n";
     enum OPAQUE_IMPORTS =
         //"import lombok.extern.slf4j.Slf4j;\n" ~
-        "import pvmoore.common.Pointer;\n" ~
-        "import pvmoore.vulkan.Functions;\n" ~
-        "import pvmoore.vulkan.structs.*;\n" ~
+        "import pvmoore.ffi.common.Pointer;\n" ~
+        "import pvmoore.ffi.vulkan.Functions;\n" ~
+        "import pvmoore.ffi.vulkan.structs.*;\n" ~
         "import java.lang.foreign.*;\n" ~
         "import static java.lang.foreign.MemorySegment.NULL;\n" ~
         "\n";
@@ -129,19 +129,19 @@ public:
         this.loaderHandles = new StringBuffer();
     }
     override void begin() {
-        enumsBuf.add("package pvmoore.vulkan;\n\n");
+        enumsBuf.add("package pvmoore.ffi.vulkan;\n\n");
         enumsBuf.add(getHeaderComment());
         enumsBuf.add("public final class Enums {\n");
     }
     override void end() {
         enumsBuf.add("}\n");
 
-        auto enumsFile = File(targetModuleRoot ~ "pvmoore/vulkan/Enums.java", "wb");
+        auto enumsFile = File(targetModuleRoot ~ "pvmoore/ffi/vulkan/Enums.java", "wb");
         enumsFile.write(enumsBuf.toString());
         enumsFile.close();
 
-        auto functionsFile = File(targetModuleRoot ~ "pvmoore/vulkan/Functions.java", "wb");
-        functionsFile.write("package pvmoore.vulkan;\n\n");
+        auto functionsFile = File(targetModuleRoot ~ "pvmoore/ffi/vulkan/Functions.java", "wb");
+        functionsFile.write("package pvmoore.ffi.vulkan;\n\n");
         functionsFile.write(FUNCTIONS_IMPORTS);
         functionsFile.write(getHeaderComment());
         functionsFile.write(FUNCTIONS_PREFIX_1);
@@ -154,9 +154,9 @@ public:
         foreach(e; opaqueHandleBuffers.byKeyValue()) {
             string name = e.key;
             auto buf = e.value;
-            auto opaqueFile = File(targetModuleRoot ~ "pvmoore/vulkan/opaque/%s.java".format(name), "wb");
+            auto opaqueFile = File(targetModuleRoot ~ "pvmoore/ffi/vulkan/opaque/%s.java".format(name), "wb");
 
-            opaqueFile.write("package pvmoore.vulkan.opaque;\n\n");
+            opaqueFile.write("package pvmoore.ffi.vulkan.opaque;\n\n");
             opaqueFile.write(OPAQUE_IMPORTS);
             opaqueFile.writefln("public final class %s extends OpaqueHandle {", name);
 
@@ -244,17 +244,17 @@ private:
 
         auto buf = new StringBuffer();
 
-        buf.add("package pvmoore.vulkan.structs;\n\n");
+        buf.add("package pvmoore.ffi.vulkan.structs;\n\n");
 
         buf.add("import java.lang.foreign.*;\n");
-        buf.add("import pvmoore.common.*;\n");
-        buf.add("import pvmoore.vulkan.misc.*;\n");
+        buf.add("import pvmoore.ffi.common.*;\n");
+        buf.add("import pvmoore.ffi.vulkan.misc.*;\n");
         buf.add("import static java.lang.foreign.ValueLayout.*;\n");
-        buf.add("import static pvmoore.vulkan.Enums.*;\n");
-        buf.add("import static pvmoore.common.Constants.*;\n");
-        buf.add("import static pvmoore.common.Utils.stringOf;\n");
-        buf.add("import static pvmoore.common.Utils.throwIf;\n");
-        buf.add("import static pvmoore.common.NativeMemory.*;\n\n");
+        buf.add("import static pvmoore.ffi.vulkan.Enums.*;\n");
+        buf.add("import static pvmoore.ffi.common.Constants.*;\n");
+        buf.add("import static pvmoore.ffi.common.Utils.stringOf;\n");
+        buf.add("import static pvmoore.ffi.common.Utils.throwIf;\n");
+        buf.add("import static pvmoore.ffi.common.NativeMemory.*;\n\n");
 
         if(isUnion) {
             buf.add("// This is actually a Union\n");
@@ -348,7 +348,7 @@ private:
 
         //writeln(buf.toString());
 
-        auto file = File(targetModuleRoot ~ "pvmoore/vulkan/structs/" ~ name ~ ".java", "wb");
+        auto file = File(targetModuleRoot ~ "pvmoore/ffi/vulkan/structs/" ~ name ~ ".java", "wb");
         file.writeln(buf.toString());
         file.close();
     }

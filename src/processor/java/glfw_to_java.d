@@ -11,8 +11,8 @@ private:
     enum glfwVersion = "3.4";
     enum glfwPath = "C:/work/glfw-3.4.bin.WIN64/";
     enum dllName = "glfw3.4.dll";
-    enum rootPackage = "pvmoore.glfw";
-    enum targetModuleRoot = "C:/pvmoore/JVM/libs/native/glfw/src/main/java/";
+    enum rootPackage = "pvmoore.ffi.glfw";
+    enum targetModuleRoot = "C:/pvmoore/JVM/libs/ffi/glfw/src/main/java/";
 public:
     override void process() {
         prepare();
@@ -66,14 +66,15 @@ final class JavaCallback : JavaEmitter.Callback {
 private:
     JavaEmitter emitter;
     string glfwVersion;
-    string rootPackage;         // pvmoore.glfw 
-    string rootPackageSlashed;  // pvmoore/glfw
+    string rootPackage;         // pvmoore.ffi.glfw 
+    string rootPackageSlashed;  // pvmoore/ffi/glfw
     string targetModuleRoot;
     Map!(string,PPDef) definitions;
 
     StringBuffer constantsBuf;
     StringBuffer enumsBuf;
     StringBuffer functionsBuf, functionHandlesBuf;
+    StringBuffer glfwBuf;
 
     enum ENUMS_IMPORTS = "";
 
@@ -81,9 +82,9 @@ private:
         //"import lombok.extern.slf4j.Slf4j;\n" ~
         "import java.lang.foreign.*;\n" ~
         "import java.lang.invoke.MethodHandle;\n" ~
-        "import pvmoore.common.*;\n" ~
+        "import pvmoore.ffi.common.*;\n" ~
         "import static java.lang.foreign.ValueLayout.*;\n" ~
-        "import static pvmoore.common.NativeMemory.GLOBAL_ARENA;\n" ~
+        "import static pvmoore.ffi.common.NativeMemory.GLOBAL_ARENA;\n" ~
         "\n";
 public:
      this(JavaEmitter emitter, string glfwVersion, string rootPackage, string targetModuleRoot, ParseState parseState) {
@@ -97,6 +98,7 @@ public:
         this.enumsBuf = new StringBuffer();
         this.functionsBuf = new StringBuffer();
         this.functionHandlesBuf = new StringBuffer();
+        this.glfwBuf = new StringBuffer();
     }
     override void begin() {
 
@@ -122,6 +124,19 @@ public:
             "\t\t\tSymbolLookup symbols = SymbolLookup.libraryLookup(sharedLibraryName, GLOBAL_ARENA);\n" ~
             "\t\t\tMethodHandle methodHandle;\n" ~
             "\n");
+
+        glfwBuf.add("package %s;\n\n", rootPackage);
+        glfwBuf.add("import lombok.extern.slf4j.Slf4j;\n");
+        glfwBuf.add("import java.lang.foreign.*;\n");
+        glfwBuf.add("import pvmoore.ffi.common.Platform;\n");
+        glfwBuf.add("import pvmoore.ffi.glfw.Functions;\n");
+        glfwBuf.add("import static java.lang.foreign.ValueLayout.*;\n");
+        glfwBuf.add("\n");
+        glfwBuf.add("@Slf4j\n");
+        glfwBuf.add("public final class Glfw {\n");
+        glfwBuf.add("\tpublic static void load(Platform platform) {\n");
+        glfwBuf.add("\t\tFunctions.load(platform.getGlfwSharedLibrary());\n");
+        glfwBuf.add("\t}\n\n");
     }
     override void structDef(StructDef sd) {
         doStructOrUnion(sd, null);
@@ -172,6 +187,12 @@ public:
         auto functionsFile = File(targetModuleRoot ~ rootPackageSlashed ~ "/Functions.java", "wb");
         functionsFile.write(functionsStr);
         functionsFile.close();
+
+        glfwBuf.add("}\n");
+
+        auto glfwFile = File(targetModuleRoot ~ rootPackageSlashed ~ "/Glfw.java", "wb");
+        glfwFile.write(glfwBuf.toString());
+        glfwFile.close();
     }
 private:
     string getHeaderComment() {
@@ -225,15 +246,42 @@ private:
         functionsBuf.add("\t\t\tmethodHandle = linker.downcallHandle(symbols.find(\"%s\").get(),\n", fd.name);
         functionsBuf.add("\t\t\t\t%s);\n", funcDesc);
 
+        string params;
+        string args;
+        foreach(i, v; fd.parameterVars()) {
+            Type t = v.type();
+
+            if(i>0) {
+                params ~= ", ";
+                args ~= ", ";
+            }
+            auto jt = getJavaType(t, true);
+            params ~= "%s %s".format(jt, v.name);
+            args ~= v.name;
+        }
+
+        string retType = "void";
+        string ret = "";
+
         if(isVoid) {
             functionHandlesBuf.add("\tpublic static VoidFunction %s;\n", fd.name);
             functionsBuf.add("\t\t\t%s = new VoidFunction(methodHandle);\n", fd.name);
         } else {
             functionHandlesBuf.add("\tpublic static RetFunction %s;\n", fd.name);
             functionsBuf.add("\t\t\t%s = new RetFunction(methodHandle);\n", fd.name);
+
+            retType = getJavaType(fd.returnType(), true);
+            ret = "return ";
         }  
 
         functionsBuf.add("\n");
+
+        glfwBuf.add("\t/**\n");
+        glfwBuf.add("\t * (%s)\n", params);
+        glfwBuf.add("\t */\n");
+        glfwBuf.add("\tpublic static %s %s(%s) {\n", retType, fd.name, params);
+        glfwBuf.add("\t\t%sFunctions.%s.call(%s);\n", ret, fd.name, args);
+        glfwBuf.add("\t}\n\n");
     }  
     void doStructOrUnion(StructDef sdef, Union un) {
         auto buf = new StringBuffer();
@@ -253,12 +301,12 @@ private:
 
         buf.add("package %s.structs;\n\n", rootPackage);
         buf.add("import java.lang.foreign.*;\n");
-        buf.add("import pvmoore.common.*;\n");
+        buf.add("import pvmoore.ffi.common.*;\n");
         buf.add("import static java.lang.foreign.ValueLayout.*;\n");
-        buf.add("import static pvmoore.common.Constants.*;\n");
-        buf.add("import static pvmoore.common.NativeMemory.*;\n");
-        buf.add("import static pvmoore.common.Utils.stringOf;\n");
-        buf.add("import static pvmoore.common.Utils.throwIf;\n");
+        buf.add("import static pvmoore.ffi.common.Constants.*;\n");
+        buf.add("import static pvmoore.ffi.common.NativeMemory.*;\n");
+        buf.add("import static pvmoore.ffi.common.Utils.stringOf;\n");
+        buf.add("import static pvmoore.ffi.common.Utils.throwIf;\n");
         buf.add("import static %s.Enums.*;\n", rootPackage);
         buf.add("\n");
 
