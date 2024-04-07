@@ -69,10 +69,6 @@ __gshared string[] GLOBAL_CMD_FUNCS = [
     "vkEnumerateInstanceLayerProperties",
     "vkCreateInstance",
 ];
-// __gshared string[] OPAQUE_HANDLES = [
-//     "VkDevice",
-//     "VkPhysicalDevice"
-// ];
 //══════════════════════════════════════════════════════════════════════════════════════════════════
 final class VulkanToJavaCallback : JavaEmitter.Callback {
 private:
@@ -483,16 +479,6 @@ bool isPtrToOpaque(Type t) {
     if(t is null) return false;
     if(auto ptr = t.as!PtrType) {
         return isOpaque(ptr.type());
-    }
-    return false;
-}
-bool isStructPtr(Type t) {
-    if(auto ptr = t.as!PtrType) {
-        if(auto tr = ptr.type().as!TypeRef) {
-            if(auto sd = tr.type.as!StructDef) {
-                if(!sd.name.endsWith("_T")) return true;
-            }
-        }
     }
     return false;
 }

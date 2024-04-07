@@ -21,6 +21,19 @@ string generateFunctionDescriptor(FuncDecl fd) {
     return funcDesc;
 }
 
+bool isStructPtr(Type t) {
+    if(auto ptr = t.as!PtrType) {
+        if(auto tr = ptr.type().as!TypeRef) {
+            if(auto sd = tr.type.as!StructDef) {
+
+                // This might only be specific to Vulkan
+                if(!sd.name.endsWith("_T")) return true;
+            }
+        }
+    }
+    return false;
+}
+
 string getJavaLayout(Type t, bool arrayAsStruct = false) {
     if(t.isPtr()) {
         return "ADDRESS";

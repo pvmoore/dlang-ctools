@@ -129,15 +129,16 @@ public:
         glfwBuf.add("import lombok.extern.slf4j.Slf4j;\n");
         glfwBuf.add("import java.lang.foreign.*;\n");
         glfwBuf.add("import pvmoore.ffi.common.*;\n");
-        glfwBuf.add("import pvmoore.ffi.glfw.Functions;\n");
+        glfwBuf.add("import pvmoore.ffi.glfw.structs.*;\n");
+        glfwBuf.add("import pvmoore.ffi.vulkan.structs.VkAllocationCallbacks;\n");
+        glfwBuf.add("import static java.lang.foreign.MemorySegment.NULL;\n");
         glfwBuf.add("import static java.lang.foreign.ValueLayout.*;\n");
+        glfwBuf.add("import static pvmoore.ffi.glfw.Constants.*;\n");
         glfwBuf.add("\n");
+        glfwBuf.add(getHeaderComment());
         glfwBuf.add("@Slf4j\n");
-        glfwBuf.add("public final class Glfw {\n");
-        glfwBuf.add("\tpublic static void load(Platform platform) {\n");
-        glfwBuf.add("\t\tFunctions.load(platform.getGlfwSharedLibrary());\n");
-        glfwBuf.add("\t\tlog.info(\"GLFW version {}\", NativeMemory.getString(Glfw.glfwGetVersionString()));\n");
-        glfwBuf.add("\t}\n\n");
+        glfwBuf.add("public final class Glfw {\n\n");
+        glfwLoad();
     }
     override void structDef(StructDef sd) {
         doStructOrUnion(sd, null);
@@ -197,8 +198,14 @@ public:
     }
 private:
     string getHeaderComment() {
-        return format("/**\n * This file was generated from GLFW version %s\n */\n", glfwVersion);
+        return format("/**\n * This file was automatically generated from GLFW version %s\n */\n", glfwVersion);
     }  
+    void glfwLoad() {
+        glfwBuf.add("\tpublic static void load(Platform platform) {\n");
+        glfwBuf.add("\t\tFunctions.load(platform.getGlfwSharedLibrary());\n");
+        glfwBuf.add("\t\tlog.info(\"GLFW version {}\", NativeMemory.getString(Glfw.glfwGetVersionString()));\n");
+        glfwBuf.add("\t}\n\n");
+    }
     void beginConstants() {
         constantsBuf.add("package %s;\n\n", rootPackage);
         constantsBuf.add(getHeaderComment());
@@ -251,37 +258,54 @@ private:
         string args;
         foreach(i, v; fd.parameterVars()) {
             Type t = v.type();
+            bool isStruct = isStructPtr(t);
 
             if(i>0) {
                 params ~= ", ";
                 args ~= ", ";
             }
-            auto jt = getJavaType(t, true);
-            params ~= "%s %s".format(jt, v.name);
-            args ~= v.name;
+
+            if(isStruct) {
+                args ~= "%s == null ? NULL : %s.getAddress()".format(v.name, v.name);
+                params ~= "%s %s".format(t.getName(), v.name);
+            } else {
+                args ~= v.name;
+                params ~= "%s %s".format(getJavaType(t, true), v.name);
+            }
         }
 
         string retType = "void";
-        string ret = "";
+        string bodyStr;
 
         if(isVoid) {
             functionHandlesBuf.add("\tpublic static VoidFunction %s;\n", fd.name);
             functionsBuf.add("\t\t\t%s = new VoidFunction(methodHandle);\n", fd.name);
+
+            bodyStr = "Functions.%s.call(%s)".format(fd.name, args);
         } else {
             functionHandlesBuf.add("\tpublic static RetFunction %s;\n", fd.name);
             functionsBuf.add("\t\t\t%s = new RetFunction(methodHandle);\n", fd.name);
 
-            retType = getJavaType(fd.returnType(), true);
-            ret = "return ";
+            if(isStructPtr(fd.returnType())) {
+                retType = fd.returnType().getName();
+                bodyStr = "return %s.alloc(Functions.%s.call(%s))".format(retType, fd.name, args);
+            } else if(fd.returnType().isFuncPtr()) {
+                // TODO - use FunctionalInterface here?
+                retType = getJavaType(fd.returnType(), true);
+                bodyStr = "return /*func interface?*/ Functions.%s.call(%s)".format(fd.name, args);
+            } else {
+                retType = getJavaType(fd.returnType(), true);
+                bodyStr = "return Functions.%s.call(%s)".format(fd.name, args);
+            }
         }  
 
         functionsBuf.add("\n");
 
         glfwBuf.add("\t/**\n");
-        glfwBuf.add("\t * (%s)\n", params);
+        glfwBuf.add("\t * (%s) -> %s\n", params, retType);
         glfwBuf.add("\t */\n");
         glfwBuf.add("\tpublic static %s %s(%s) {\n", retType, fd.name, params);
-        glfwBuf.add("\t\t%sFunctions.%s.call(%s);\n", ret, fd.name, args);
+        glfwBuf.add("\t\t%s;\n", bodyStr);
         glfwBuf.add("\t}\n\n");
     }  
     void doStructOrUnion(StructDef sdef, Union un) {
