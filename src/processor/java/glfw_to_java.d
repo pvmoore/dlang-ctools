@@ -128,7 +128,7 @@ public:
         glfwBuf.add("package %s;\n\n", rootPackage);
         glfwBuf.add("import lombok.extern.slf4j.Slf4j;\n");
         glfwBuf.add("import java.lang.foreign.*;\n");
-        glfwBuf.add("import pvmoore.ffi.common.Platform;\n");
+        glfwBuf.add("import pvmoore.ffi.common.*;\n");
         glfwBuf.add("import pvmoore.ffi.glfw.Functions;\n");
         glfwBuf.add("import static java.lang.foreign.ValueLayout.*;\n");
         glfwBuf.add("\n");
@@ -136,6 +136,7 @@ public:
         glfwBuf.add("public final class Glfw {\n");
         glfwBuf.add("\tpublic static void load(Platform platform) {\n");
         glfwBuf.add("\t\tFunctions.load(platform.getGlfwSharedLibrary());\n");
+        glfwBuf.add("\t\tlog.info(\"GLFW version {}\", NativeMemory.getString(Glfw.glfwGetVersionString()));\n");
         glfwBuf.add("\t}\n\n");
     }
     override void structDef(StructDef sd) {

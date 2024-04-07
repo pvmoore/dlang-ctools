@@ -27,19 +27,22 @@ import processor.glfw;
 //     "gcopt=profile:1"
 // ];
 
+enum : int {
+    D_VULKAN, D_GLFW, D_CIMGUI,
+    J_VULKAN, J_GLFW,
+    TESTS, 
+    ENV
+}
+
 void main(string[] args) {
 
-    enum : int {
-        D_VULKAN, D_GLFW, D_CIMGUI,
-        J_VULKAN, J_GLFW,
-        TESTS, 
-        ENV
-    }
+    executeProcessor(J_VULKAN);
+    executeProcessor(J_GLFW);
 
-    int p = J_VULKAN;
-    //int p = J_GLFW;
-    //int p = D_GLFW;
+    writefln("Done");
+}
 
+void executeProcessor(int p) {
     Processor processor; 
 
     final switch(p) {
@@ -62,8 +65,6 @@ void main(string[] args) {
     }
 
     if(processor) processor.process();
-
-    writefln("Done");
 }
 
 void parseSingleFile() {

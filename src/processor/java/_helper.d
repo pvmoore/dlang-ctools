@@ -219,7 +219,7 @@ string createGetter(string structName, int offset, Var v) {
 
     if(isPrimitiveArray && array.type().kind == TKind.CHAR && isPossibleString(v.name)) {
         returnJavaType = "String";
-        javaType = "BytesAsString";
+        javaType = "String";
         isArray = false;
     }
 
@@ -354,14 +354,14 @@ string createToString(StructDef sd) {
             }
 
             if(isPrimitiveArray && array.type().kind == TKind.CHAR && isPossibleString(v.name)) {
-                javaType = "BytesAsString";
+                javaType = "String";
                 isArray = false;
                 quoted = true;
             }
-            if("MemorySegment" == javaType && isPossibleString(v.name)) {
-                javaType = "MemorySegmentAsString";
-                quoted = true;
-            }
+            // if("MemorySegment" == javaType && isPossibleString(v.name)) {
+            //     javaType = "MemorySegmentAsString";
+            //     quoted = true;
+            // }
 
             // Convert these to getString:
             // - XCount
