@@ -36,8 +36,9 @@ enum : int {
 
 void main(string[] args) {
 
+    executeProcessor(D_VULKAN);
     //executeProcessor(J_VULKAN);
-    executeProcessor(J_GLFW);
+    //executeProcessor(J_GLFW);
 
     writefln("Done");
 }

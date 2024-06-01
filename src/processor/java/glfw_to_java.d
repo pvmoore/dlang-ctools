@@ -3,6 +3,12 @@ module processor.java.glfw_to_java;
 import processor.base;
 import processor.java._helper;
 
+/**
+ * TODO:
+ *  - Functions with an int* count parameter and return non-void can probably be improved to either return
+ *    a java array or a Struct with a count.
+ *  - Handle functions that take or return a callback. Use FunctionalInterfaces for these.
+ */
 final class GlfwToJavaProcessor : Processor {
 private:
     EConfig config;
@@ -248,8 +254,10 @@ private:
         //var methodHandle = linker.downcallHandle(symbols.find("funcname").get(),
         //            FunctionDescriptor.of(ADDRESS, ADDRESS, ADDRESS));
 
-        bool isVoid = isVoidValue(fd.returnType());
-        string funcDesc = generateFunctionDescriptor(fd);   
+        Type rt = fd.returnType();
+        bool isVoid = isVoidValue(rt);
+        string funcDesc = generateFunctionDescriptor(fd);  
+        bool hasCountPtrParameter = rt.isPtr() && fd.parameterVars().any!(it=>it.name=="count" && it.type().isPtr() && it.type().kind == TKind.INT);
 
         functionsBuf.add("\t\t\tmethodHandle = linker.downcallHandle(symbols.find(\"%s\").get(),\n", fd.name);
         functionsBuf.add("\t\t\t\t%s);\n", funcDesc);
@@ -269,33 +277,47 @@ private:
                 args ~= "%s == null ? NULL : %s.getAddress()".format(v.name, v.name);
                 params ~= "%s %s".format(t.getName(), v.name);
             } else {
+                if(t.isFuncPtr()) {
+                    // TODO - functional interface?
+                }
                 args ~= v.name;
                 params ~= "%s %s".format(getJavaType(t, true), v.name);
             }
         }
 
         string retType = "void";
-        string bodyStr;
+        string[] bodyLines;
 
         if(isVoid) {
             functionHandlesBuf.add("\tpublic static VoidFunction %s;\n", fd.name);
             functionsBuf.add("\t\t\t%s = new VoidFunction(methodHandle);\n", fd.name);
 
-            bodyStr = "Functions.%s.call(%s)".format(fd.name, args);
+            bodyLines ~= "Functions.%s.call(%s);".format(fd.name, args);
         } else {
             functionHandlesBuf.add("\tpublic static RetFunction %s;\n", fd.name);
             functionsBuf.add("\t\t\t%s = new RetFunction(methodHandle);\n", fd.name);
 
-            if(isStructPtr(fd.returnType())) {
-                retType = fd.returnType().getName();
-                bodyStr = "return %s.alloc(Functions.%s.call(%s))".format(retType, fd.name, args);
+            if(isStructPtr(rt)) {
+                retType = rt.getName();
+                if(hasCountPtrParameter) {
+                    bodyLines ~= "MemorySegment mem = Functions.%s.call(%s);".format(fd.name, args);
+                    bodyLines ~= "return %s.wrap(mem, NativeMemory.getInt(count));".format(retType);
+                } else {
+                    bodyLines ~= "return %s.wrap(Functions.%s.call(%s), 1);".format(retType, fd.name, args);
+                }
             } else if(fd.returnType().isFuncPtr()) {
                 // TODO - use FunctionalInterface here?
-                retType = getJavaType(fd.returnType(), true);
-                bodyStr = "return /*func interface?*/ Functions.%s.call(%s)".format(fd.name, args);
+                retType = getJavaType(rt, true);
+                bodyLines ~= "return /*func interface?*/ Functions.%s.call(%s);".format(fd.name, args);
             } else {
-                retType = getJavaType(fd.returnType(), true);
-                bodyStr = "return Functions.%s.call(%s)".format(fd.name, args);
+                retType = getJavaType(rt, true);
+                if(hasCountPtrParameter) {
+                    
+                    bodyLines ~= "//count ptr (%s)".format(rt.getBaseType());
+                    bodyLines ~= "return Functions.%s.call(%s);".format(fd.name, args);
+                } else {
+                    bodyLines ~= "return Functions.%s.call(%s);".format(fd.name, args);
+                }
             }
         }  
 
@@ -305,7 +327,9 @@ private:
         glfwBuf.add("\t * (%s) -> %s\n", params, retType);
         glfwBuf.add("\t */\n");
         glfwBuf.add("\tpublic static %s %s(%s) {\n", retType, fd.name, params);
-        glfwBuf.add("\t\t%s;\n", bodyStr);
+        foreach(line; bodyLines) {
+            glfwBuf.add("\t\t%s\n", line);
+        }
         glfwBuf.add("\t}\n\n");
     }  
     void doStructOrUnion(StructDef sdef, Union un) {

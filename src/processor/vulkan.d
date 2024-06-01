@@ -7,7 +7,7 @@ private:
     EConfig config;
     Extractor extractor;
     Emitter emitter;
-    enum vulkanVersion = "1.3.275.0";
+    enum vulkanVersion = "1.3.283.0";
 public:
     override void process() {
         prepare();
@@ -34,7 +34,8 @@ private:
         config.requiredFunctionRegexes ~= [
             regex(r"^vk.*$")];
         config.requiredTypeRegexes ~= [
-            regex(r"^Vk.*$")
+            regex(r"^Vk.*$"),
+            regex(r"^Std.*")
         ];
         config.requiredTypedefRegexes ~= regex(r"^PFN_vk.*$");
 
@@ -75,6 +76,9 @@ private:
             "VK_WHOLE_SIZE" : "(~0UL)",
             "VK_SHADER_UNUSED_KHR" : "(~0U)"
         ];
+        auto extraAliases = [
+            "int16_t" : "short"
+        ];
 
         auto funcDecls = getOrderedValues(extractor.funcDecls);
 
@@ -82,7 +86,8 @@ private:
 
         this.emitter = new Emitter(extractor, "vulkan_api", flags)
             .privateImports(["core.sys.windows.windows"])
-            .extraDefinitions(extraDefs);
+            .extraDefinitions(extraDefs)
+            .extraAliases(extraAliases);
 
         emitter.add(new Comment(COMMENTS));
 

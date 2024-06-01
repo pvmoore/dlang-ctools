@@ -50,6 +50,7 @@ public:
         }
         foreach(n; enums) {
             this.log("\tEnum: %s", n);
+            //writefln("\tEnum: %s", n);
         }
         foreach(u; unions) {
             this.log("\tUnion: %s", u);

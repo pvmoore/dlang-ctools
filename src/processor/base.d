@@ -5,11 +5,12 @@ public:
 import ctools;
 import extractor;
 
-import std.stdio             : writeln, writefln;
-import std.format            : format;
-import std.array             : replace;
-import std.algorithm.sorting : sort;
-import std.typecons          : Tuple, tuple;
+import std.stdio                : writeln, writefln;
+import std.format               : format;
+import std.array                : replace;
+import std.algorithm.searching  : any;
+import std.algorithm.sorting    : sort;
+import std.typecons             : Tuple, tuple;
 
 abstract class Processor {
 private:
