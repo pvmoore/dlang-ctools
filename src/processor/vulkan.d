@@ -7,7 +7,7 @@ private:
     EConfig config;
     Extractor extractor;
     Emitter emitter;
-    enum vulkanVersion = "1.3.283.0";
+    enum vulkanVersion = "1.3.290.0";
 public:
     override void process() {
         prepare();
