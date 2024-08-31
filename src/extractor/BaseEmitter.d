@@ -145,15 +145,26 @@ public:
         //  Multidimensional arrays are reversed eg.
         //  float matrix[3][4] becomes float matrix[4][3]
 
+        if(Var v = at.parent.as!Var) {
+            if(FuncDecl fd = v.parent.as!FuncDecl) {
+
+            } 
+        }
+
         foreach_reverse(dim; at.dimensions()) {
-            buf.add("[");
-            Number n = dim.as!Number ;
+            Number n = dim.as!Number;
             if(n && n.stringValue=="-1") {
-                // Don't emit empty array dimension
+                // Convert this into a ptr
+                buf.add("*");
             } else {
-                emit(dim);
+                buf.add("[");
+                //if(n && n.stringValue=="-1") {
+                    // Don't emit empty array dimension
+                //} else {
+                    emit(dim);
+                //}
+                buf.add("]");
             }
-            buf.add("]");
         }
     }
 
@@ -241,6 +252,14 @@ public:
 
         buf.add(" function(");
         foreach(i, v; fd.parameterVars()) {
+
+            if(ArrayType at = v.type().as!ArrayType) {
+                if(!at.isPtr()) {
+                    // Arrays are passed as an implicit pointer
+                    buf.add("ref ");
+                }
+            }
+
             emit(v.type());
             buf.add(" %s", Emitter.dname(v.name));
             if(i < fd.numParameters-1) buf.add(", ");
@@ -279,6 +298,7 @@ public:
         }
     }
     void emit(Var v) {
+
         emit(v.type());
         buf.add(" %s", Emitter.dname(v.name));
         if(v.hasInitialiser) {

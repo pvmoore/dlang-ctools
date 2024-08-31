@@ -7,6 +7,7 @@ private:
     EConfig config;
     Extractor extractor;
     Emitter emitter;
+    enum imguiVersion = "1.91";
 public:
     override void process() {
         prepare();
@@ -26,6 +27,8 @@ protected:
         //defines["GLFW_INCLUDE_VULKAN"] = "1";
         //defines["CIMGUI_FREETYPE"] = "1";
         defines["CIMGUI_DEFINE_ENUMS_AND_STRUCTS"] = "1";
+        defines["IMGUI_DISABLE_OBSOLETE_FUNCTIONS"] = "1";
+        defines["IMGUI_DISABLE_OBSOLETE_KEYIO"] = "1";
     }
     override void adjustIncludes(ref string[] includeDirs) {
         //string vulkanSdk = environment.get("VULKAN_SDK");
@@ -80,7 +83,7 @@ private:
         */
 
         import std : map, array;
-        auto loader = new EmitDLLLoader("CImguiLoader", "cimgui-glfw-vk-1.87.dll")
+        auto loader = new EmitDLLLoader("CImguiLoader", "cimgui-glfw-vk-%s.dll".format(imguiVersion))
             .loadFunctions(getOrderedValues(extractor.funcDecls)
                                               .map!(it=>it.name)
                                               .array);
@@ -157,7 +160,7 @@ struct ImVector(T) {
     void clear() { if (Data) { Size = Capacity = 0; igMemFree(Data); Data = null; } }
     bool empty() { return Size == 0; }
 
-    void push_back(T* v) { if (Size == Capacity) reserve(_grow_capacity(Size + 1)); memcpy(&Data[Size], &v, v.sizeof); Size++; }
+    void push_back(T* v) { if (Size == Capacity) reserve(_grow_capacity(Size + 1)); memcpy(&Data[Size], v, T.sizeof); Size++; }
 
     void reserve(int new_capacity) {
         if (new_capacity <= Capacity) return; T* new_data = cast(T*)igMemAlloc(cast(size_t)new_capacity * T.sizeof); if (Data) { memcpy(new_data, Data, cast(size_t)Size * T.sizeof); igMemFree(Data); } Data = new_data; Capacity = new_capacity;
