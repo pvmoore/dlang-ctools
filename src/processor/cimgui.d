@@ -100,13 +100,22 @@ private:
             "ImSpan"
         ];
 
+        enum MANUAL_STRUCTS = [
+            "ImVec2"
+        ];
+
         static class MyBaseEmitter : BaseEmitter {
             this(Emitter e) {
                 super(e);
             }
             override void emit(StructDef sd) {
+                // Ignore these - we will create them manually
                 foreach(t; TEMPLATES) {
                     if(sd.name.startsWith(t)) return;
+                }
+                // And these
+                foreach(t; MANUAL_STRUCTS) {
+                    if(sd.name == t) return;
                 }
                 super.emit(sd);
             }
@@ -182,6 +191,19 @@ struct ImChunkStream(T) {
 struct ImSpan(T) {
     T*                  Data;
     T*                  DataEnd;
+}
+struct ImVec2 {
+    float x;
+    float y;
+
+    ImVec2 opBinary(string op)(ImVec2 a) if (op==\"+\" || op==\"-\") {
+        static if (op == \"+\") {
+            return ImVec2(x+a.x, y+a.y);
+        }
+        static if (op == \"-\") {
+            return ImVec2(x-a.x, y-a.y);
+        }
+    }
 }
 ";
 }
