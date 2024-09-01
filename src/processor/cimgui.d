@@ -2,6 +2,25 @@ module processor.cimgui;
 
 import processor.base;
 
+/**
+ * Download cimgui docking branch:
+ *   cd C:/pvmoore/cpp/
+ *   git clone --recursive https://github.com/cimgui/cimgui.git 
+ *   git checkout docking_inter
+ *   (may also need to "git submodule update --init --recursive")
+ *
+ * Build the visual studio solution to generate the DLL. Rename this as 
+ * cimgui-glfw-vk-VERSION.dll where VERSION is the version defined below in 'imguiVersion'.
+ *
+ * In imgui/imconfig.h, disable obsolete functions:
+ *   #define IMGUI_DISABLE_OBSOLETE_FUNCTIONS
+ *   #define IMGUI_DISABLE_OBSOLETE_KEYIO 
+ *
+ * Update the version 'imguiVersion' below.
+ * Run this processor.
+ * Copy generated/cimgui_api.d to where it is used. 
+ * Copy the DLL to where it is used.
+ */
 final class CImguiProcessor : Processor {
 private:
     EConfig config;
