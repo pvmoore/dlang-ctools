@@ -1593,8 +1593,14 @@ alias ImU64 = ulong;
 alias ImU8 = ubyte;
 alias ImWchar = ImWchar16;
 alias ImWchar16 = ushort;
+alias __time64_t = long;
+alias errno_t = int;
+alias fpos_t = long;
 alias size_t = ulong;
+alias uintptr_t = ulong;
 alias va_list = immutable(char)*;
+alias wchar_t = ushort;
+alias wint_t = ushort;
 
 // Enums
 enum ImDrawFlags_ {
@@ -5374,6 +5380,8 @@ struct ImGuiTextIndex {
 	int EndOffset;
 }
 struct ImGuiTextRange {
+	immutable(char)* b;
+	immutable(char)* e;
 }
 struct ImGuiTreeNodeStackData {
 	ImGuiID ID;

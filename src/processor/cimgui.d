@@ -60,7 +60,7 @@ private:
         this.config = new EConfig();
 
         config.requiredFunctionRegexes ~= regex(r"^(Im|ig).*$");
-        config.requiredTypeRegexes ~= regex(r"^(Im|Stb).*$");
+        config.requiredTypeRegexes ~= regex(r"^(Im|Stb|STB_).*$");
 
         config.excludeRegexes ~= regex(r"^(FILE|_iobuf)$");
         //config.excludeRegexes ~= regex(r"^_iobuf.*$");

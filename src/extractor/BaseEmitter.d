@@ -313,7 +313,13 @@ public:
         buf.add(id.name);
     }
     void emit(Number n) {
-        buf.add(n.stringValue);
+        import std.string : toUpper;
+        string s = n.stringValue;
+
+        if(s.toUpper.endsWith("ULL")) {
+            s = s[0..$-1];
+        } 
+        buf.add(s);
     }
     void emit(Binary b) {
         emit(b.left());

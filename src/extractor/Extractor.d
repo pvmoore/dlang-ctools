@@ -58,19 +58,20 @@ public:
         foreach(n; structDefs) {
             this.log("\tStructDef: %s", n);
         }
-        foreach(n; vars) {
+        foreach(n; vars.keys) {
             this.log("\tVar: %s", n);
         }
-        // foreach(n; typedefs) {
-        //     this.log("\tTypedef: %s", n);
-        // }
-        foreach(n; aliases) {
-            this.log("\tAlias: %s", n);
+        foreach(n; typedefs) {
+            this.log("\tTypedef: %s", n);
+        }
+        foreach(e; aliases.byKeyValue) {
+            this.log("\tAlias: %s", e.key);
         }
         this.log("::::::::::::::::::");
     }
 private:
     void evaluate(Node n) {
+        //this.log("Node %s %s", n.nid, n);
         final switch(n.nid) with(Nid) {
             case ADDRESSOF: break;
             case ARRAYTYPE: break;
@@ -124,7 +125,23 @@ private:
             }
             case TERNARY: break;
             case TYPEDEF: break;
-            case TYPEREF: break;
+            case TYPEREF: {
+                auto tr = n.as!TypeRef;
+                if(tr.name) {
+                    if(config.isRequiredType(tr.name)) {
+                        include(tr);
+                        break;
+                    } else if(tr.type.isA!PrimitiveType) {
+                        include(tr);
+                        break;
+                    } else if(tr.type.isA!PtrType && tr.type.as!PtrType.type().isA!PrimitiveType) {
+                        include(tr);
+                        break;
+                    } 
+                }
+                this.log("Ignoring TypeRef %s", tr.name);
+                break;
+            }
             case UNARY: break;
             case UNION:
                 auto u = n.as!Union;
@@ -132,7 +149,9 @@ private:
                     include(u);
                 }
                 break;
-            case VAR: break;
+            case VAR: 
+                include(n.as!Var);
+                break;
         }
     }
     void filterTypedefs() {
@@ -244,13 +263,19 @@ private:
         include(tr.type);
     }
     void include(Var var) {
-        //this.log("Include Var %s %s", var.name, var.type());
+        if(var.name in vars) return;
+
         // Include var if it is global
-        if(var.isGlobal() && var.name !in vars && !config.isExcluded(var.name)) {
-            vars[var.name] = var;
-            modified = true;
+        if(var.isGlobal()) {
+
+            bool isExcluded = config.isExcluded(var.name) || config.isExcluded(var.type().getName());
+
+            if(!isExcluded) {
+                vars[var.name] = var;
+                modified = true;
+                include(var.type());
+            }
         }
-        include(var.type());
     }
     void include(Typedef td) {
         if(td.name in typedefs) return;

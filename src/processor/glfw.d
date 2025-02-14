@@ -47,8 +47,13 @@ private:
 
         config.requiredFunctionRegexes ~= regex(r"^glfw.*");
 
+        config.requiredTypeRegexes ~= [
+            regex(r"^GLFW.*")
+        ];
+
         config.excludeRegexes ~= regex(r"^(Vk|vk).*");
         config.excludeRegexes ~= regex(r"HWND");
+        config.excludeRegexes ~= regex(r"^GUID$");
 
         this.extractor = new Extractor(config);
         extractor.process(parent);

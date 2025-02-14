@@ -7,7 +7,7 @@ private:
     EConfig config;
     Extractor extractor;
     Emitter emitter;
-    enum vulkanVersion = "1.4.304.0";
+    enum vulkanVersion = "1.4.304.1";
 public:
     override void process() {
         prepare();
@@ -37,10 +37,11 @@ private:
             regex(r"^Vk.*$"),
             regex(r"^Std.*")
         ];
-        config.requiredTypedefRegexes ~= regex(r"^PFN_vk.*$");
+        config.requiredTypedefRegexes ~= regex(r"^(PFN_vk|Vk).*$");
 
         config.excludeRegexes ~= [
-            regex(r"^(HINSTANCE|HMONITOR|HWND)$")
+            regex(r"^(HINSTANCE|HMONITOR|HWND)$"),
+            regex(r".*(__security_cookie|GUID).*")
         ];
 
         this.extractor = new Extractor(config);
@@ -76,9 +77,7 @@ private:
             "VK_WHOLE_SIZE" : "(~0UL)",
             "VK_SHADER_UNUSED_KHR" : "(~0U)"
         ];
-        auto extraAliases = [
-            "int16_t" : "short"
-        ];
+        string[string] extraAliases;
 
         auto funcDecls = getOrderedValues(extractor.funcDecls);
 

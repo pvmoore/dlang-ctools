@@ -116,7 +116,11 @@ public:
         buf.add("\n");
         buf.add("// Global variables\n");
         foreach(v; getOrderedValues(extractor.vars)) {
-            baseEmitter.emit(v);
+            if(v.type.isConst) {
+                // Convert to an enum
+                buf.add(" enum ");
+                baseEmitter.emit(v);
+            }
         }
         buf.add("\n");
 
