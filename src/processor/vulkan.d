@@ -105,7 +105,6 @@ private:
     
     void convertVkFlags2ToEnums() {
         Var[][string] vars; 
-        
 
         foreach(v; parent.range().filter!(it=>it.isA!Var).map!(it=>it.as!Var).filter!(it=>it.type().isConst)) {
 
