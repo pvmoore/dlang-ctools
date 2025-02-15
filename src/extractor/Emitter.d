@@ -19,6 +19,7 @@ private:
     AppenderPlugin[] appenderPlugins;
     CharBytePlugin charBytePlugin;
     BaseEmitter baseEmitter;
+    VariableEmitter variableEmitter;
     StringBuffer buf;
 public:
     interface AppenderPlugin {
@@ -26,6 +27,9 @@ public:
     }
     interface CharBytePlugin {
         string eval(PrimitiveType);
+    }
+    interface VariableEmitter {
+        void emit(Var[] vars, BaseEmitter baseEmitter, StringBuffer buf);
     }
     enum Flag {
         NONE                = 0,
@@ -49,6 +53,17 @@ public:
         this.charBytePlugin = new CharByteEval;
         this.buf = new StringBuffer();
         this.baseEmitter = new BaseEmitter(this);
+        this.variableEmitter = new class VariableEmitter {
+            void emit(Var[] vars, BaseEmitter baseEmitter, StringBuffer buf) {
+                foreach(v; vars) {
+                    if(v.type.isConst) {
+                        // Convert to an enum
+                        buf.add(" enum ");
+                        baseEmitter.emit(v);
+                    }
+                }
+            }
+        };
     }
     auto add(AppenderPlugin plugin) {
         this.appenderPlugins ~= plugin;
@@ -56,6 +71,10 @@ public:
     }
     auto add(CharBytePlugin cbe) {
         this.charBytePlugin = cbe;
+        return this;
+    }
+    auto add(VariableEmitter emitter) {
+        this.variableEmitter = emitter;
         return this;
     }
     auto add(BaseEmitter emitter) {
@@ -115,13 +134,7 @@ public:
         }
         buf.add("\n");
         buf.add("// Global variables\n");
-        foreach(v; getOrderedValues(extractor.vars)) {
-            if(v.type.isConst) {
-                // Convert to an enum
-                buf.add(" enum ");
-                baseEmitter.emit(v);
-            }
-        }
+        variableEmitter.emit(getOrderedValues(extractor.vars), baseEmitter, buf);
         buf.add("\n");
 
         buf.add("extern(Windows) { nothrow __gshared {\n\n");

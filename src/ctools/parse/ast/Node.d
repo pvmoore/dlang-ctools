@@ -42,6 +42,12 @@ public:
         }
         return this;
     }
+    final void detach() {
+        if(parent) {
+            parent.children.removeAt(index());
+            parent = null;
+        }
+    }
     final void detach(Node child) {
         if(child.parent) {
             child.parent.children.removeAt(child.index());
@@ -55,6 +61,8 @@ public:
     final Node lastChildOrSelf() { return hasChildren() ? last() : this; }
     final Node getRoot() { if(parent) return parent.getRoot(); return this; }
     final bool isGlobal() { return parent.nid==Nid.ROOT; }
+
+    final NodeRange range() { return NodeRange(this); }
 
     final int index() {
         throwIf(!parent);
@@ -131,4 +139,46 @@ Node findNode(Node node, bool delegate(Node n) filter) {
     if(filter(node)) return node;
     if(node.parent is null) return null;
     return findNode(node.up(), filter);
+}
+//──────────────────────────────────────────────────────────────────────────────────────────────────
+/**
+ * Usage:
+ *   node.range().filter!(it=>...).map!(it=>...).array;
+ */
+struct NodeRange {
+    this(Node n) {
+        stack.reserve(16);
+        stack ~= NI(n, -1);
+        fetchNext();
+    }
+    Node front() { return _front; }
+    bool empty() { return _front is null; }
+    void popFront() { fetchNext(); }
+private:
+    void fetchNext() {
+        while(stack.length > 0) {
+
+            NI* s = &stack[$-1];
+            Node n = s.node;
+            int i = s.i++;
+
+            if(i == -1) {
+                _front = n;
+                return;
+
+            } else if(i < n.numChildren()) {
+                stack ~= NI(n.children[i], -1);
+            } else {
+                stack.length--;
+            }
+        }
+        _front = null;
+    }
+
+    struct NI {
+        Node node;
+        int i;
+    }
+    NI[] stack;
+    Node _front;
 }

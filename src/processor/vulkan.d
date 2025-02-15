@@ -29,6 +29,9 @@ protected:
     }
 private:
     void extract() {
+
+        convertVkFlags2ToEnums();
+
         this.config = new EConfig();
 
         config.requiredFunctionRegexes ~= [
@@ -97,6 +100,53 @@ private:
         emitter.add(new LoadInstanceFunctions(funcDecls));
 
         emitter.emitTo("generated/vulkan_api.d");
+    }
+
+    
+    void convertVkFlags2ToEnums() {
+        Var[][string] vars; 
+        
+
+        foreach(v; parent.range().filter!(it=>it.isA!Var).map!(it=>it.as!Var).filter!(it=>it.type().isConst)) {
+
+            if(TypeRef tr = v.type.as!TypeRef) {
+                if(TypeRef tr2 = tr.type.as!TypeRef) {
+                    if(tr2.name == "VkFlags64") {
+                        vars.update(tr.name, ()=>[v], (ref Var[] list) { list ~= v;});
+                    }
+                }
+            }
+        }
+
+        foreach(e; vars.byKeyValue) {
+            writefln("%s:", e.key);
+            foreach(v; e.value) {
+                v.detach();
+            }
+        }
+        foreach(e; vars.byKeyValue) {
+            auto en = new Enum(e.key);
+            parent.add(en);
+            foreach(v; e.value) {
+                auto id = new Identifier(v.name);
+                auto expr = v.initialiser();
+                id.add(expr);
+                en.add(id);
+            }
+        }
+
+        TypeRef[] toBeRemoved;
+
+        foreach(tr; parent.range().filter!(it=>it.isA!TypeRef).map!(it=>it.as!TypeRef)) {
+            if(tr.name in vars) {
+                writefln("Removing %s", tr);
+                toBeRemoved ~= tr;
+            }
+        }
+
+        foreach(tr; toBeRemoved) {
+            tr.detach();
+        }
     }
 }
 private:
