@@ -70,14 +70,14 @@ private:
         if(nav.kind()==TK.ID && !nav.peek(0).blue) {
             string val = nav.value();
 
-            PPDef* def = state.definitions.get(val);
+            PPDef* def = val in state.definitions;
 
             if(state.definitions.containsKey(val)) {
                 if(nav.kind(1)==TK.LBRACKET) {
-                    replaceMacroToken(state, nav, state.definitions[val], indent);
+                    replaceMacroToken(state, nav, val in state.definitions, indent);
                     return true;
                 } else if(!def.isFunc) {
-                    replaceObjectToken(nav, state.definitions[val]);
+                    replaceObjectToken(nav, val in state.definitions);
                     return true;
                 } else {
                     // macro definition called without params

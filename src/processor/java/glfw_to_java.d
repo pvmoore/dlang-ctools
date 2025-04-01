@@ -75,7 +75,7 @@ private:
     string rootPackage;         // pvmoore.ffi.glfw 
     string rootPackageSlashed;  // pvmoore/ffi/glfw
     string targetModuleRoot;
-    Map!(string,PPDef) definitions;
+    PPDef[string] definitions;
 
     StringBuffer constantsBuf;
     StringBuffer enumsBuf;
@@ -234,7 +234,7 @@ private:
         // Some of these keys refer to others that are further down which is not allowed.
         // Replace the token value of anything that is a forward reference with the actual value
         foreach(i, k; keys) {
-            PPDef* def = definitions[k];
+            PPDef* def = k in definitions;
             foreach(ref t; def.tokens) {
                 if(definitions.containsKey(t.value)) {
                     int j = keys.indexOf(t.value);
@@ -246,7 +246,7 @@ private:
         }
 
         foreach(k; keys) {
-            constantsBuf.add("\tpublic static int %s = %s;\n", k, *definitions[k]);
+            constantsBuf.add("\tpublic static int %s = %s;\n", k, definitions[k]);
         }
     }
     void doFuncDecl(FuncDecl fd) {

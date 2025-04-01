@@ -87,10 +87,10 @@ public:
 
 final class DefineEmitter : Emitter.AppenderPlugin {
 private:
-    Map!(string,PPDef) definitions;
+    PPDef[string] definitions;
     Regex!char[] includes;
 public:
-    this(Map!(string,PPDef) definitions, Regex!char[] includes) {
+    this(PPDef[string] definitions, Regex!char[] includes) {
         this.definitions = definitions;
         this.includes = includes;
     }
@@ -113,7 +113,7 @@ public:
             if(definitions[k].isEmpty()) {
                 buf.add("enum %s = 1;\n", k);
             } else {
-                buf.add("enum %s = %s;\n", k, *definitions[k]);
+                buf.add("enum %s = %s;\n", k, definitions[k]);
             }
         }
         buf.add("// End Definitions\n\n");

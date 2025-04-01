@@ -12,7 +12,7 @@ private:
 
 public:
     static void process(ParseState state, string filename, TokenNavigator file) {
-        state.definitions.add("__FILE__", PPDef("__FILE__", [Token(TK.ID, filename)]));
+        state.definitions["__FILE__"] = PPDef("__FILE__", [Token(TK.ID, filename)]);
 
         enum IfState { FALSE_CONTINUE, FALSE_DONE, TRUE }
         IfState[] ifStates;

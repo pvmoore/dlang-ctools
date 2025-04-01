@@ -10,8 +10,7 @@ public:
     Directory[] includeDirectories;
     Set!Filepath allSourceFiles;
     StopWatch preprocessTime, parseTime;
-    Map!(string,PPDef) definitions;
-
+    PPDef[string] definitions;
 
     // Debugging
     string dumpDirectory = "target";
@@ -21,7 +20,6 @@ public:
 
     this(string[] includeDirectories, string[string] defines) {
         this.includeDirectories = includeDirectories.map!(i=>Directory(i)).array;
-        this.definitions = new Map!(string,PPDef);
         this.allSourceFiles = new Set!Filepath;
 
         defines["__DATE__"] = "MMM DD YYY";
@@ -31,7 +29,7 @@ public:
         defines["__LINE__"] = "TODO";   // Needs to be updated in PreProcessor
 
         foreach(e; defines.byKeyValue()) {
-            definitions.add(e.key, PPDef(e.key, toTokens(e.value)));
+            definitions[e.key] = PPDef(e.key, toTokens(e.value));
         }
     }
     Filepath currentFile() {
