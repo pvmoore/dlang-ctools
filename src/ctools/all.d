@@ -13,6 +13,7 @@ import std.conv                 : to;
 import fs = std.file            : exists, getSize, read;
 
 import common;
+import common.containers;
 
 import ctools;
 import ctools.logs;

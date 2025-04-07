@@ -27,7 +27,7 @@ struct PPDef {
     }
 }
 
-string toString(Map!(string,PPDef) definitions) {
+string toString(PPDef[string] definitions) {
     string s = "Definitions {\n";
     foreach(e; definitions.byKeyValue()) {
         s ~= "\t%s = %s\n".format(e.key, e.value);
