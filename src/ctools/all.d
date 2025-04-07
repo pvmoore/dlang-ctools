@@ -14,6 +14,8 @@ import fs = std.file            : exists, getSize, read;
 
 import common;
 import common.containers;
+import common.io;
+import common.utils;
 
 import ctools;
 import ctools.logs;

@@ -3,6 +3,8 @@ module ctools;
 public:
 
 import common;
+import common.io;
+import common.utils;
 
 import ctools.ParseState;
 import ctools.Serialiser;

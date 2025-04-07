@@ -180,7 +180,7 @@ public:
         buf.add("// Load Global Command Functions\n");
         buf.add("void vkLoadGlobalCommandFunctions() {\n");
         buf.add("\timport std.string : toStringz;\n");
-        buf.add("\timport common : throwIf;\n");
+        buf.add("\timport common.utils : throwIf;\n");
     }
     void epilog(StringBuffer buf) {
         buf.add("}\n");
@@ -207,7 +207,7 @@ protected:
         buf.add("// Load Instance Functions\n");
         buf.add("void vkLoadInstanceFunctions(VkInstance instance) {\n");
         buf.add("\timport std.string : toStringz;\n");
-        buf.add("\timport common : throwIf;\n");
+        buf.add("\timport common.utils : throwIf;\n");
     }
     override void load(StringBuffer buf, FuncDecl fd) {
         buf.add("\t*(cast(void**)&%s) = vkGetInstanceProcAddr(instance, toStringz(\"%s\"));\n", fd.name, fd.name);
