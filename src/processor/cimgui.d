@@ -71,7 +71,7 @@ private:
     void emit() {
 
         enum string[] COMMENTS = [
-            "CImgui include files converted to D (This is a generated file)",
+            "CImgui %s include files converted to D (This is a generated file)".format(imguiVersion),
             "",
             "Usage:",
             "  ** Start program",

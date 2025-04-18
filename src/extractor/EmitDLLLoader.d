@@ -23,7 +23,7 @@ public:
         buf.add("// %s\n", className);
         buf.add("private struct _%s {\n", className);
         buf.add("\timport core.sys.windows.windows;\n");
-        buf.add("\timport common : throwIf;\n");
+        buf.add("\timport common.utils : throwIf;\n");
         buf.add("\tHANDLE handle;\n");
         buf.add("\tvoid load() {\n");
         buf.add("\t\tthis.handle = LoadLibraryA(\"%s\");\n", libraryName);

@@ -253,14 +253,15 @@ public:
         buf.add(" function(");
         foreach(i, v; fd.parameterVars()) {
 
+            emit(v.type());
+
             if(ArrayType at = v.type().as!ArrayType) {
                 if(!at.isPtr()) {
-                    // Arrays are passed as an implicit pointer
-                    buf.add("ref ");
+                    // Assume an array decays to a pointer argument
+                    buf.add("*");
                 }
             }
 
-            emit(v.type());
             buf.add(" %s", Emitter.dname(v.name));
             if(i < fd.numParameters-1) buf.add(", ");
         }
