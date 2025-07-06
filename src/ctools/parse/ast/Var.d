@@ -20,6 +20,11 @@ public:
     Expr bitfield() { return children[1].as!Expr; }
     Expr initialiser() { return last().as!Expr; }
 
+    uint getBitfieldValue() { 
+        assert(bitfield().isA!Number, "Bitfield is not a Number it is a %s".format(bitfield().nid));
+        return bitfield().as!Number.stringValue.to!uint; 
+    }
+
     this() {
         this.nid = Nid.VAR;
     }

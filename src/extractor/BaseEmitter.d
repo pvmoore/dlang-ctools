@@ -68,11 +68,141 @@ public:
     //──────────────────────────────────────────────────────────────────────────────────────────────
     void emit(StructDef sd) {
         buf.add("struct %s {\n", sd.name);
-
         string t = tab(sd);
-        foreach(st; sd.statements()) {
-            buf.add(t);
-            emit(st);
+
+        if(sd.hasBitfields()) {   
+            writefln("[NOTE] bitfields detected in %s", sd);
+
+            struct BF {
+                Var v;
+                string fieldName;
+                uint startBit;
+                uint numBits;
+                string storageFieldName;
+
+                string toString() {
+                    return format("%s: bits %s..%s -> %s", fieldName, startBit, startBit+(numBits-1), storageFieldName);
+                }
+            }
+
+            Var[] variables = sd.variables();
+            uint numStorageVars = 0;
+            string storageVarName;
+            Var storageVar;
+            int storageVarIndex = -1;
+            uint size;
+            uint bitOffset;
+            BF[] bitfields;
+
+            foreach(i, st; sd.statements()) {
+                if(Var v = st.as!Var) {
+                    if(v.hasBitfieldBits) {
+                        if(v.hasInitialiser) {
+                            writefln(("[WARN] struct %s has bitfields with initialisers. " ~
+                                "This is not currently supported and the emitted struct will need to be manually repaired."), sd.name);
+                            return;
+                        }
+                        if(v.type().size() != 4) {
+                            writefln(("[WARN] struct %s has bitfields that are not 32 bits. " ~
+                                "This is not currently supported and the emitted struct will need to be manually repaired."), sd.name);
+                            return;
+                        }
+
+                        string fieldName = v.name;
+
+                        if(storageVarIndex == -1) {
+                            // this is the start of 1 or more bitfields
+                            storageVarIndex = i.as!int;
+                            storageVar = v;
+                            size = v.type().size() * 8;
+                            bitOffset = 0;
+                            storageVarName = v.name;
+                            v.name = "_bf%s".format(numStorageVars++);
+
+                            buf.add(t);
+                            emit(v);
+
+                        } else {
+                            // This is a subsequent bitfield
+
+                            if(bitOffset > size) {
+                                // Spans multiple storage vars
+                                writefln(("[WARN] struct %s has bitfields that span multiple storage variables. " ~
+                                    "This is not currently supported and the emitted struct will need to be manually repaired."), sd.name);
+                                return;
+                            }
+
+                            if(bitOffset == size) {
+                                // Output the next storage var
+                                storageVarIndex++;
+                                storageVar = variables[storageVarIndex];
+                                storageVarName = storageVar.name;
+                                storageVar.name = "_bf%s".format(numStorageVars++);
+                                size = storageVar.type().size() * 8;
+                                bitOffset = 0;
+
+                                buf.add(t);
+                                emit(storageVar);
+                            }
+                        }
+
+                        uint numBits = v.getBitfieldValue();
+                        bitfields ~= BF(v, fieldName, bitOffset, numBits, storageVar.name);
+                        bitOffset += numBits;
+
+                    } else {
+                        // Reset
+                        storageVarIndex = -1;
+
+                        buf.add(t);
+                        emit(v);
+                    }
+                } else {
+                    buf.add(t);
+                    emit(st);
+                }
+            }
+
+            if(bitfields.length > 0) {
+                import std.string : toUpper;
+                buf.add("\n");
+                buf.add(t);
+                buf.add("// bitfield getters\n");
+                foreach(bf; bitfields) {
+                    string name = Emitter.dname(bf.fieldName);
+                    string storageName = Emitter.dname(bf.storageFieldName);
+                    uint shr = bf.startBit;
+                    uint and = (1 << bf.numBits) - 1;
+                    name = "%s%s".format(name[0..1].toUpper(), name[1..$]);
+
+                    buf.add(t);
+                    emit(bf.v.type());
+                    buf.add(" get%s", name);
+                    buf.add("() { return (%s >>> %s) & 0x%08x; }\n", storageName, shr, and);
+                }
+                buf.add("\n");
+                buf.add(t);
+                buf.add("// bitfield setters\n");
+                foreach(bf; bitfields) {
+                    string name = Emitter.dname(bf.fieldName);
+                    string storageName = Emitter.dname(bf.storageFieldName);
+                    uint shr = bf.startBit;
+                    uint and = (1 << bf.numBits) - 1;
+                    name = "%s%s".format(name[0..1].toUpper(), name[1..$]);
+
+                    buf.add(t);
+                    buf.add("void set%s(", name);
+                    emit(bf.v.type());
+
+                    buf.add(" value) { %s = (%s & 0x%08x) | ((value & 0x%x) << %s); }\n", 
+                        storageName, storageName, ~(and << shr), and, shr);  
+                }
+            }
+        } else {
+            foreach(st; sd.statements()) {
+                buf.add(t);
+                emit(st);
+            }
         }
         buf.add("%s}\n", tab(sd.parent));
     }

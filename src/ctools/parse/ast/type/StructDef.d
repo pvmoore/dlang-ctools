@@ -29,6 +29,12 @@ public:
         return offsets[memberIndex];
     }
 
+    bool hasBitfields() {
+        return !variables().filter!(it=>it.isA!Var)
+                           .filter!(it=>it.as!Var.hasBitfieldBits)
+                           .empty();
+    }
+
     override string getName() { return name ? name : ""; }
 
     /**
