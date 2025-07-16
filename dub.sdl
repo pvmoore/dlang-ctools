@@ -8,9 +8,14 @@ buildType "release" {
 	buildOptions "releaseMode" "optimize" "inline" "noBoundsCheck"
 }
 
+
+
 configuration "test" {
 	targetType "executable"
 	targetName "bin-test"
+
+	# todo - refactor some recursive functions so that increasing the stack size is not necessary
+	lflags "/STACK:2000000" 
 }
 configuration "library" {
 	excludedSourceFiles "src/test.d"

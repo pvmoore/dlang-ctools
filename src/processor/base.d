@@ -61,6 +61,8 @@ protected:
 
         this.parent = parseState.parse(tokens);
 
+        writefln("Finished parsing");
+
         writefln("Preprocess time %s seconds", parseState.preprocessTime.peek().total!"nsecs"/1_000_000_000.0);
         writefln("Parse time %s seconds", parseState.parseTime.peek().total!"nsecs"/1_000_000_000.0);
     }

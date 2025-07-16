@@ -31,6 +31,11 @@ void log(T, A...)(T src, string fmt, A args) if(is(T==class) || is(T==interface)
     if(name in ENABLED_LOGS) {
 	    writefln("[%s] ".format(name) ~ format(fmt, args));
 		logger.log("[%s] ".format(name) ~ format(fmt, args));
+
+		import common.io : flushConsole;
+		import logging : flushLog;
+		flushLog();
+		flushConsole();
     }
 
 	// enum MAXLEN = 15;
