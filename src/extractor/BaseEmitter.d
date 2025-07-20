@@ -46,12 +46,12 @@ public:
             case STRUCTDEF: emit(n.as!StructDef); break;
             case TYPEREF: emit(n.as!TypeRef, true); break;
             case UNION: emit(n.as!Union); break;
+            case CAST: emit(n.as!Cast); break;
             case STRING:
             case TERNARY:
             case INDEX:
             case MEMBER:
             case CALL:
-            case CAST:
             case CHAR:
             case ADDRESSOF:
             case DEREF:
@@ -66,6 +66,12 @@ public:
         }
     }
     //──────────────────────────────────────────────────────────────────────────────────────────────
+    void emit(Cast c) {
+        buf.add("cast(");
+        emit(c.first());
+        buf.add(") ");
+        emit(c.last());
+    }
     void emit(StructDef sd) {
         buf.add("struct %s {\n", sd.name);
         string t = tab(sd);
@@ -78,16 +84,15 @@ public:
                 string fieldName;
                 uint startBit;
                 uint numBits;
-                string storageFieldName;
+                Var storageVar;
 
                 string toString() {
-                    return format("%s: bits %s..%s -> %s", fieldName, startBit, startBit+(numBits-1), storageFieldName);
+                    return format("%s: bits %s..%s -> %s", fieldName, startBit, startBit+(numBits-1), storageVar.name);
                 }
             }
 
             Var[] variables = sd.variables();
             uint numStorageVars = 0;
-            string storageVarName;
             Var storageVar;
             int storageVarIndex = -1;
             uint size;
@@ -102,22 +107,24 @@ public:
                                 "This is not currently supported and the emitted struct will need to be manually repaired."), sd.name);
                             return;
                         }
-                        if(v.type().size() != 4) {
-                            writefln(("[WARN] struct %s has bitfields that are not 32 bits. " ~
-                                "This is not currently supported and the emitted struct will need to be manually repaired."), sd.name);
-                            return;
-                        }
 
                         string fieldName = v.name;
 
                         if(storageVarIndex == -1) {
-                            // this is the start of 1 or more bitfields
+                            // this is the start of 1 or more bitfields  
+
                             storageVarIndex = i.as!int;
                             storageVar = v;
                             size = v.type().size() * 8;
                             bitOffset = 0;
-                            storageVarName = v.name;
+                            //storageVarName = v.name;
                             v.name = "_bf%s".format(numStorageVars++);
+
+                            // If the storage type is a bool we need to make it a char instead
+                            bool changeStorageType = v.type().kind == TKind.BOOL; 
+                            if(changeStorageType) {
+                                v.type().kind = TKind.CHAR;
+                            }
 
                             buf.add(t);
                             emit(v);
@@ -136,7 +143,6 @@ public:
                                 // Output the next storage var
                                 storageVarIndex++;
                                 storageVar = variables[storageVarIndex];
-                                storageVarName = storageVar.name;
                                 storageVar.name = "_bf%s".format(numStorageVars++);
                                 size = storageVar.type().size() * 8;
                                 bitOffset = 0;
@@ -147,7 +153,7 @@ public:
                         }
 
                         uint numBits = v.getBitfieldValue();
-                        bitfields ~= BF(v, fieldName, bitOffset, numBits, storageVar.name);
+                        bitfields ~= BF(v, fieldName, bitOffset, numBits, storageVar);
                         bitOffset += numBits;
 
                     } else {
@@ -170,7 +176,7 @@ public:
                 buf.add("// bitfield getters\n");
                 foreach(bf; bitfields) {
                     string name = Emitter.dname(bf.fieldName);
-                    string storageName = Emitter.dname(bf.storageFieldName);
+                    string storageName = Emitter.dname(bf.storageVar.name);
                     uint shr = bf.startBit;
                     uint and = (1 << bf.numBits) - 1;
                     name = "%s%s".format(name[0..1].toUpper(), name[1..$]);
@@ -178,14 +184,17 @@ public:
                     buf.add(t);
                     emit(bf.v.type());
                     buf.add(" get%s", name);
-                    buf.add("() { return (%s >>> %s) & 0x%08x; }\n", storageName, shr, and);
+                    buf.add("() { return cast(");
+                    emit(bf.v.type());
+                    buf.add(")((%s >>> %s) & 0x%08x); }\n", storageName, shr, and);
+
                 }
                 buf.add("\n");
                 buf.add(t);
                 buf.add("// bitfield setters\n");
                 foreach(bf; bitfields) {
                     string name = Emitter.dname(bf.fieldName);
-                    string storageName = Emitter.dname(bf.storageFieldName);
+                    string storageName = Emitter.dname(bf.storageVar.name);
                     uint shr = bf.startBit;
                     uint and = (1 << bf.numBits) - 1;
                     name = "%s%s".format(name[0..1].toUpper(), name[1..$]);
@@ -194,8 +203,11 @@ public:
                     buf.add("void set%s(", name);
                     emit(bf.v.type());
 
-                    buf.add(" value) { %s = (%s & 0x%08x) | ((value & 0x%x) << %s); }\n", 
-                        storageName, storageName, ~(and << shr), and, shr);  
+                    buf.add(" value) { %s = cast(", storageName);
+                    emit(bf.storageVar.type());
+                    buf.add(")");
+                    buf.add("(%s & 0x%08x) | ((value & 0x%x) << %s); }\n", 
+                        storageName, ~(and << shr), and, shr);  
                 }
             }
         } else {

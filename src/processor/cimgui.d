@@ -9,12 +9,12 @@ import processor.base;
  *   git checkout docking_inter
  *   (may also need to "git submodule update --init --recursive")
  *
- * Build the visual studio solution to generate the DLL. Rename this as 
- * cimgui-glfw-vk-VERSION.dll where VERSION is the version defined below in 'imguiVersion'.
- *
- * In imgui/imconfig.h, disable obsolete functions:
+ * In imgui/imconfig.h, uncomment these to disable obsolete functions:
  *   #define IMGUI_DISABLE_OBSOLETE_FUNCTIONS
  *   #define IMGUI_DISABLE_OBSOLETE_KEYIO 
+ *
+ * Build the visual studio solution to generate the DLL. Rename this as 
+ * cimgui-glfw-vk-VERSION.dll where VERSION is the version defined below in 'imguiVersion'.
  *
  * Update the version 'imguiVersion' below.
  * Run this processor.
@@ -26,7 +26,7 @@ private:
     EConfig config;
     Extractor extractor;
     Emitter emitter;
-    enum imguiVersion = "1.91";
+    enum imguiVersion = "1.92.1";
 public:
     override void process() {
         prepare();
@@ -60,7 +60,7 @@ private:
         this.config = new EConfig();
 
         config.requiredFunctionRegexes ~= regex(r"^(Im|ig).*$");
-        config.requiredTypeRegexes ~= regex(r"^(Im|Stb|STB_).*$");
+        config.requiredTypeRegexes ~= regex(r"^(Im|Stb|STB_|stbrp_).*$");
 
         config.excludeRegexes ~= regex(r"^(FILE|_iobuf)$");
         //config.excludeRegexes ~= regex(r"^_iobuf.*$");
