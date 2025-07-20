@@ -197,6 +197,14 @@ struct ImVector(T) {
     int _grow_capacity(int sz) { int new_capacity = Capacity ? (Capacity + Capacity / 2) : 8; return new_capacity > sz ? new_capacity : sz; }
 
     void resize(int new_size) { if (new_size > Capacity) reserve(_grow_capacity(new_size)); Size = new_size; }
+
+    T* erase_unsorted(T* it) { 
+		assert(it >= Data && it < Data + Size);  
+		ptrdiff_t off = it - Data; 
+		if(it < Data + Size - 1) memcpy(Data + off, Data + Size - 1, T.sizeof); 
+		Size--; 
+		return Data + off; 
+	}
 }
 struct ImPool(T) {
     ImVector!T      Buf;        // Contiguous data
