@@ -26,7 +26,7 @@ private:
     EConfig config;
     Extractor extractor;
     Emitter emitter;
-    enum imguiVersion = "1.92.3";
+    enum imguiVersion = "1.92.4";
 public:
     override void process() {
         prepare();
