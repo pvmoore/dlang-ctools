@@ -13,8 +13,9 @@ import processor.base;
  *   #define IMGUI_DISABLE_OBSOLETE_FUNCTIONS
  *   #define IMGUI_DISABLE_OBSOLETE_KEYIO 
  *
- * Build the visual studio solution to generate the DLL. Rename this as 
- * cimgui-glfw-vk-VERSION.dll where VERSION is the version defined below in 'imguiVersion'.
+ * Update the Vulkan SDK path in .\cimgui\CimguiLib\CimguiLib.sln
+ * Build the visual studio solution to generate the DLL. 
+ * Rename the CimguiLib.dll to cimgui-glfw-vk-VERSION.dll and copy to the dlls folder and to the vulkan libs folder.
  *
  * Update the version 'imguiVersion' below.
  * Run this processor.
@@ -26,7 +27,7 @@ private:
     EConfig config;
     Extractor extractor;
     Emitter emitter;
-    enum imguiVersion = "1.92.4";
+    enum imguiVersion = "1.92.5";
 public:
     override void process() {
         prepare();
