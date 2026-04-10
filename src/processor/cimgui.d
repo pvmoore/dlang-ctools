@@ -9,9 +9,12 @@ import processor.base;
  *   git checkout docking_inter
  *   (may also need to "git submodule update --init --recursive")
  *
+ * To update to the latest imgui submodule:
+ *   git submodule update --recursive
+ *
  * In imgui/imconfig.h, uncomment these to disable obsolete functions:
  *   #define IMGUI_DISABLE_OBSOLETE_FUNCTIONS
- *   #define IMGUI_DISABLE_OBSOLETE_KEYIO 
+ *   #define IMGUI_DISABLE_OBSOLETE_KEYIO   <-- this one may now be obsolete
  *
  * Update the Vulkan SDK path in .\cimgui\CimguiLib\CimguiLib.sln
  * Build the visual studio solution to generate the DLL. 
@@ -27,7 +30,7 @@ private:
     EConfig config;
     Extractor extractor;
     Emitter emitter;
-    enum imguiVersion = "1.92.5";
+    enum imguiVersion = "1.92.7";
 public:
     override void process() {
         prepare();
@@ -121,7 +124,13 @@ private:
         ];
 
         enum MANUAL_STRUCTS = [
-            "ImVec2"
+            "ImVec2_c", // Create this manually
+
+            // alias these to the xxxxx_c structs
+            "ImVec2",
+            "ImVec2i",
+            "ImVec4",
+            "ImColor",
         ];
 
         static class MyBaseEmitter : BaseEmitter {
@@ -240,7 +249,7 @@ struct ImSpan(T) {
     T*                  Data;
     T*                  DataEnd;
 }
-struct ImVec2 {
+struct ImVec2_c {
     float x;
     float y;
 
@@ -253,5 +262,9 @@ struct ImVec2 {
         }
     }
 }
+alias ImVec2 = ImVec2_c;
+alias ImVec2i = ImVec2i_c;
+alias ImVec4 = ImVec4_c;
+alias ImColor = ImColor_c;
 ";
 }
