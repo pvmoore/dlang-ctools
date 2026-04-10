@@ -10,6 +10,11 @@ protected:
     StringBuffer buf;
     Emitter.CharBytePlugin charBytePlugin;
 
+    // Disable this to emit standard bitfields in Var rather than creating the workaround setters and getters.
+    // Note that bitfields are enable by default in DMD 2.112.0 but your IDE may not recognise them.
+    // https://dlang.org/spec/struct.html#bitfields
+    enum BITFIELD_WORKAROUND = true;
+
     string tab(Node n) {
         if(n.nid==Nid.STRUCTDEF || n.nid==Nid.UNION) {
             return tab(n.parent) ~ "\t";
@@ -76,7 +81,8 @@ public:
         buf.add("struct %s {\n", sd.name);
         string t = tab(sd);
 
-        if(sd.hasBitfields()) {   
+        // This chunk of code is here to create bitfield setters and getters so that bitfields are not required.
+        if(BITFIELD_WORKAROUND && sd.hasBitfields()) {   
             writefln("[NOTE] bitfields detected in %s", sd);
 
             struct BF {
@@ -441,9 +447,16 @@ public:
         }
     }
     void emit(Var v) {
-
         emit(v.type());
         buf.add(" %s", Emitter.dname(v.name));
+
+        // Note that if BITFIELD_WORKAROUND is true we don't get here if there are bitfields since they are
+        // handled in emit(StructDef)
+        if(!BITFIELD_WORKAROUND && v.hasBitfieldBits) {
+            buf.add(" : ");
+            emit(v.bitfield());
+        }
+
         if(v.hasInitialiser) {
             buf.add(" = ");
             emit(v.initialiser());
