@@ -7,12 +7,12 @@ private:
     EConfig config;
     Extractor extractor;
     Emitter emitter;
-    enum vulkanVersion = "1.4.341.1";
+    enum vulkanVersion = "1.4.350.0";
 public:
     override void process() {
         prepare();
 
-        string vulkanSdk = environment.get("VULKAN_SDK");
+        string vulkanSdk = getVulkanSdkDirectory();
         string vulkanH = vulkanSdk ~ "/Include/vulkan/vulkan.h";
 
         parse(Filepath(vulkanH));
@@ -24,10 +24,18 @@ protected:
         defines["VK_USE_PLATFORM_WIN32_KHR"] = "1";
     }
     override void adjustIncludes(ref string[] includeDirs) {
-        string vulkanSdk = environment.get("VULKAN_SDK");
+        string vulkanSdk = getVulkanSdkDirectory();
+        writefln("VULKAN_SDK = %s", vulkanSdk);
         includeDirs ~= vulkanSdk ~ "/Include";
     }
 private:
+    string getVulkanSdkDirectory() {
+        string vulkanSdk = environment.get("VULKAN_SDK");
+        if(vulkanSdk is null) {
+            vulkanSdk = "C:\\work\\VulkanSDK\\%s".format(vulkanVersion);
+        }
+        return vulkanSdk;
+    }
     void extract() {
 
         convertVkFlags2ToEnums();
