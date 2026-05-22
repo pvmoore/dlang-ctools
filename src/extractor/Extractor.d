@@ -72,6 +72,7 @@ public:
 private:
     void evaluate(Node n) {
         //this.log("Node %s %s", n.nid, n);
+ 
         final switch(n.nid) with(Nid) {
             case ADDRESSOF: break;
             case ARRAYTYPE: break;
@@ -124,7 +125,18 @@ private:
                 break;
             }
             case TERNARY: break;
-            case TYPEDEF: break;
+            case TYPEDEF: { 
+                auto td = n.as!Typedef;
+                if(config.isRequiredTypedef(td.name)) {
+
+                    Type t = td.hasChildren() ? td.type() : null;
+
+                    if(t && !t.isA!StructDef && !t.isA!Union && !t.isA!Enum) {
+                        include(td);
+                    }
+                }
+                break;
+            }
             case TYPEREF: {
                 auto tr = n.as!TypeRef;
                 if(tr.name) {
@@ -251,6 +263,7 @@ private:
         modified = true;
     }
     void include(TypeRef tr) {
+
         if(tr.name in aliases) return;
 
         if(tr.type.isFuncPtr() || tr.name != tr.type.getName()) {
@@ -283,7 +296,7 @@ private:
         typedefs[td.name] = td;
         modified = true;
 
-        this.log("Include Typedef %s", td.name);
+        //writefln("Typedef %s %s", td, typeid(td.type()).name);
         include(td.type());
     }
 }

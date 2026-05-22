@@ -19,6 +19,7 @@ import processor.vulkan;
 import processor.java.glfw_to_java;
 import processor.java.vulkan_to_java;
 import processor.glfw;
+import processor.vma;
 
 ///
 /// Show GC stats after program exits
@@ -28,7 +29,7 @@ import processor.glfw;
 // ];
 
 enum : int {
-    D_VULKAN, D_GLFW, D_CIMGUI,
+    D_VULKAN, D_GLFW, D_CIMGUI, D_VMA,
     J_VULKAN, J_GLFW,
     TESTS, 
     ENV
@@ -36,10 +37,10 @@ enum : int {
 
 void main(string[] args) {
 
-    executeProcessor(D_VULKAN);
+    //executeProcessor(D_VULKAN);
     //executeProcessor(D_GLFW);   
-
     //executeProcessor(D_CIMGUI);
+    executeProcessor(D_VMA);
 
     //executeProcessor(J_VULKAN);
     //executeProcessor(J_GLFW);
@@ -54,6 +55,7 @@ void executeProcessor(int p) {
         case D_VULKAN: processor = new VulkanProcessor(); break;
         case D_GLFW: processor = new GLFWProcessor(); break;
         case D_CIMGUI: processor = new CImguiProcessor(); break;
+        case D_VMA: processor = new VmaProcessor(); break;
         case J_VULKAN: processor = new VulkanToJavaProcessor(); break;
         case J_GLFW: processor = new GlfwToJavaProcessor(); break;
         case TESTS:

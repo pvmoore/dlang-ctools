@@ -38,9 +38,9 @@ private:
     }
     void extract() {
 
-        convertVkFlags2ToEnums();
-
         this.config = new EConfig();
+
+        convertVkFlags2ToEnums();
 
         config.requiredFunctionRegexes ~= [
             regex(r"^vk.*$")];
@@ -57,6 +57,24 @@ private:
 
         this.extractor = new Extractor(config);
         extractor.process(parent);
+
+        // Remove aliases to VkFlags64 (which we have converted into enums in the convertVkFlags2ToEnums() function)
+        foreach(e; extractor.typedefs.byKeyValue()) {
+            auto t = e.value.type();
+            if(auto tr = t.as!TypeRef) {
+                if(tr.name == "VkFlags64") {
+                    writefln("Removing alias to alias %s = VkFlags64;", e.key);
+                    extractor.typedefs.remove(e.key);
+                }
+            } 
+        }
+
+        // Remove duplicate aliases stored in typedefs
+        foreach(e; extractor.aliases.keys()) {
+            if(e in extractor.typedefs) {
+                extractor.typedefs.remove(e);
+            }
+        }
     }
     void emit() {
         enum string[] COMMENTS = [
