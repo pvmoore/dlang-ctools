@@ -40,7 +40,7 @@ public:
 
         parseState.dumpDirectory = "target";
         parseState.dumpIncludeFilenames = true;
-        parseState.dumpIncludeTokens = true;
+        parseState.dumpIncludeTokens = false;
     }
 protected:
     void adjustDefines(ref string[string] defines) {

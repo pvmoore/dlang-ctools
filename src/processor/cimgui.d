@@ -106,7 +106,7 @@ private:
         */
 
         import std : map, array;
-        auto loader = new EmitDLLLoader("CImguiLoader", "cimgui-glfw-vk-%s.dll".format(imguiVersion))
+        auto loader = new EmitDLLLoader("CImguiLoader", "cimgui-glfw-vk-%s.dll".format(imguiVersion), true)
             .loadFunctions(getOrderedValues(extractor.funcDecls)
                                               .map!(it=>it.name)
                                               .array);

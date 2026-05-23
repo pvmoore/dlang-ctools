@@ -13,6 +13,7 @@ private:
     enum vulkanVersion = "1.4.350.0";
     enum vmaVersion    = "3.4.0";
     enum dllName       = "vma-%s.dll".format(vmaVersion);
+    enum dllNameDebug  = "vma-%s-debug.dll".format(vmaVersion);
 public:
     override void process() {
         prepare();
@@ -103,34 +104,17 @@ private:
 
 
         string[] privateImports =[
-            "vulkan_api"
+            "vulkan.api.vulkan_api"
         ];
 
-        string[string] extraDefs; // = [
-            // "VK_NULL_HANDLE" : "null",
-            // "VK_TRUE" : "1",
-            // "VK_FALSE" : "0",
-            // "VK_QUEUE_FAMILY_IGNORED" : "(~0U)",
-            // "VK_REMAINING_MIP_LEVELS" : "(~0U)",
-            // "VK_REMAINING_ARRAY_LAYERS" : "(~0U)",
-            // "VK_SUBPASS_EXTERNAL" : "(~0U)",
-            // "VK_WHOLE_SIZE" : "(~0UL)",
-            // "VK_SHADER_UNUSED_KHR" : "(~0U)"
-        //];
+        string[string] extraDefs; 
         string[string] extraAliases;
 
         writefln("emitting...");
 
-        //writefln("funcDecls: %s", getOrderedValues(extractor.funcDecls));
-        // writefln("funcDefs: %s", extractor.funcDefs);
-        // writefln("enums: %s", extractor.enums);
-        // writefln("structDefs: %s", extractor.structDefs);
-        // writefln("aliases: %s", extractor.aliases);
-        // writefln("typedefs: %s", extractor.typedefs);
-        // writefln("vars: %s", extractor.vars);
-
         import std : map, array;
-        auto loader = new EmitDLLLoader("VMALoader", dllName)
+        auto loader = new EmitDLLLoader("VMALoader", dllName, false)
+            .setDebugLibraryName(dllNameDebug)
             .loadFunctions(getOrderedValues(extractor.funcDecls)
                                               .map!(it=>it.name)
                                               .array);

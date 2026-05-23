@@ -119,7 +119,7 @@ private:
 
         emitter.add(new Comment(COMMENTS));
 
-        emitter.add(new EmitDLLLoader("VulkanLoader", "vulkan-1.dll")
+        emitter.add(new EmitDLLLoader("VulkanLoader", "vulkan-1.dll", true)
                         .loadFunctions("vkGetInstanceProcAddr"));
 
         emitter.add(new LoadGlobalCommandFunctions(funcDecls));

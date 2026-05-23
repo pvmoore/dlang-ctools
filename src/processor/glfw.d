@@ -72,7 +72,7 @@ private:
         ];
 
         enum string[] INCLUDES = [
-            "vulkan_api",
+            "vulkan.api.vulkan_api",
             "core.sys.windows.windows : HWND"
         ];
 
@@ -82,7 +82,7 @@ private:
         );
         
         import std : map, array;
-        auto loader = new EmitDLLLoader("GLFWLoader", dllName)
+        auto loader = new EmitDLLLoader("GLFWLoader", dllName, true)
             .loadFunctions(getOrderedValues(extractor.funcDecls)
                                               .map!(it=>it.name)
                                               .array);
