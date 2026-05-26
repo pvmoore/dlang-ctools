@@ -20,8 +20,8 @@ private struct _CImguiLoader {
 	import core.sys.windows.windows;
 	import common.utils : throwIf;
 	HANDLE handle;
-	void load() {
-		this.handle = LoadLibraryA("cimgui-glfw-vk-1.92.7.dll");
+	bool load() {
+			this.handle = LoadLibraryA("cimgui-glfw-vk-1.92.7.dll");
 		if(!handle) throw new Exception("Unable to load 'cimgui-glfw-vk-1.92.7.dll'");
 		
 		*(cast(void**)&ImBitVector_Clear) = GetProcAddress(handle, "ImBitVector_Clear"); throwIf(!ImBitVector_Clear);
@@ -1597,6 +1597,7 @@ private struct _CImguiLoader {
 		*(cast(void**)&igWindowPosRelToAbs) = GetProcAddress(handle, "igWindowPosRelToAbs"); throwIf(!igWindowPosRelToAbs);
 		*(cast(void**)&igWindowRectAbsToRel) = GetProcAddress(handle, "igWindowRectAbsToRel"); throwIf(!igWindowRectAbsToRel);
 		*(cast(void**)&igWindowRectRelToAbs) = GetProcAddress(handle, "igWindowRectRelToAbs"); throwIf(!igWindowRectRelToAbs);
+		return true;
 	}
 	void unload() {
 		if(handle) FreeLibrary(handle);

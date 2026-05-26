@@ -23,6 +23,7 @@ void testParser() {
     testParse("test/parse/typedef2.h");
     testParse("test/parse/typedef3.h");
     testParse("test/parse/typedef4.h");
+    testParse("test/parse/typedef5.h");
     testParse("test/parse/var.h");
     testParse("test/parse/test.h");
 }

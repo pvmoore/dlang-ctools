@@ -86,6 +86,17 @@ Token deserialise(ByteReader r) {
 Token[] toTokens(string str) {
     import std.string : split;
     import std.range: array;
+
+    // bool isNumber(string s) {
+    //     foreach(ch; s) if(ch<'0' || ch>'9') return false;
+    //     return true;
+    // }
+
+    // return str.split().map!((it) { 
+    //     if(isNumber(it)) return Token(TK.NUMBER, it);
+    //     return Token(TK.ID, it); 
+    // }).array;
+
     return str.split().map!(it=>Token(TK.ID, it)).array;
 }
 

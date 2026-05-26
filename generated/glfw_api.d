@@ -2,7 +2,7 @@ module glfw_api;
 
 private:
 
-import vulkan_api;
+import vulkan.api.vulkan_api;
 import core.sys.windows.windows : HWND;
 
 public:
@@ -21,8 +21,8 @@ private struct _GLFWLoader {
 	import core.sys.windows.windows;
 	import common.utils : throwIf;
 	HANDLE handle;
-	void load() {
-		this.handle = LoadLibraryA("glfw3.4.dll");
+	bool load() {
+			this.handle = LoadLibraryA("glfw3.4.dll");
 		if(!handle) throw new Exception("Unable to load 'glfw3.4.dll'");
 		
 		*(cast(void**)&glfwCreateCursor) = GetProcAddress(handle, "glfwCreateCursor"); throwIf(!glfwCreateCursor);
@@ -152,6 +152,7 @@ private struct _GLFWLoader {
 		*(cast(void**)&glfwWindowHint) = GetProcAddress(handle, "glfwWindowHint"); throwIf(!glfwWindowHint);
 		*(cast(void**)&glfwWindowHintString) = GetProcAddress(handle, "glfwWindowHintString"); throwIf(!glfwWindowHintString);
 		*(cast(void**)&glfwWindowShouldClose) = GetProcAddress(handle, "glfwWindowShouldClose"); throwIf(!glfwWindowShouldClose);
+		return true;
 	}
 	void unload() {
 		if(handle) FreeLibrary(handle);

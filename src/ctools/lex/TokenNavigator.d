@@ -51,7 +51,7 @@ public:
         pos += count;
     }
     void skip(TK k) {
-        throwIf(kind()!=k, "Expecting %s", k);
+        throwIf(kind()!=k, "Expecting %s but got %s", k, peek(0));
         skip(1);
     }
     void skip(string val) {
@@ -171,4 +171,28 @@ void skipBetween(TokenNavigator nav, TK startKind, TK endKind) {
         }
         nav.skip(1);
     }
+}
+
+/** 
+ *  Find the end of a parenthesised block. 
+ *  Assumes nav.peek(startPos) is the position of the opening bracket
+ *  Returns the position of the closing bracket or -1 if the closing bracket is not found
+ */
+int findClosingBracket(TokenNavigator nav, int startPos, TK startKind, TK endKind) {
+    throwIf(!nav.isKind(startKind, startPos));
+    int i     = startPos+1;
+    int count = 1;
+    while(i < nav.tokens.length) {
+        auto k = nav.kind(i);
+        if(k==startKind) {
+            count++;
+        } else if(k==endKind) {
+            count--;
+            if(count==0) {
+                return i;
+            }
+        }
+        i++;
+    }
+    return -1;
 }

@@ -153,13 +153,17 @@ public:
      *  '__declspec' '(' 'dllexport' ')'
      *  '__declspec' '(' 'noinline' ')'
      *  '__declspec' '('' deprecated [ '(' { "" } ')' ] ')'
+     *  '__declspec' '(' allocator ')'
+     *  '__declspec' '(' align '(' x ')' ')'
      */
     void parseDeclspec(Node parent) {
+        this.log("parseDeclspec");
         nav.skip("__declspec");
         nav.skip(TK.LBRACKET);
         switch(nav.value()) {
             case "noreturn":
             case "noinline":
+            case "allocator":
                 // ignore
                 nav.skip(1);
                 break;
@@ -167,6 +171,15 @@ public:
             case "dllexport":
                 // ignore for now
                 nav.skip(1);
+                break;
+            case "align":
+                nav.skip(1);
+                nav.skip(TK.LBRACKET);
+                auto alignment = nav.value();
+                // TODO: use alignment
+                nav.skip(1);
+                this.log("__declspec(align) == %s", alignment);
+                nav.skip(TK.RBRACKET);
                 break;
             case "deprecated":
                 nav.skip(1);
@@ -178,9 +191,50 @@ public:
                 }
                 break;
             default:
-                throwIf(true, "Unsupported __declspec %s", nav.value());
+                throwIf(true, "Unsupported __declspec %s, %s", nav.value(), nav.peek(0));
                 break;
         }
+        nav.skip(TK.RBRACKET);
+    }
+    /**
+     *  '__pragma' '(' PRAGMA ')'
+     *
+     *  PACK_PRAGMA ::= 'pack' '(' 'push' ',' NUMBER ')'
+     */
+    void parsePragma(Node parent) {
+
+        // __pragma
+        nav.skip("__pragma");
+
+        // (
+        nav.skip(TK.LBRACKET);
+
+        switch(nav.value()) {
+            case "pack":
+                // 'pack' '(' 'push' ',' NUMBER ')'
+                // 'pack' '(' 'pop' ')'
+                nav.skip("pack");
+                nav.skip(TK.LBRACKET);
+
+                if("push"==nav.value()) {
+                    nav.skip("push");
+                    nav.skip(TK.COMMA);
+                    pushPragmaPack(nav.value().to!int);
+                    nav.skip(1);
+                } else if("pop"==nav.value()) {
+                    nav.skip("pop");
+                    popPragmaPack();
+                } else {
+                    throwIf(true, "unsupported pragma pack %s", nav.value());
+                }
+                nav.skip(TK.RBRACKET);
+                break;
+            default:
+                throwIf(true, "Unhandled __pragma %s", nav.value());
+                break;
+        }
+
+        // )
         nav.skip(TK.RBRACKET);
     }
 private:
@@ -281,47 +335,6 @@ private:
         }
 
         nav.skip(TK.SEMICOLON);
-    }
-    /**
-     *  '__pragma' '(' PRAGMA ')'
-     *
-     *  PACK_PRAGMA ::= 'pack' '(' 'push' ',' NUMBER ')'
-     */
-    void parsePragma(Node parent) {
-
-        // __pragma
-        nav.skip("__pragma");
-
-        // (
-        nav.skip(TK.LBRACKET);
-
-        switch(nav.value()) {
-            case "pack":
-                // 'pack' '(' 'push' ',' NUMBER ')'
-                // 'pack' '(' 'pop' ')'
-                nav.skip("pack");
-                nav.skip(TK.LBRACKET);
-
-                if("push"==nav.value()) {
-                    nav.skip("push");
-                    nav.skip(TK.COMMA);
-                    pushPragmaPack(nav.value().to!int);
-                    nav.skip(1);
-                } else if("pop"==nav.value()) {
-                    nav.skip("pop");
-                    popPragmaPack();
-                } else {
-                    throwIf(true, "unsupported pragma pack %s", nav.value());
-                }
-                nav.skip(TK.RBRACKET);
-                break;
-            default:
-                throwIf(true, "Unhandled __pragma %s", nav.value());
-                break;
-        }
-
-        // )
-        nav.skip(TK.RBRACKET);
     }
     /**
      *  FOR    ::= 'for' '(' INITS ';' COND ';' PEXPRS ')' BODY

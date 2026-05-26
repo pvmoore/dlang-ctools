@@ -23,6 +23,8 @@ enum string[string] WIN64_DEFINES = [
     "_M_AMD64" : "100",
     "_M_X64" : "100",
     "WIN32_LEAN_AND_MEAN" : "1",
+    // "__GNUC__": "0",
+    // "MIDL_PASS": "1",       // Setting this will remove a lot of MS specific nonsense   
 ];
 
 string[] getWindowsSDKIncludeDirs() {

@@ -121,7 +121,7 @@ public:
                     case "volatile":
                         isVolatile = true;
                         nav.skip(1);
-                        break;
+                        break;    
                     default:
                         return;
                 }
@@ -223,7 +223,7 @@ public:
             this.log("\tparsed typeAndName = %s", tan);
             this.log("\tvalue: %s, kind: %s", nav.value(), nav.kind());
         } else if(throwIfNull) {
-            throwIf(true, "Type is null: %s", value);
+            throwIf(true, "Type is null: %s %s", value, nav.peek(0));
         }
         return tan;
     }
@@ -253,6 +253,9 @@ public:
                 nav.skip(1);
             } else if("__declspec"==nav.value()) {
                 stmtParser.parseDeclspec(parent);
+            } else if("__ptr32" == nav.value() || "__ptr64" == nav.value()) {
+                // ignore MS specific stuff
+                nav.skip(1);
             } else {
                 break;
             }
@@ -287,8 +290,14 @@ private:
         this.log("isFuncPtrOrDecl '%s' %s", nav.value(), nav.kind());
 
         if(nav.kind()==TK.ID) {
+
             int i = 1;
             while(true) {
+                // if("__declspec" == nav.value(i-1)) {
+                //     assert(nav.kind(i) == TK.LBRACKET);
+                //     i = nav.findClosingBracket(1, TK.LBRACKET, TK.RBRACKET);
+                //     assert(i !=-1);
+                // } 
                 if(nav.kind(i)==TK.LBRACKET) return true;
                 if(nav.kind(i)!=TK.ID) return false;
                 i++;
@@ -444,7 +453,7 @@ private:
         parent.detach(decl);
     }
     /**
-     * STRUCT ::= 'struct' [NAME] [ BODY ]
+     * STRUCT ::= 'struct' [declspec] [NAME] [ BODY ]
      * BODY   ::= '{' { VAR|FUNC } '}'
      */
     Type parseStruct(Node parent) {
@@ -452,6 +461,19 @@ private:
 
         // "struct"
         nav.skip("struct");
+
+        // __declspec(...) __pragma(...)
+        // while(true) {
+        //     if(nav.isValue("__declspec")) {
+        //         stmtParser.parseDeclspec(parent);
+        //         this.log("\tFound declspec. Continuing with %s", nav.value());
+        //     } else if(nav.isValue("__pragma")) {
+        //         stmtParser.parsePragma(parent);
+        //         this.log("\tFound pragma. Continuing with %s", nav.value());
+        //     } else {
+        //         break;
+        //     }
+        // }
 
         bool inTypedef = parent.isA!Typedef;
 
@@ -474,6 +496,8 @@ private:
         }
 
         auto struct_ = new StructDef();
+
+        
 
         // name
         if(nav.isKind(TK.ID)) {

@@ -25,11 +25,12 @@ private struct _VulkanLoader {
 	import core.sys.windows.windows;
 	import common.utils : throwIf;
 	HANDLE handle;
-	void load() {
-		this.handle = LoadLibraryA("vulkan-1.dll");
+	bool load() {
+			this.handle = LoadLibraryA("vulkan-1.dll");
 		if(!handle) throw new Exception("Unable to load 'vulkan-1.dll'");
 		
 		*(cast(void**)&vkGetInstanceProcAddr) = GetProcAddress(handle, "vkGetInstanceProcAddr"); throwIf(!vkGetInstanceProcAddr);
+		return true;
 	}
 	void unload() {
 		if(handle) FreeLibrary(handle);
