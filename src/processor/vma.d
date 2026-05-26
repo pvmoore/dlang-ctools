@@ -3,7 +3,58 @@ module processor.vma;
 import processor.base;
 
 /**
- * WIP Unfinished
+ *  Create loader for Vulkan Memory Allocator.   
+ *  @see https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
+ *
+ *  1) Where to get the vm_alloc.h header file:
+ *
+ *     a) Download from https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator 
+ *
+ *        or
+ *
+ *     b) Enable the Vulkan Memory Allocator option when installing the VulkanSDK and the vk_alloc.h header should
+ *        be in the %VULKAN_SDK%\include\vma folder.
+ *
+ *  2) How to generate the vma shared lib:
+ *
+ *  Create a c++ project with a vma.h header containing:
+ *
+ *    #include <vulkan/vulkan.h>
+ *    #define VMA_CALL_PRE extern "C" __declspec(dllexport)
+ *    #define VMA_CALL_POST
+ *    #include "vk_mem_alloc.h"
+ *
+ *  Create a vma.cpp containing:
+ *
+ *    // Vulkan 1.4
+ *    #define VMA_VULKAN_VERSION 1004000  
+ *
+ *    #define VMA_DEDICATED_ALLOCATION 1
+ *    #define VMA_BIND_MEMORY2 1
+ *    #define VMA_MEMORY_BUDGET 1
+ *    #define VMA_EXTERNAL_MEMORY 1
+ *    #define VMA_EXTERNAL_MEMORY_WIN32 1
+ *    #define VMA_BUFFER_DEVICE_ADDRESS 1
+ *    #define VMA_MEMORY_PRIORITY 1
+ *    #define VMA_KHR_MAINTENANCE4 1
+ *    #define VMA_KHR_MAINTENANCE5 1
+ *    #define VMA_STATIC_VULKAN_FUNCTIONS 0
+ *    #define VMA_DYNAMIC_VULKAN_FUNCTIONS 0
+ *    #define VK_USE_PLATFORM_WIN32_KHR 1
+ *    #define VMA_IMPLEMENTATION
+ *    #include "vma.h"
+ *
+ *  Adjust VMA_CALL_PRE and VMA_CALL_POST to match your OS. The above example is for windows.
+ *  Adjust the defines above to match your Vulkan version and desired features. I have enabled everything.
+ *
+ *  Build the shared library:
+ *
+ *    clang -O3 -I%VULKAN_SDK%\include vma.cpp --target=x86_64-pc-windows-msvc -shared -o vma-3.4.0.dll
+ *
+ *  Other compilers and operating systems are available.
+ *
+ *  3) Run this processor to generate vma_api.d and include that and the shared lib in your project.
+ *     a) Set the vulkanVersion and vmaVersion enums appropriately.
  */
 final class VmaProcessor : Processor {
 private:
